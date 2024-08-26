@@ -88,8 +88,6 @@
 			this.BannerSprite = this._mainMC.attachMovie("BannerSprite", "bannerSpriteMC", this._mainMC.getNextHighestDepth());
 			this.BannerSprite._x = 0 + this._menuOff[0];
 			this.BannerSprite._y = 0 + this._menuOff[1];
-			this.BannerSprite._width = 288;
-			this.BannerSprite._height = 65;
 			var banner = this.BannerSprite.bannerBG.attachMovie("txdLoader", "bannerSprite", this.BannerSprite.bannerBG.getNextHighestDepth());
 			var _alreadyLoaded = true;
 			if (banner.textureFilename != txn && banner.textureDict != txd)
@@ -98,7 +96,7 @@
 			}
 			this._bannerTxd = txd;
 			this._bannerTexture = txn;
-			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(banner,txd,txn,288,65,this.bannerLoaded,this);
+			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(banner,txd,txn,512,128,this.bannerLoaded,this);
 		}
 		if (this._menuTitle != undefined && this._menuTitle != "")
 		{
@@ -129,7 +127,7 @@
 
 		this.SubtitleSprite = this._mainMC.attachMovie("SubtitleSprite", "subtitleSprite", this._mainMC.getNextHighestDepth());
 		this.SubtitleSprite._x = 0 + this._menuOff[0];
-		this.SubtitleSprite._y = this.BannerSprite != undefined ? this.BannerSprite._y + this.BannerSprite._height - 1 : 0 + this._menuOff[1];
+		this.SubtitleSprite._y = (this.BannerSprite != undefined ? 72 : 0) + this._menuOff[1];
 		this.SubtitleSprite._width = 288;
 		this.SubtitleSprite._height = 25;
 		this.SubtitleText = this.SubtitleSprite.subtitleMC.labelTF;
@@ -211,7 +209,7 @@
 		}
 		this._bannerTxd = txd;
 		this._bannerTexture = txn;
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.BannerSprite.bannerBG.bannerSprite,txd,txn,288,65,this.bannerLoaded,this);
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.BannerSprite.bannerBG.bannerSprite,txd,txn,512,128,this.bannerLoaded,this);
 	}
 
 	function SetBannerColor(color)
@@ -315,9 +313,9 @@
 			case 3 :
 				panel = new com.rockstargames.ScaleformUI.panels.UIMenuStatsPanel(selectItem);
 				break;
-			case 4:
+			case 4 :
 				panel = new com.rockstargames.ScaleformUI.panels.UIMenuColorPickerPanel(selectItem, param1);
-			break;
+				break;
 		}
 		selectItem.addPanel(panel);
 		if (!selectItem.highlighted)
@@ -551,10 +549,15 @@
 
 	function updateItemsDrawing()
 	{
+		this.BannerSprite._x = 0 + this._menuOff[0];
+		this.BannerSprite._y = 0 + this._menuOff[1];
+		this.SubtitleSprite._x = 0 + this._menuOff[0];
+		this.SubtitleSprite._y = (this.BannerSprite != undefined ? 72 : 0) + this._menuOff[1];
 		if (this.isItemless)
 		{
 			return;
 		}
+
 		this.itemsBG._x = 0 + this._menuOff[0];
 		for (var item in this.menuItems)
 		{
@@ -864,6 +867,8 @@
 
 	function bannerLoaded()
 	{
+		this.BannerSprite.bannerBG.bannerSprite._width = 288;
+		this.BannerSprite.bannerBG.bannerSprite._height = 72;
 		if (this.bannerColor != -1)
 		{
 			this.SetBannerColor(this.bannerColor);

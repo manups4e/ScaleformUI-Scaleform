@@ -24,8 +24,9 @@
 	var _rightIcon;
 	var isActive;
 	var _enabled;
+	var isSeparator;
 
-	function mpFreemodeItem(parentMenu, index, str, baseColor, highlightColor, iconL, colL, iconR, colR, checked, _enabled)
+	function mpFreemodeItem(parentMenu, id, index, str, baseColor, highlightColor, iconL, colL, iconR, colR, checked, _enabled, jumpable)
 	{
 		this._parentMenu = parentMenu;
 		this.parentMC = parentMenu.scrollableContent;
@@ -39,12 +40,21 @@
 		this.bgMC = this.itemMC.bgMC;
 		this._mainColor = baseColor;
 		this._highlightColor = highlightColor;
+		this.isSeparator = id == 1;
 
 		if (str != undefined)
 		{
-			this.leftTextTF.autoSize = true;
+			if (this.isSeparator)
+			{
+				this.leftTextTF.autoSize = "center";
+			}
+			else
+			{
+				this.leftTextTF.autoSize = true;
+			}
 			com.rockstargames.ui.utils.UIText.setSizedText(this.leftTextTF,str,false);
 			this.itemMC.labelMC.setMask(this.itemMC.labelMC.maskMC);
+			this.updateLabelWidth();
 		}
 
 		this.AddLeftTexture(iconL,colL);
@@ -62,7 +72,7 @@
 		this.bgMC.onRollOver = com.rockstargames.ui.utils.DelegateStar.create(this, this.mOver);
 		this.bgMC.onRollOut = com.rockstargames.ui.utils.DelegateStar.create(this, this.mOut);
 	}
-	// this function is called out of scope of the item itself, use this.something won't do anything!
+	// this function is called out of scope from the item itself, using this.something won't do anything!
 	function onMouseEvent(evtType, targetMC, args)
 	{
 		var item = args[0];
@@ -123,7 +133,16 @@
 		}
 		else
 		{
-			this.itemMC.labelMC.maskMC._width = 280;
+			if (this.isSeparator)
+			{
+				this.leftTextTF.autoSize = "center";
+				this.itemMC.labelMC._x = (288 - this.itemMC.labelMC._width) / 2;
+				this.leftTextTF._x = (this.itemMC.labelMC._width - this.leftTextTF._width) / 2;
+			}
+			else
+			{
+				this.itemMC.labelMC.maskMC._width = 280;
+			}
 		}
 		this.checkScroll();
 	}

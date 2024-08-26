@@ -251,7 +251,7 @@
 		this.BodyMask._x = this.OFFSET;// cambierà in base alla richiesta (x)
 		for (var item in this.ItemList)
 		{
-			this.ItemList[item].Selected = this.ItemList[item].highlighted = this._parentMC.Parent.Focus != 0 && (this._parentMC.currentColumn.column == this || (!this._parentMC.NewStyle && this._parentMC.Focus >= this._id)) && item == this.currentSelection;
+			this.ItemList[item].highlighted = this._parentMC.Parent.Focus != 0 && (this._parentMC.currentColumn.column == this || (!this._parentMC.NewStyle && this._parentMC.Focus >= this._id)) && item == this.currentSelection;
 		}
 		if (this.currentSelection == 0)
 		{

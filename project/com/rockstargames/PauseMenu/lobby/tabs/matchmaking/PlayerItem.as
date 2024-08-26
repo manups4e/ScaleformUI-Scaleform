@@ -30,6 +30,7 @@
 	//PauseMPMenuMatchmakingCardItem
 	function PlayerItem(mc, _type, _label, hudColor, iconL, iconR, rankIcon, txd, txn, friendOrCrew, rank)
 	{
+		com.rockstargames.ui.utils.Debug.log("Addin player to player list: (" + arguments + ")");
 		this.parentMC = mc;
 		this.type = _type;
 		this.itemMC = this.parentMC.attachMovie("mpMMCardItem", "cardItem_" + this.parentMC.getNextHighestDepth(), this.parentMC.getNextHighestDepth());
@@ -63,7 +64,6 @@
 		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.labelMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
 		this.itemMC.betMC._visible = false;
 		this.itemMC.oddsTF._visible = false;
-
 		this.setLabel(_label);
 		this.setItemColour(hudColor);
 		this.setAvatarImg(txd,txn);

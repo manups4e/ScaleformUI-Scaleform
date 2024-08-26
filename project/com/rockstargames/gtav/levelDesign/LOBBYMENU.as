@@ -67,9 +67,9 @@
 	{
 		this.LobbyMenu.AddPlayerItem(id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13);
 	}
-	function ADD_MISSIONS_ITEM(id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
+	function ADD_MISSIONS_ITEM(id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14)
 	{
-		this.LobbyMenu.AddMissionsItem(id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13);
+		this.LobbyMenu.AddMissionsItem(id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13, param14);
 	}
 	function ADD_STORE_ITEM(id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
 	{
@@ -148,6 +148,17 @@
 			}
 			col.ItemList[item].refreshLabelFonts();
 			col.ItemList[item].updateLabelWidth();
+		}
+	}
+	
+	function UPDATE_SETTINGS_LISTITEM_LIST(item, list, index)
+	{
+		var col = this.LobbyMenu.getColumn("settings");
+		if (col != undefined)
+		{
+			col.ItemList[item].multiListItems = [];
+			col.ItemList[item].multiListItems = list.split(",");
+			col.ItemList[item].Value = index;
 		}
 	}
 

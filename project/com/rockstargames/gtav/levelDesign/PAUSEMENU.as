@@ -39,7 +39,7 @@
 	function SET_BASE_TAB_RIGHT_PICTURE(txd, txn)
 	{
 		var curTab = this.PauseMenu.Tab;
-		if (curTab instanceof com.rockstargames.PauseMenu.tabs.SimpleTab)
+		if ((curTab instanceof com.rockstargames.PauseMenu.tabs.SimpleTab))
 		{
 			curTab.AddPicture(txd,txn);
 		}
@@ -48,7 +48,7 @@
 	function UPDATE_LEFT_ITEM_RIGHT_BACKGROUND(item, txd, txn, resType)
 	{
 		var curTab = this.PauseMenu.Tab;
-		if (curTab instanceof com.rockstargames.PauseMenu.tabs.InfoTab)
+		if ((curTab instanceof com.rockstargames.PauseMenu.tabs.InfoTab))
 		{
 			var leftItem = curTab.LeftItemList[item];
 			if (leftItem.itemType == 1 || leftItem.itemType == 2 || leftItem.itemType == 3)
@@ -192,10 +192,10 @@
 				switch (this.PauseMenu.Focus)
 				{
 					case 1 :
-						if (this.PauseMenu.Tab instanceof com.rockstargames.PauseMenu.tabs.PlayerListTab)
+						if (this.PauseMenu.Tabinstanceofcom.rockstargames.PauseMenu.tabs.PlayerListTab)
 						{
 							var col = this.PauseMenu.Tab.getColumn("settings");
-							if (col != undefined)
+							if ((col != undefined))
 							{
 								if (col.currentItem._type == 2)
 								{
@@ -214,6 +214,7 @@
 								com.rockstargames.ui.game.GameInterface.call("PLAY_SOUND",com.rockstargames.ui.game.GameInterface.GENERIC_TYPE,"SELECT","HUD_FRONTEND_DEFAULT_SOUNDSET");
 							}
 
+
 						};
 						break;
 				}
@@ -225,18 +226,18 @@
 	{
 		// -1 up , 1 down
 		var focus = this.PauseMenu.Focus;
-		if (focus == 1)
+		if ((focus == 1))
 		{
 			var curTab = this.PauseMenu.currentTab;
 			var curItem = curTab.currentItem;
-			if (curTab instanceof com.rockstargames.PauseMenu.tabs.InfoTab)
+			if ((curTab instanceof com.rockstargames.PauseMenu.tabs.InfoTab))
 			{
 				if (curItem.itemType == 1)
 				{
 					curItem.scrollAll(direction,true);
 				}
 			}
-			else if (curTab instanceof com.rockstargames.PauseMenu.tabs.SimpleTab)
+			else if ((curTab instanceof com.rockstargames.PauseMenu.tabs.SimpleTab))
 			{
 				if (curTab.panelHovered || isJoyPad)
 				{
@@ -281,6 +282,7 @@
 					}
 				}
 
+
 				break;
 			case 2 :
 				var curTab = this.PauseMenu.currentTab;
@@ -295,6 +297,7 @@
 						break;
 					}
 				}
+
 
 				for (var i = 0; i < curItem.ItemList.length; i++)
 				{
@@ -313,6 +316,7 @@
 						}
 					}
 				}
+
 
 				break;
 		}
@@ -367,9 +371,9 @@
 		this.PauseMenu.Tab.AddPlayerItem(before,index,id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13);
 	}
 
-	function ADD_PLAYERS_TAB_MISSIONS_ITEM(before, index, id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
+	function ADD_PLAYERS_TAB_MISSIONS_ITEM(before, index, id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14)
 	{
-		this.PauseMenu.Tab.AddMissionsItem(before,index,id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13);
+		this.PauseMenu.Tab.AddMissionsItem(before,index,id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13,param14);
 	}
 
 	function ADD_PLAYERS_TAB_STORE_ITEM(before, index, id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
@@ -407,10 +411,21 @@
 		this.PauseMenu.Tab.RemoveMission(id);
 	}
 
-	function SET_PLAYERS_TAB_SETTINGS_SELECTION(id)
+	function UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST(item, list, index)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
 		if (col != undefined)
+		{
+			col.ItemList[item].multiListItems = [];
+			col.ItemList[item].multiListItems = list.split(",");
+			col.ItemList[item].Value = index;
+		}
+	}
+
+	function SET_PLAYERS_TAB_SETTINGS_SELECTION(id)
+	{
+		var col = this.PauseMenu.Tab.getColumn("settings");
+		if ((col != undefined))
 		{
 			col.currentSelection = id;
 		}
@@ -418,7 +433,7 @@
 	function SET_PLAYERS_TAB_PLAYERS_SELECTION(id)
 	{
 		var col = this.PauseMenu.Tab.getColumn("players");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.currentSelection = id;
 		}
@@ -426,7 +441,7 @@
 	function SET_PLAYERS_TAB_MISSIONS_SELECTION(id)
 	{
 		var col = this.PauseMenu.Tab.getColumn("missions");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.currentSelection = id;
 		}
@@ -434,7 +449,7 @@
 	function SET_PLAYERS_TAB_STORE_SELECTION(id)
 	{
 		var col = this.PauseMenu.Tab.getColumn("store");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.currentSelection = id;
 		}
@@ -443,7 +458,7 @@
 	function SET_PLAYERS_TAB_SETTINGS_QTTY(current, max)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.setCounter(current,max);
 		}
@@ -452,7 +467,7 @@
 	function SET_PLAYERS_TAB_PLAYERS_QTTY(current, max)
 	{
 		var col = this.PauseMenu.Tab.getColumn("players");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.setCounter(current,max);
 		}
@@ -461,7 +476,7 @@
 	function SET_PLAYERS_TAB_MISSIONS_QTTY(current, max)
 	{
 		var col = this.PauseMenu.Tab.getColumn("missions");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.setCounter(current,max);
 		}
@@ -469,7 +484,7 @@
 	function SET_PLAYERS_TAB_STORE_QTTY(current, max)
 	{
 		var col = this.PauseMenu.Tab.getColumn("store");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.setCounter(current,max);
 		}
@@ -478,7 +493,7 @@
 	function SET_PLAYERS_TAB_PLAYER_ITEM_STATUS(item, status, statusColor)
 	{
 		var col = this.PauseMenu.Tab.getColumn("players");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].setStatus(status,statusColor);
 		}
@@ -487,7 +502,7 @@
 	function SET_PLAYERS_TAB_PLAYER_ITEM_PANEL()
 	{
 		var col = this.PauseMenu.Tab.getColumn("players");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[arguments[0]].addPanel(arguments.slice(1));
 			col.updateItemsDrawing();
@@ -497,7 +512,7 @@
 	function SET_PLAYERS_TAB_PLAYERS_STAT_PANEL_PERMANENT(item, bool)
 	{
 		var col = this.PauseMenu.Tab.getColumn("players");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].permanentPanel = bool;
 		}
@@ -505,16 +520,16 @@
 
 	function HIDE_PLAYERS_TAB_MISSION_PANEL(show)
 	{
-		if (show == true)
+		if ((show == true))
 		{
 			var plCol = this.PauseMenu.Tab.getColumn("players");
-			if ((plCol != undefined && plCol.IsPermanentPanel) || this.PauseMenu.Tab.currentColumn.type == "players")
+			if ((((plCol != undefined) && plCol.IsPermanentPanel) || this.PauseMenu.Tab.currentColumn.type == "players"))
 			{
 				return;
 			}
 		}
 		var col = this.PauseMenu.Tab.getColumn("panel");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.itemMC._visible = show;
 		}
@@ -523,7 +538,7 @@
 	function SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT()
 	{
 		var col = this.PauseMenu.Tab.getColumn("players");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[arguments[0]].panel.AddStatItem(arguments.slice(1));
 		}
@@ -532,7 +547,7 @@
 	function SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DETAIL(item, id, textLeft, textRight, param3, param4, param5, param6, param7, param8, param9, param10)
 	{
 		var col = this.PauseMenu.Tab.getColumn("players");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].panel.ADD_DETAILS_ITEM(id,textLeft,textRight,param3,param4,param5,param6,param7,param8,param9,param10);
 		}
@@ -540,7 +555,7 @@
 	function SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION(item, desc, type, unused, collapse)
 	{
 		var col = this.PauseMenu.Tab.getColumn("players");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].panel.SET_DESCRIPTION(desc,type,unused,collapse);
 		}
@@ -554,7 +569,7 @@
 	function UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS(item, lbl, rtxt)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			com.rockstargames.ui.utils.UIText.setSizedText(col.ItemList[item].leftTextTF,lbl,false,true);
 			if (col.ItemList[item]._type == 0)
@@ -568,7 +583,7 @@
 	function SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT(item, fName, fId)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].updateLabelFont(fName,fId);
 		}
@@ -576,7 +591,7 @@
 	function SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT(item, fName, fId)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].updateRightLabelFont(fName,fId);
 		}
@@ -585,7 +600,7 @@
 	function UPDATE_PLAYERS_TAB_SETTINGS_ITEM_DESCRIPTION(item, desc)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].subtitle = desc;
 			col.updateDescription();
@@ -595,7 +610,7 @@
 	function UPDATE_PLAYERS_TAB_SETTINGS_ITEM_BLINK_DESC(item, blink)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].blinkDesc = blink;
 		}
@@ -604,7 +619,7 @@
 	function UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL(item, txt)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			com.rockstargames.ui.utils.UIText.setSizedText(col.ItemList[item].leftTextTF,txt,false,true);
 			col.ItemList[item].refreshLabelFonts();
@@ -614,7 +629,7 @@
 	function UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT(item, _label)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].SetRightText(_label);
 		}
@@ -623,7 +638,7 @@
 	function SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE(item, badge)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].SetLeftBadge(badge);
 		}
@@ -632,7 +647,7 @@
 	function SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE(item, badge)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].SetRightBadge(badge);
 		}
@@ -641,7 +656,7 @@
 	function ENABLE_PLAYERS_TAB_SETTINGS_ITEM(item, disable)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].Enabled = disable;
 		}
@@ -650,7 +665,7 @@
 	function SET_PLAYERS_TAB_MISSION_ITEM_ENABLED(item, bool)
 	{
 		var col = this.PauseMenu.Tab.getColumn("missions");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].Enabled = bool;
 		}
@@ -659,7 +674,7 @@
 	function SET_PLAYERS_TAB_MISSION_ITEM_LEFT_ICON(item, icon, color)
 	{
 		var col = this.PauseMenu.Tab.getColumn("missions");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].AddLeftTexture(icon,color);
 		}
@@ -668,7 +683,7 @@
 	function SET_PLAYERS_TAB_MISSION_ITEM_RIGHT_ICON(item, icon, checked, color)
 	{
 		var col = this.PauseMenu.Tab.getColumn("missions");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ItemList[item].AddRightTexture(icon,checked,color);
 		}
@@ -677,7 +692,7 @@
 	function CLEAR_PLAYERS_TAB_PLAYERS_COLUMN()
 	{
 		var col = this.PauseMenu.Tab.getColumn("players");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ClearItems();
 		}
@@ -685,7 +700,7 @@
 	function CLEAR_PLAYERS_TAB_SETTINGS_COLUMN()
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ClearItems();
 		}
@@ -693,7 +708,7 @@
 	function CLEAR_PLAYERS_TAB_MISSIONS_COLUMN()
 	{
 		var col = this.PauseMenu.Tab.getColumn("missions");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ClearItems();
 		}
@@ -701,7 +716,7 @@
 	function CLEAR_PLAYERS_TAB_STORE_COLUMN()
 	{
 		var col = this.PauseMenu.Tab.getColumn("store");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ClearItems();
 		}
@@ -709,7 +724,7 @@
 	function CLEAR_PLAYERS_TAB_MISSION_PANEL_ITEMS()
 	{
 		var col = this.PauseMenu.Tab.getColumn("panel");
-		if (col != undefined)
+		if ((col != undefined))
 		{
 			col.ClearItems();
 		}
@@ -789,9 +804,10 @@
 	{
 		for (var i in clip)
 		{
-			if (typeof (clip[i]) == "movieclip")
+			if (typeof clip[i] == "movieclip")
 			{
-				clip[i].swapDepths(0);// Bring the MovieClip to the topmost layer
+				clip[i].swapDepths(0);
+				// Bring the MovieClip to the topmost layer;
 				removeClipAndChildren(clip[i]);
 			}
 		}
@@ -803,7 +819,7 @@
 		for (var prop in parent)
 		{
 			// Check if the property is an object (not a primitive type like Number, String, etc.)
-			if (typeof (parent[prop]) == "object")
+			if (typeof parent[prop] == "object")
 			{
 				// Remove the object by setting its reference to null
 				parent[prop] = null;
@@ -832,11 +848,11 @@
 
 	function ADD_TXD_REF_RESPONSE(txd, strRef, success)
 	{
-		if (success == true)
+		if ((success == true))
 		{
 			var pMC = this.CONTENT;
-			var il = com.rockstargames.ui.media.ImageLoaderMC(eval(pMC + "." + strRef));
-			if (pMC != undefined)
+			var il = com.rockstargames.ui.media.ImageLoaderMC(eval(((pMC + ".") + strRef)));
+			if ((pMC != undefined))
 			{
 				il.displayTxdResponse(txd);
 			}
@@ -845,11 +861,11 @@
 
 	function TXD_HAS_LOADED(txd, success, strRef)
 	{
-		if (success == true)
+		if ((success == true))
 		{
 			var pMC = this.CONTENT;
-			var il = com.rockstargames.ui.media.ImageLoaderMC(eval(pMC + "." + strRef));
-			if (pMC != undefined)
+			var il = com.rockstargames.ui.media.ImageLoaderMC(eval(((pMC + ".") + strRef)));
+			if ((pMC != undefined))
 			{
 				il.displayTxdResponse(txd,success);
 			}
@@ -859,8 +875,8 @@
 	function TXD_ALREADY_LOADED(txd, strRef)
 	{
 		var pMC = this.CONTENT;
-		var il = com.rockstargames.ui.media.ImageLoaderMC(eval(pMC + "." + strRef));
-		if (pMC != undefined)
+		var il = com.rockstargames.ui.media.ImageLoaderMC(eval(((pMC + ".") + strRef)));
+		if ((pMC != undefined))
 		{
 			il.displayTxdResponse(txd,true);
 		}

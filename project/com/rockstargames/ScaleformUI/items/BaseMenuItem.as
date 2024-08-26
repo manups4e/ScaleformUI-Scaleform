@@ -12,8 +12,9 @@
 	var parentMC;
 	var _mainColor = 1291845632;// com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG
 	var _highlightColor = -986896;// com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE
-	var _textColor = com.rockstargames.ui.utils.HudColour.NONE;
-	var _textHighlightColor = com.rockstargames.ui.utils.HudColour.NONE;
+	var _textColor = -1;
+	var _textHighlightColor = -1;
+	var _disabledColor = -6579301;// com.rockstargames.ui.utils.HudColour.HUD_COLOUR_GREY
 	var _hovered = false;
 	var hover = -1;
 	var _enabled = true;
@@ -134,7 +135,6 @@
 		{
 			com.rockstargames.ScaleformUI.utils.MovieClipHandler.ApplyHexColour(this.backgroundMC,this._highlightColor);
 		}
-		//com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.leftTextTF,this._enabled ? (!_h ? this._textColor : this._textHighlightColor) : com.rockstargames.ui.utils.HudColour.HUD_COLOUR_GREY);
 	}
 
 	function get highlighted()

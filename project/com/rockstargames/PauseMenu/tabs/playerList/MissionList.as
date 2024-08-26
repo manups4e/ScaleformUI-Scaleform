@@ -49,12 +49,12 @@
 		this.AnimType = 0;
 	}
 
-	function AddItem(before, index, id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
+	function AddItem(before, index, id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13,param14)
 	{
 		var item;
-		if (id == 0)
+		if (id == 0 || id == 1)
 		{
-			item = new com.rockstargames.PauseMenu.tabs.playerList.mpFreemodeItem(this, index, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13);
+			item = new com.rockstargames.PauseMenu.tabs.playerList.mpFreemodeItem(this, id, index, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14);
 		}
 
 		var lastItem = this.ItemList[this.itemCount - 1];
