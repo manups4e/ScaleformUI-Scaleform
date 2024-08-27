@@ -957,9 +957,7 @@
 	{
 
 		this._menuOff = new Array(x, y);
-		this.updateItemsDrawing();
 
-		//Update banner and subtitle (not updated with the method above)
 		this.BannerSprite._x = 0 + this._menuOff[0];
 		this.BannerSprite._y = 0 + this._menuOff[1];
 		this.SubtitleSprite._x = 0 + this._menuOff[0];
@@ -967,5 +965,6 @@
 		this.itemsBG._y = this.SubtitleSprite._y + this.SubtitleSprite._height - 1;
 		this.DescriptionSprite._x = 0 + this._menuOff[0];
 		this.DescriptionSprite._y = this.SubtitleSprite._y + this.SubtitleSprite._height + 1;
+		this.updateItemsDrawing();
 	}
 }
