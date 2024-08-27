@@ -549,5 +549,10 @@
 			il.displayTxdResponse(txd,true);
 		}
 	}
+	
+	function SET_MENU_OFFSET(x, y)
+	{
+		this.UIMenu.SetMenuOffset(x, y);
+	}
 
 }
