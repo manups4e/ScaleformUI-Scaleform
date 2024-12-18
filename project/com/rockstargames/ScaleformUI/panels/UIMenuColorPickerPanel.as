@@ -4,6 +4,7 @@
 	var colorsArray = [];
 	var hovered = -1;
 	var colorIncludedArray = [];
+
 	function UIMenuColorPickerPanel(parentItem, type)
 	{
 		super(parentItem);
@@ -75,12 +76,15 @@
 				panel.mOutCP(cell,id);
 				break;
 			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OVER :
+				if (panel.hovered != -1)
+				{
+					panel.mOutCP(panel.itemMC.honeyComb["colour_" + panel.hovered],panel.hovered);
+				}
 				panel.mOverCP(cell,id);
 				break;
 			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_RELEASE_OUTSIDE :
 				panel.mOutCP(cell,id);
 		}
-
 	}
 
 	function mOverCP(cell, id)
@@ -117,6 +121,25 @@
 		{
 			return color1.b - color2.b;
 		}
+	}
+
+	function set Value(_v)
+	{
+		if (this.hovered != -1)
+		{
+			this.mOutCP(this.itemMC.honeyComb["colour_" + this.hovered],this.hovered);
+		}
+		this.hovered = _v;
+		this.hovered = _v;
+		if (_v == -1)
+		{
+			return;
+		}
+		this.mOverCP(this.itemMC.honeyComb["colour_" + this.hovered],this.hovered);
+	}
+	function get Value()
+	{
+		return this.hovered;
 	}
 
 	function Clear()

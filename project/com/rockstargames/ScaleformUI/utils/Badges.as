@@ -1,5 +1,6 @@
 ﻿class com.rockstargames.ScaleformUI.utils.Badges
 {
+	static var CUSTOM = -1;
 	static var NONE = 0;
 	static var LOCK = 1;
 	static var STAR = 2;

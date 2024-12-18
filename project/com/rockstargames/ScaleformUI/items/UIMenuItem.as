@@ -66,6 +66,7 @@
 		this.jumpable = false;
 		this.menuIndex = index;
 		this._enabled = param1;
+		this.itemMC.checkbox._visible = false;
 		//this.itemMC.mouseCatcher.swapDepths(this.itemMC.RLabelMC);
 
 		if (str != undefined)
@@ -103,7 +104,8 @@
 				break;
 			case 2 :// checkbox item
 				this.itemMC.RLabelMC._visible = false;
-				this.checkbox = this.itemMC.attachMovie("txdLoader", "checkBox", this.itemMC.getNextHighestDepth());
+				this.checkbox = this.itemMC.checkbox;
+				this.itemMC.checkbox._visible = true;
 				this.tickStyle = param3;
 				this.Checked = param4;
 				this._mainColor = param5;
@@ -284,12 +286,6 @@
 				}
 				item.mOver();
 				break;
-			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_PRESS :
-				break;
-			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_RELEASE :
-				break;
-			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_RELEASE_OUTSIDE :
-				break;
 		}
 	}
 
@@ -351,7 +347,7 @@
 	function SetRightBadge(id)
 	{
 		this.rightBadgeId = id;
-		if (this.rightBadgeId != com.rockstargames.ScaleformUI.utils.Badges.NONE)
+		if (this.rightBadgeId != com.rockstargames.ScaleformUI.utils.Badges.NONE && this.rightBadgeId != -1)
 		{
 			if (this.rightBadgeMC == undefined)
 			{
@@ -376,10 +372,38 @@
 		this.updateLabelWidth();
 	}
 
+	function SetCustomRightBadge(sprite_txd,sprite_name)
+	{
+		this.rightBadgeId = -1;
+		if (this.rightBadgeMC == undefined)
+		{
+			this.rightBadgeMC = this.itemMC.attachMovie("txdLoader", "RightBadge", this.itemMC.getNextHighestDepth());
+		}
+		if (this.rightBadgeMC.isLoaded)
+		{
+			this.rightBadgeMC.removeTxdRef();
+		}
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.rightBadgeMC,sprite_txd,sprite_name,24,24,this.rightBadgeLoaded,this);
+	}
+
+	function SetCustomLeftBadge(sprite_txd,sprite_name)
+	{
+		this.leftBadgeId = -1;
+		if (this.leftBadgeMC == undefined)
+		{
+			this.leftBadgeMC = this.itemMC.attachMovie("txdLoader", "LeftBadge", this.itemMC.getNextHighestDepth());
+		}
+		if (this.leftBadgeMC.isLoaded)
+		{
+			this.leftBadgeMC.removeTxdRef();
+		}
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.leftBadgeMC,sprite_txd,sprite_name,24,24,this.leftBadgeLoaded,this);
+		this.itemMC.labelMC._x = 28.25;
+	}
 	function SetLeftBadge(id)
 	{
 		this.leftBadgeId = id;
-		if (this.leftBadgeId != com.rockstargames.ScaleformUI.utils.Badges.NONE)
+		if (this.leftBadgeId != com.rockstargames.ScaleformUI.utils.Badges.NONE && this.leftBadgeId != -1)
 		{
 			if (this.leftBadgeMC == undefined)
 			{
@@ -488,7 +512,8 @@
 
 	function getSprite(_highlighted, _style, _checked)
 	{
-		return _highlighted ? (_checked ? (_style == com.rockstargames.ScaleformUI.items.UIMenuCheckboxItem.CHECKBOX_STYLE_TICK ? "shop_box_tickb" : "shop_box_crossb") : "shop_box_blankb") : _checked ? (_style == com.rockstargames.ScaleformUI.items.UIMenuCheckboxItem.CHECKBOX_STYLE_TICK ? "shop_box_tick" : "shop_box_cross") : "shop_box_blank";
+		return _highlighted ? (_checked ? (_style == com.rockstargames.ScaleformUI.items.UIMenuCheckboxItem.CHECKBOX_STYLE_TICK ? "check_black" : "cross_black") : "empty_black") : _checked ? (_style == com.rockstargames.ScaleformUI.items.UIMenuCheckboxItem.CHECKBOX_STYLE_TICK ? "check_white" : "cross_white") : "empty";
+		//return _highlighted ? (_checked ? (_style == com.rockstargames.ScaleformUI.items.UIMenuCheckboxItem.CHECKBOX_STYLE_TICK ? "shop_box_tickb" : "shop_box_crossb") : "shop_box_blankb") : _checked ? (_style == com.rockstargames.ScaleformUI.items.UIMenuCheckboxItem.CHECKBOX_STYLE_TICK ? "shop_box_tick" : "shop_box_cross") : "shop_box_blank";
 	}
 
 	function addSidePanel(panel)
@@ -503,8 +528,10 @@
 	function set Checked(val)
 	{
 		this._checked = val;
+		
 		var sprite_name = this.getSprite(this._highlighted, this.tickStyle, this._checked);
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.checkbox,"commonmenu",sprite_name,24,24,this.checkLoaded_withAnim,this);
+		//com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.checkbox,"commonmenu",sprite_name,24,24,this.checkLoaded_withAnim,this);
+		this.checkbox.gotoAndStop(sprite_name);
 		this.updateLabelWidth();
 	}
 
@@ -590,7 +617,7 @@
 	{
 		if (this._highlighted != _h)
 		{
-			if (this.rightBadgeMC != undefined && this.rightBadgeMC.isLoaded)
+			if (this.rightBadgeMC != undefined && this.rightBadgeMC.isLoaded && this.rightBadgeId != -1)
 			{
 				if (com.rockstargames.ScaleformUI.utils.Badges.canChangeSprite(this.rightBadgeId))
 				{
@@ -605,7 +632,7 @@
 					com.rockstargames.ui.utils.Colour.ApplyHudColour(this.rightBadgeMC,color);
 				}
 			}
-			if (this.leftBadgeMC != undefined && this.leftBadgeMC.isLoaded)
+			if (this.leftBadgeMC != undefined && this.leftBadgeMC.isLoaded && this.leftBadgeId != -1)
 			{
 				if (com.rockstargames.ScaleformUI.utils.Badges.canChangeSprite(this.leftBadgeId))
 				{
@@ -641,7 +668,8 @@
 				else if (this._type == 2)
 				{
 					var sprite_name = this.getSprite(true, this.tickStyle, this.Checked);
-					com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.checkbox,"commonmenu",sprite_name,24,24,this.checkLoaded,this);
+					//com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.checkbox,"commonmenu",sprite_name,24,24,this.checkLoaded,this);
+					this.checkbox.gotoAndStop(sprite_name);
 				}
 				this.updateLabelWidth();
 				this.checkScroll();
@@ -661,7 +689,8 @@
 				else if (this._type == 2)
 				{
 					var sprite_name = this.getSprite(false, this.tickStyle, this.Checked);
-					com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.checkbox,"commonmenu",sprite_name,24,24,this.checkLoaded,this);
+					//com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.checkbox,"commonmenu",sprite_name,24,24,this.checkLoaded,this);
+					this.checkbox.gotoAndStop(sprite_name);
 				}
 				clearTimeout(this.scrollTimeout);
 				com.rockstargames.ui.tweenStar.TweenStarLite.removeTweenOf(this.leftTextTF);

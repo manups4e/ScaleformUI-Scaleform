@@ -1,4 +1,4 @@
-﻿class com.rockstargames.PauseMenu.tabs.playerList.StoreContentImageItem
+﻿class com.rockstargames.PauseMenu.elements.items.StoreContentImageItem
 {
 	var _parentMenu;
 	var parentMC;
@@ -23,13 +23,18 @@
 			this.itemMC.textBgMC._visible = false;
 			this.itemMC.labelMC._visible = false;
 		}
+		else
+		{
+			com.rockstargames.ui.utils.UIText.setSizedText(this.itemMC.labelMC.titleTF,param2,true,false,0,23);
+		}
 		this.itemMC.itemHilite._visible = false;
 		this.TXD = param0;
 		this.TXN = param1;
 		this.LoadPicture(param0,param1);
 		this.itemMC.attachMovie("mouseCatcher","mouseCatcher",itemMC.getNextHighestDepth(),{_width:itemMC._width, _height:itemMC._height});
 		this.itemMC.mouseCatcher.setupGenericMouseInterface(index,this._parentMenu._id,this.onMouseEvent,[this]);
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.UpdateFont(this.itemMC.labelMC.titleTF,"$Font2");
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.UpdateFont(this.itemMC.labelMC.titleTF,"$Font5");
+		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.textBgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
 		this.initBaseMouseInterface();
 	}
 

@@ -1,4 +1,4 @@
-﻿class com.rockstargames.PauseMenu.tabs.playerList.ImageColumnList
+﻿class com.rockstargames.PauseMenu.elements.columns.ImageColumnList
 {
 	var _MC;
 	var _parentMC;
@@ -49,11 +49,10 @@
 
 	function AddItem(before, index, id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
 	{
-		com.rockstargames.ui.utils.Debug.log(arguments.toString());
 		var item;
 		if (id == 0)
 		{
-			item = new com.rockstargames.PauseMenu.tabs.playerList.StoreContentImageItem(this, index, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13);
+			item = new com.rockstargames.PauseMenu.elements.items.StoreContentImageItem(this, index, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13);
 		}
 
 		if (before)
@@ -240,8 +239,16 @@
 		this.BodyMask._x = this.OFFSET;
 		for (var item in this.ItemList)
 		{
-			this.ItemList[item].Selected = this.ItemList[item].highlighted = this._parentMC.Parent.Focus != 0 && (this._parentMC.currentColumn.column == this || (!this._parentMC.NewStyle && this._parentMC.Focus >= this._id)) && item == this.currentSelection;
-			this.ItemList[item].LoadPicture(this.ItemList[item].TXD,this.ItemList[item].TXN);
+			if (this._parentMC instanceof com.rockstargames.PauseMenu.MainView)
+			{
+				this.ItemList[item].Selected = this.ItemList[item].highlighted = this._parentMC.Parent.Focus != 0 && (this._parentMC.currentColumn.column == this || (!this._parentMC.NewStyle && this._parentMC.Focus >= this._id)) && item == this.currentSelection;
+				this.ItemList[item].LoadPicture(this.ItemList[item].TXD,this.ItemList[item].TXN);
+			}
+			else if (this._parentMC instanceof com.rockstargames.PauseMenu.tabs.PlayerListTab)
+			{
+				this.ItemList[item].Selected = this.ItemList[item].highlighted = this._parentMC.Parent.Focus != 0 && (this._parentMC.currentColumn.column == this || (!this._parentMC.NewStyle && this._parentMC.Focus >= this._id)) && item == this.currentSelection;
+				this.ItemList[item].LoadPicture(this.ItemList[item].TXD,this.ItemList[item].TXN);
+			}
 		}
 		if (this.currentSelection == 0)
 		{
@@ -253,7 +260,6 @@
 		}
 
 		this.BodyMask.maskMC._height = this.BodyMask.bgMC._height = this.MaxHeight;
-		com.rockstargames.ui.utils.Debug.log("this.BodyMask.maskMC._height: " + this.BodyMask.maskMC._height + ", this.ItemList.length: " + this.ItemList.length);
 		this._itemsOffset = this.BodyMask._y + this.BodyMask.bgMC._height;
 		this.updateDescription();
 	}
@@ -275,17 +281,25 @@
 	{
 		this.tot = maxItems;
 		var subFont = new TextFormat("$Font2", 12);
-		if (this._parentMC.Focus < this._id || this._parentMC.Parent.Focus == 0)
+		if (!this.isLobby)
 		{
-			subFont.align = "left";
-			com.rockstargames.ui.utils.UIText.setSizedText(this.Footer.numItemsTF,maxItems,false,true);
+			if (this._parentMC.Focus < this._id || this._parentMC.Parent.Focus == 0)
+			{
+				com.rockstargames.ui.utils.UIText.setSizedText(this.Footer.numItemsTF,maxItems,false,true);
+				subFont.align = "left";
+			}
+			else
+			{
+				this.Footer.numItemsTF.autoSize = "right";
+				this.Footer.numItemsTF.text = act + "/" + maxItems;
+				this.Footer.numItemsTF._x = 3.5;
+				subFont.align = "right";
+			}
 		}
 		else
 		{
-			this.Footer.numItemsTF.autoSize = "right";
-			this.Footer.numItemsTF.text = act + "/" + maxItems;
-			this.Footer.numItemsTF._x = 3.5;
 			subFont.align = "right";
+			com.rockstargames.ui.utils.UIText.setSizedText(this.Footer.numItemsTF,act + "/" + maxItems,true,true);
 		}
 		this.Footer.numItemsTF.setTextFormat(subFont);
 		this.updateItemsDrawing();
@@ -342,6 +356,11 @@
 	function get IsVisible()
 	{
 		return this._isVisible;
+	}
+	
+	function get isLobby()
+	{
+		return this._parentMC instanceof com.rockstargames.PauseMenu.MainView;
 	}
 
 	function Clear()

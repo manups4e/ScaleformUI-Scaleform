@@ -1,4 +1,4 @@
-﻿class com.rockstargames.PauseMenu.tabs.playerList.MinimapPanel
+﻿class com.rockstargames.PauseMenu.elements.panels.MinimapPanel
 {
 	var itemMC;
 	var imgLdr;

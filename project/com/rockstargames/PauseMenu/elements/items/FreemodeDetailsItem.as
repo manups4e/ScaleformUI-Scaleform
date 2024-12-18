@@ -1,4 +1,4 @@
-﻿class com.rockstargames.PauseMenu.lobby.FreemodeDetailsItem
+﻿class com.rockstargames.PauseMenu.elements.items.FreemodeDetailsItem
 {
 	var basetextW = 266;
 	var itemMC;
@@ -15,7 +15,7 @@
 	function FreemodeDetailsItem(_parentPanel, index, type, textLeft, textRight, param3, param4, param5, param6, param7, param8, param9, param10)
 	{
 		this.parentPanel = _parentPanel;
-		this.itemMC = this.parentPanel.itemMC.attachMovie("freemodeDetailsItem", "detailsItem_" + this.parentPanel.itemMC.getNextHighestDepth(), this.parentPanel.itemMC.getNextHighestDepth());
+		this.itemMC = this.parentPanel.itemMC.attachMovie("freemodeDetailsItem", "detailsItem_" + index, this.parentPanel.itemMC.getNextHighestDepth());
 		this.itemMC.outlineMC._visible = false;
 		this.itemTextRight = this.itemMC.labelMC.valueTF;
 		this.itemTextLeft = this.itemMC.leftlabelMC.titleTF;
@@ -81,8 +81,8 @@
 				this.updateRightLabelFont(param8,param9);
 				break;
 			case 3 :
-				var _loc0_ = 2;
 				this.itemMC.outlineMC._visible = true;
+				var _loc0_ = 2;
 				this.itemMC.leftlabelMC._y = _loc0_ = 2;
 				this.itemMC.labelMC._y = _loc0_;
 				this.itemMC.bgMC._y = _loc0_;
@@ -155,7 +155,7 @@
 		{
 			var sprite_name = com.rockstargames.ScaleformUI.utils.Badges.getSpriteNameById(id, false);
 			var sprite_txd = com.rockstargames.ScaleformUI.utils.Badges.GetSpriteDictionary(id);
-			this.SetClip(this.badgeLoader,sprite_txd,sprite_name,20,20);
+			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.badgeLoader,sprite_txd,sprite_name,20,20);
 		}
 		else
 		{
@@ -165,24 +165,6 @@
 			}
 		}
 	}
-
-	function SetClip(targetMC, textureDict, textureName, w, h, x, y, callback)
-	{
-		var _loc12_ = true;
-		if (targetMC.textureFilename != textureName && targetMC.textureDict != textureDict)
-		{
-			var _loc12_ = false;
-		}
-		targetMC.init("lobbymenu",textureDict,textureName,w,h);
-		var _loc7_ = 4;
-		var _loc5_ = String(targetMC).split(".");
-		var _loc8_ = _loc5_.slice(_loc5_.length - _loc7_).join(".");
-		com.rockstargames.ui.tweenStar.TweenStarLite.removeTweenOf(targetMC);
-		targetMC._alpha = 100;
-		targetMC.requestTxdRef(_loc8_,_loc12_,callback,this);
-	}
-
-
 
 	function snapBGGrid(bgMC)
 	{

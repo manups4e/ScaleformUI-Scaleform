@@ -1,4 +1,4 @@
-﻿class com.rockstargames.PauseMenu.tabs.playerList.SettingsList
+﻿class com.rockstargames.PauseMenu.elements.columns.PlayerList
 {
 	var _MC;
 	var _parentMC;
@@ -17,22 +17,22 @@
 	var _maxItem;
 	var MAX_ITEMS;
 	var OFFSET;
-	var type = "settings";
+	var type = "players";
 	var _id;
 	var _isVisible = false;
 	var tot;
 
-	function SettingsList(parent, offset, id)
+	function PlayerList(parent, offset, id)
 	{
 		this._id = id;
 		this.OFFSET = offset;
-		this._minItem = 0;
 		this.MAX_ITEMS = 12;
+		this._minItem = 0;
 		this._maxItem = this.MAX_ITEMS;
 		this.ItemList = new Array();
 		this._parentMC = parent;
 		this._MC = parent.CONTENT;
-		this.BodyMask = this._MC.attachMovie("pauseMenuColumnBody", "Body_settings_" + this._MC.getNextHighestDepth(), this._MC.getNextHighestDepth());
+		this.BodyMask = this._MC.attachMovie("pauseMenuColumnBody", "Body_players_" + this._MC.getNextHighestDepth(), this._MC.getNextHighestDepth(), {_x:this.OFFSET});
 		this.BodyMask.maskMC._height = 0;
 		this.BodyMask.bgMC._height = 0;
 		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.BodyMask.bgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
@@ -41,28 +41,41 @@
 		this.BodyMask.setMask(this.BodyMask.maskMC);
 		this._itemsOffset = this.BodyMask._y + this.BodyMask.bgMC._height;
 
-		this.Footer = this._MC.attachMovie("MenuFooter", "footer_settings_" + this._MC.getNextHighestDepth(), this._MC.getNextHighestDepth());
+		this.Footer = this._MC.attachMovie("MenuFooter", "footer_players_" + this._MC.getNextHighestDepth(), this._MC.getNextHighestDepth());
 		this.Footer._visible = false;
 
-		this.DescriptionSprite = this._MC.attachMovie("DescriptionBG", "descriptionSprite_settings_" + this._MC.getNextHighestDepth(), this._MC.getNextHighestDepth());
+		/*
+		this.DescriptionSprite = this._MC.attachMovie("DescriptionBG", "descriptionSprite", this._MC.getNextHighestDepth());
 		var _loc3_ = new com.rockstargames.ui.utils.HudColour();
 		com.rockstargames.ui.utils.Colour.setHudColour(com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG,_loc3_);
 		com.rockstargames.ui.utils.Colour.Colourise(this.DescriptionSprite.bgMC,_loc3_.r,_loc3_.g,_loc3_.b,_loc3_.a);
 		this.DescriptionSprite._visible = false;
 		this.EnableAnim = false;
 		this.AnimType = 0;
+		*/
+		this.EnableAnim = false;
+		this.AnimType = 0;
 	}
 
-	function AddItem(before, index, id, str, sub, enabled, blink, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
+	function AddItem(before, index, id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
 	{
-		var item = new com.rockstargames.ScaleformUI.items.UIMenuItem(id, index, str, sub, this, enabled, blink, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13);
-		item.itemMC.attachMovie("mouseCatcher","mouseCatcher",item.itemMC.getNextHighestDepth(),{_width:item.itemMC._width, _height:item.itemMC._height});
-		item.itemMC.mouseCatcher.setupGenericMouseInterface(index,this._id,item.onMouseEvent,[item]);
+		var item;
+		/*
+		if (id == 0)
+		{
+		item = new com.rockstargames.PauseMenu.tabs.playerList.PlayerItem(this, this.scrollableContent, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13);
+		item.itemMC._x = item.itemMC._x - 25;
+		}
+		*/
+		if (id == 1)
+		{
+			item = new com.rockstargames.PauseMenu.elements.items.FriendItem(this, this.scrollableContent, index, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13);
+		}
 
 		var lastItem = this.ItemList[this.itemCount - 1];
 		if (before)
 		{
-			item.itemMC._y = this.ItemList[0].itemMC._y - item.itemMC._height - 2.55;
+			item.itemMC._y = this.ItemList[0].itemMC._y - item.itemMC._height + 1.50;
 			this.ItemList[this.itemCount - 1].Clear();
 			this.ItemList.pop();
 			this.itemCount = this.ItemList.unshift(item);
@@ -81,10 +94,20 @@
 					this.ItemList.shift();
 					this.itemCount = this.ItemList.length;
 				}
-				item.itemMC._y = lastItem.itemMC._y + lastItem.itemMC._height + 2.55;
+				item.itemMC._y = lastItem.itemMC._y + lastItem.itemMC._height - 1.50;
 			}
 			this.itemCount = this.ItemList.push(item);
 		}
+		item.uniqueID = this.itemCount;
+		this.updateItemsDrawing();
+	}
+
+	function RemoveItem(id)
+	{
+		this.ItemList[id].Clear();
+		this.ItemList.splice(id,1);
+		this.itemCount = this.ItemList.length;
+		this._itemsOffset = this.BodyMask._y + this.BodyMask.bgMC._height - 1.50;
 		this.updateItemsDrawing();
 	}
 
@@ -141,7 +164,7 @@
 			switch (targetIndex)
 			{
 				case 1 :
-					_loc2_ = _loc2_ - (this.currentItem.itemMC._height);
+					_loc2_ = _loc2_ - 27.55;
 					if (end)
 					{
 						_loc2_ = 0;
@@ -155,7 +178,7 @@
 					}
 					break;
 				case -1 :
-					_loc2_ = _loc2_ + (this.currentItem.itemMC._height);
+					_loc2_ = _loc2_ + 27.55;
 					if (end)
 					{
 						_loc2_ = -(this.scrollableContent._height - this.MaxHeight);
@@ -186,16 +209,16 @@
 		{
 			if (dir == 1)
 			{
-				if (this.scrollableContent._y != this.MaxHeight - (this.currentItem.itemMC._y + (this.currentItem.itemMC._height + 2.55)))
+				if (this.scrollableContent._y != this.MaxHeight - (this.currentItem.itemMC._y + 27.55))
 				{
-					this.scrollableContent._y = this.MaxHeight - (this.currentItem.itemMC._y + (this.currentItem.itemMC._height + 2.55));
+					this.scrollableContent._y = this.MaxHeight - (this.currentItem.itemMC._y + 27.55);
 				}
 			}
 			else if (dir == -1)
 			{
-				if (this.scrollableContent._y != -this.currentItem.itemMC._y - 2.55)
+				if (this.scrollableContent._y != -this.currentItem.itemMC._y)
 				{
-					this.scrollableContent._y = -this.currentItem.itemMC._y - 2.55;
+					this.scrollableContent._y = -this.currentItem.itemMC._y;
 				}
 			}
 		}
@@ -210,7 +233,7 @@
 
 	function GoDown(val)
 	{
-		this.scrollableContent._y = this.MaxHeight - (this.currentItem.itemMC._y + this.currentItem.itemMC._height + 2.55);
+		this.scrollableContent._y = this.MaxHeight - (this.currentItem.itemMC._y + this.currentItem.itemMC._height - 1.50);
 		this.updateItemsDrawing();
 		return this.currentSelection;
 	}
@@ -218,31 +241,14 @@
 	function GoLeft()
 	{
 		var retVal = -1;
-		if (this.currentItem.Enabled)
-		{
-
-			if (this.currentItem._type == 1 || this.currentItem._type == 3 || this.currentItem._type == 4)
-			{
-				this.currentItem.Value--;
-				retVal = this.currentItem.Value;
-			}
-			this.updateItemsDrawing();
-		}
+		this.updateItemsDrawing();
 		return retVal;
 	}
 
 	function GoRight()
 	{
 		var retVal = -1;
-		if (this.currentItem.Enabled)
-		{
-			if (this.currentItem._type == 1 || this.currentItem._type == 3 || this.currentItem._type == 4)
-			{
-				this.currentItem.Value++;
-				retVal = this.currentItem.Value;
-			}
-			this.updateItemsDrawing();
-		}
+		this.updateItemsDrawing();
 		return retVal;
 	}
 
@@ -251,7 +257,21 @@
 		this.BodyMask._x = this.OFFSET;// cambierà in base alla richiesta (x)
 		for (var item in this.ItemList)
 		{
-			this.ItemList[item].highlighted = this._parentMC.Parent.Focus != 0 && (this._parentMC.currentColumn.column == this || (!this._parentMC.NewStyle && this._parentMC.Focus >= this._id)) && item == this.currentSelection;
+			if (this._parentMC instanceof com.rockstargames.PauseMenu.MainView)
+			{
+				this.ItemList[item].Selected = this.ItemList[item].highlighted = (this._parentMC.currentColumn.column == this || (!this._parentMC.NewStyle && this._parentMC.Focus >= this._id)) && item == this.currentSelection;
+				this.ItemList[item].panel.Visible = (this.ItemList[item].permanentPanel || this._parentMC.currentColumn.column == this) && item == this.currentSelection;
+				this.ItemList[item].panel.itemMC._x = this._parentMC.rightX + (this.ItemList[item].panel.collapsed ? 144 : 0);
+				this.ItemList[item].panel.itemMC._alpha = 100;
+			}
+			else if (this._parentMC instanceof com.rockstargames.PauseMenu.tabs.PlayerListTab)
+			{
+				this.ItemList[item].Selected = this.ItemList[item].highlighted = this._parentMC.Parent.Focus != 0 && (this._parentMC.currentColumn.column == this || (!this._parentMC.NewStyle && this._parentMC.Focus >= this._id)) && item == this.currentSelection;
+				this.ItemList[item].panel.Visible = this._isVisible && (this.ItemList[item].permanentPanel || this._parentMC.currentColumn.column == this) && item == this.currentSelection;
+				this.ItemList[item].panel.itemMC._x = this._parentMC.rightX + (this.ItemList[item].panel.collapsed ? 144 : 0);
+				this.ItemList[item].panel.itemMC._alpha = this._parentMC._isFocused ? 100 : 60;
+			}
+
 		}
 		if (this.currentSelection == 0)
 		{
@@ -259,8 +279,9 @@
 		}
 		else if (this.currentSelection == this.MAX_ITEMS - 1)
 		{
-			this.scrollableContent._y = this.MaxHeight - (this.currentItem.itemMC._y + this.currentItem.itemMC._height + 2.55);
+			this.scrollableContent._y = this.MaxHeight - (this.currentItem.itemMC._y + this.currentItem.itemMC._height - 1.50);
 		}
+		//this._parentMC.missionDetails.itemMC._visible = this._parentMC.currentColumn.type != this.type || this.currentItem.panel == undefined;          
 
 		this.BodyMask.maskMC._height = this.BodyMask.bgMC._height = this.MaxHeight;
 		this._itemsOffset = this.BodyMask._y + this.BodyMask.bgMC._height;
@@ -273,7 +294,7 @@
 
 		if (this.Footer == undefined)
 		{
-			this.Footer = this._MC.attachMovie("MenuFooter", "footer_settings_" + this._MC.getNextHighestDepth(), this._MC.getNextHighestDepth());
+			this.Footer = this._MC.attachMovie("MenuFooter", "footer_players_" + this._MC.getNextHighestDepth(), this._MC.getNextHighestDepth());
 		}
 		if (this.tot > this.MAX_ITEMS)
 		{
@@ -287,67 +308,38 @@
 			this.Footer._visible = false;
 		}
 
-		if (this.currentItem.subtitle != undefined && this.currentItem.subtitle != "" && this._parentMC.Parent.Focus != 0 && (this._parentMC.currentColumn.column == this || (!this._parentMC.NewStyle && this._parentMC.Focus >= this._id)))
-		{
-			this.DescriptionSprite._x = this.OFFSET;// cambierà
-			if (this.Footer._visible)
-			{
-				this.DescriptionSprite._y = this.Footer._y + this.Footer._height + 1;
-			}
-			else
-			{
-				this.DescriptionSprite._y = offset + 1.55;
-			}
-			this.DescriptionSprite._visible = this._isVisible && this._parentMC.Parent.Focus != 0;
-			var textBlips = new com.rockstargames.ui.utils.Text();
-			var format = this.DescriptionSprite.descriptionMC.descText.getTextFormat();
-			if (this.blipLayer)
-			{
-				this.blipLayer.removeMovieClip();
-			}
-			this.DescriptionSprite.descriptionMC.descText.wordWrap = true;
-			this.DescriptionSprite.descriptionMC.descText.autoSize = "left";
-			this.blipLayer = this.DescriptionSprite.descriptionMC.createEmptyMovieClip("blipLayer", this.DescriptionSprite.descriptionMC.getNextHighestDepth(), {_x:this.DescriptionSprite.descriptionMC.descText._x, _y:this.DescriptionSprite.descriptionMC.descText._y});
-			textBlips.setTextWithIcons(this.currentItem.subtitle,this.blipLayer,this.DescriptionSprite.descriptionMC.descText,0,format.size,2,false);
-			format.font = "$Font2";
-			format.size = 13;
-			format.leading = 2;
-			this.DescriptionSprite.descriptionMC.descText.setTextFormat(format);
-			if (this.currentItem.blinkDesc)
-			{
-				if (this.DescriptionSprite.iMC._currentframe == 1)
-				{
-					this.DescriptionSprite.iMC.gotoAndPlay(2);
-				}
-			}
-			else
-			{
-				this.DescriptionSprite.iMC.gotoAndStop(1);
-			}
-			this.DescriptionSprite.bgMC._height = this.DescriptionSprite.descriptionMC.descText.textHeight + 16;
-		}
-		else
-		{
-			this.DescriptionSprite._visible = false;
-			this.DescriptionSprite.iMC.gotoAndStop(1);
-		}
+	}
+
+	function setMaxItems(max)
+	{
+		this.MAX_ITEMS = max;
+		this._maxItem = max;
+		this.updateItemsDrawing();
 	}
 
 	function setCounter(act, maxItems)
 	{
 		this.tot = maxItems;
 		var subFont = new TextFormat("$Font2", 12);
-		if (this._parentMC.Focus < this._id || this._parentMC.Parent.Focus == 0)
+		if (!this.isLobby)
 		{
-			com.rockstargames.ui.utils.UIText.setSizedText(this.Footer.numItemsTF,maxItems,false,true);
-			subFont.align = "left";
+			if (this._parentMC.Focus < this._id || this._parentMC.Parent.Focus == 0)
+			{
+				com.rockstargames.ui.utils.UIText.setSizedText(this.Footer.numItemsTF,maxItems,false,true);
+				subFont.align = "left";
+			}
+			else
+			{
+				this.Footer.numItemsTF.autoSize = "right";
+				this.Footer.numItemsTF.text = act + "/" + maxItems;
+				this.Footer.numItemsTF._x = 3.5;
+				subFont.align = "right";
+			}
 		}
 		else
 		{
-			this.Footer.numItemsTF.autoSize = "right";
-			this.Footer.numItemsTF.text = act + "/" + maxItems;
-			this.Footer.numItemsTF._x = 3.5;
 			subFont.align = "right";
+			com.rockstargames.ui.utils.UIText.setSizedText(this.Footer.numItemsTF,act + "/" + maxItems,true,true);
 		}
 		this.Footer.numItemsTF.setTextFormat(subFont);
 		this.updateItemsDrawing();
@@ -376,15 +368,21 @@
 		var limit = this.itemCount;
 		for (var i = 0; i < limit; i++)
 		{
-			_h += this.ItemList[i].itemMC.bgMC._height + 2.55;
+			var mc = this.ItemList[i].isColour ? this.ItemList[i].itemMC.colourBGMC : this.ItemList[i].itemMC.bgMC;
+			_h += this.ItemList[i].itemMC._height - 1.50;
 		}
 		return _h;
 	}
-	
-	function setMaxItems(max){
-		this.MAX_ITEMS = max;
-		this._maxItem = max;
-		this.updateItemsDrawing();
+
+	function ClearItems()
+	{
+		for (var i in this.ItemList)
+		{
+			this.ItemList[i].Clear();
+		}
+		this.ItemList = new Array();
+		this.itemCount = 0;
+		this._activeItem = 0;
 	}
 
 	function Clear()
@@ -393,8 +391,6 @@
 		{
 			this.ItemList[i].Clear();
 		}
-		this.BodyMask.removeMovieClip();
-		this.DescriptionSprite.removeMovieClip();
 		this.Footer.removeMovieClip();
 		var _MC = null;
 		var _parentMC = null;
@@ -419,28 +415,37 @@
 		var tot = 0;
 	}
 
-	function ClearItems()
-	{
-		for (var i in this.ItemList)
-		{
-			this.ItemList[i].Clear();
-		}
-		this.ItemList = new Array();
-		this.itemCount = 0;
-		this._activeItem = 0;
-	}
-
-
 	function set IsVisible(v)
 	{
 		this._isVisible = v;
 		this.BodyMask._visible = v;
-		this.Footer._visible = v;
+		if (this.itemCount > this.MAX_ITEMS)
+		{
+			this.Footer._visible = v;
+		}
+		if (this.currentItem.panel)
+		{
+			this.currentItem.panel.Visible = v;
+		}
+		/*
+		if (this.currentItem.subtitle != undefined && this.currentItem.subtitle != "")
+		{
 		this.DescriptionSprite._visible = v;
+		}
+		*/ 
 	}
-
 	function get IsVisible()
 	{
 		return this._isVisible;
+	}
+	
+	function get isLobby()
+	{
+		return this._parentMC instanceof com.rockstargames.PauseMenu.MainView;
+	}
+
+	function get IsPermanentPanel()
+	{
+		return this.currentItem.permanentPanel;
 	}
 }

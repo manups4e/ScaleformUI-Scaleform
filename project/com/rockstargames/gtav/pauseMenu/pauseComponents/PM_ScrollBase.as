@@ -18,6 +18,7 @@
 	var forceInvisible:Boolean = false;
 	var _arrowPosition;
 	var _caption;
+	var _captionR;
 	var _columnSpan;
 	var _component;
 	var _currentPosition;
@@ -32,8 +33,11 @@
 	var arrowsMC;
 	var bgMC;
 	var captionBlipLayer;
+	var captionRBlipLayer;
 	var scrollPosMC;
 	var scrollPosTXT;
+	var scrollPosRMC;
+	var scrollPosRightTXT;
 	var upDownMC;
 
 	function PM_ScrollBase()
@@ -41,9 +45,13 @@
 		super();
 		_global.gfxExtensions = true;
 		this.scrollPosTXT = this.scrollPosMC.scrollPosTXT;
+		this.scrollPosRightTXT = this.scrollPosRMC.scrollPosTXT;
+		this.scrollPosRMC._visible = false;
 		this.scrollPosTXT.autoSize = true;
 		this.scrollPosTXT.html = true;
 		this.scrollPosMC._visible = false;
+		this.scrollPosRightTXT.autoSize = "right";
+		this.scrollPosRightTXT.html = true;
 		this.upDownMC._visible = false;
 		this.allArrowsMC._visible = false;
 		this._y = 432;
@@ -51,7 +59,7 @@
 		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.bgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
 		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.allArrowsMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
 		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.upDownMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
-		this.INIT_BUTTONS();
+		//this.INIT_BUTTONS();
 	}
 
 	function INIT_BUTTONS()
@@ -117,24 +125,25 @@
 		this.updateScroll();
 	}
 
-	function SET_SCROLL_BAR(currentPosition, maxPosition, maxVisible, caption, forceInvisible)
+	function SET_SCROLL_BAR(currentPosition, maxPosition, maxVisible, caption, forceInvisible, captionR)
 	{
 		this._currentPosition = currentPosition;
 		this._maxPosition = maxPosition;
 		this._maxVisible = maxVisible;
 		this.forceInvisible = forceInvisible;
-		if (caption != undefined && caption != "")
+		if ((caption != undefined && caption != "") || (captionR != undefined && captionR != ""))
 		{
-			this.SET_CAPTION(caption);
+			this.SET_CAPTION(caption,captionR);
 			return;
 		}
 		this.CLEAR_CAPTION();
 	}
 
-	function SET_CAPTION(caption)
+	function SET_CAPTION(caption, captionR)
 	{
 		this._captionOn = true;
 		this._caption = caption;
+		this._captionR = captionR;
 		this.updateScroll();
 	}
 
@@ -142,6 +151,7 @@
 	{
 		this._captionOn = false;
 		this._caption = undefined;
+		this._captionR = undefined;
 		this.updateScroll();
 	}
 
@@ -250,20 +260,38 @@
 	function updateDisplay()
 	{
 		this.scrollPosMC._visible = false;
+		this.scrollPosRMC._visible = false;
 		if (this.captionBlipLayer != undefined)
 		{
 			this.captionBlipLayer.removeMovieClip();
 		}
 		if (this._captionOn)
 		{
-			this.scrollPosMC._visible = true;
-			this.captionBlipLayer = this.scrollPosMC.createEmptyMovieClip("captionBlipLayer", 1000);
-			var __reg3 = new com.rockstargames.ui.utils.Text();
-			__reg3.setTextWithIcons(this._caption,this.captionBlipLayer,this.scrollPosTXT,0,13.5,0,false);
+			if (this._caption != undefined)
+			{
+				this.scrollPosMC._visible = true;
+				this.captionBlipLayer = this.scrollPosMC.createEmptyMovieClip("captionBlipLayer", 1000);
+				var __reg3 = new com.rockstargames.ui.utils.Text();
+				__reg3.setTextWithIcons(this._caption,this.captionBlipLayer,this.scrollPosTXT,0,13.5,0,false);
+			}
+			if (this._captionR != undefined)
+			{
+				this.scrollPosRMC._visible = true;
+				com.rockstargames.ui.utils.UIText.setSizedText(this.scrollPosRightTXT, this._captionR, false, false, 0, 13.5)
+				if (this._arrowPosition == com.rockstargames.gtav.pauseMenu.pauseComponents.PM_ScrollBase.POSITION_ARROW_RIGHT)
+				{
+					this.scrollPosRMC._x = this.arrowsMC._x - this.arrowsMC._width - 15;
+				}
+				else
+				{
+					this.scrollPosRMC._x = this.bgMC._width - this.scrollPosRightTXT._width - 8;
+				}
+			}
 		}
 		else if (this._arrowPosition == com.rockstargames.gtav.pauseMenu.pauseComponents.PM_ScrollBase.POSITION_ARROW_RIGHT && this._maxPosition > 0)
 		{
 			this.scrollPosMC._visible = true;
+			this.scrollPosRMC._visible = false;
 			if (this._currentPosition >= 0)
 			{
 				var __reg2 = this._currentPosition;
@@ -276,6 +304,7 @@
 			}
 		}
 		com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.scrollPosMC.scrollPosTXT,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
+		com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.scrollPosRMC.scrollPosTXT,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
 		this._visible = this.displayEnabled();
 	}
 

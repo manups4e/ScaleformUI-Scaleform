@@ -1,4 +1,4 @@
-﻿class com.rockstargames.PauseMenu.lobby.mpFreemodeItem
+﻿class com.rockstargames.PauseMenu.elements.items.mpFreemodeItem
 {
 	var itemMC;
 	var leftTextTF;
@@ -25,8 +25,10 @@
 	var isActive;
 	var _enabled;
 	var isSeparator;
+	var rightIcon_ICON;
+	var leftIcon_ICON;
 
-	function mpFreemodeItem(parentMenu, id, index, str, baseColor, highlightColor, iconL, colL, iconR, colR, checked, _enabled)
+	function mpFreemodeItem(parentMenu, id, index, str, baseColor, highlightColor, iconL, colL, iconR, colR, checked, _enabled, jumpable)
 	{
 		this._parentMenu = parentMenu;
 		this.parentMC = parentMenu.scrollableContent;
@@ -44,7 +46,7 @@
 
 		if (str != undefined)
 		{
-			if (id == 1)
+			if (this.isSeparator)
 			{
 				this.leftTextTF.autoSize = "center";
 			}
@@ -72,7 +74,7 @@
 		this.bgMC.onRollOver = com.rockstargames.ui.utils.DelegateStar.create(this, this.mOver);
 		this.bgMC.onRollOut = com.rockstargames.ui.utils.DelegateStar.create(this, this.mOut);
 	}
-	// this function is called out of scope of the item itself, use this.something won't do anything!
+	// this function is called out of scope from the item itself, using this.something won't do anything!
 	function onMouseEvent(evtType, targetMC, args)
 	{
 		var item = args[0];
@@ -135,6 +137,7 @@
 		{
 			if (this.isSeparator)
 			{
+				this.leftTextTF.autoSize = "center";
 				this.itemMC.labelMC._x = (288 - this.itemMC.labelMC._width) / 2;
 				this.leftTextTF._x = (this.itemMC.labelMC._width - this.leftTextTF._width) / 2;
 			}
@@ -189,7 +192,7 @@
 	function AddLeftTexture(icon, color)
 	{
 		this._leftIcon = icon;
-		if (icon == 0)
+		if (icon == 0 && icon != -1)
 		{
 			this.LeftIcon.removeTxdRef();
 			return;
@@ -207,7 +210,7 @@
 		{
 			this.itemMC.checkMC._visible = true;
 		}
-		if (icon == 0)
+		if (icon == 0 && icon != -1)
 		{
 			this.RightIcon.removeTxdRef();
 			return;
@@ -218,15 +221,60 @@
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.RightIcon,sprite_txd,sprite_name,25,25,this.textureRightAdded,this);
 	}
 
+	function AddCustomLeftTexture(sprite_txd, sprite_name)
+	{
+		this._leftIcon = -1;
+		this.LeftIcon.removeTxdRef();
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.LeftIcon,sprite_txd,sprite_name,25,25,this.textureLeftAdded_NoC,this);
+	}
+
+	function AddCustomRightTexture(sprite_txd, sprite_name, checked)
+	{
+		this._rightIcon = -1;
+		this.RightIcon.removeTxdRef();
+		if (checked)
+		{
+			this.itemMC.checkMC._visible = true;
+		}
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.RightIcon,sprite_txd,sprite_name,25,25,this.textureRightAdded_NoC,this);
+	}
+
 	function textureLeftAdded()
 	{
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.ApplyHexColour(this.LeftIcon,this.leftIconColor);
+		var iconCol = com.rockstargames.ScaleformUI.utils.Badges.BadgeToColor(this._leftIcon, this._highlighted);
+		if (iconCol == -1)
+		{
+			com.rockstargames.ScaleformUI.utils.MovieClipHandler.ApplyHexColour(this.LeftIcon,this.leftIconColor);
+		}
+		else
+		{
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(this.LeftIcon,iconCol);
+		}
 		this.updateLabelWidth();
 	}
 
 	function textureRightAdded()
 	{
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.ApplyHexColour(this.RightIcon,this.rightIconColor);
+		var iconCol = com.rockstargames.ScaleformUI.utils.Badges.BadgeToColor(this._rightIcon, this._highlighted);
+		if (iconCol == -1)
+		{
+			com.rockstargames.ScaleformUI.utils.MovieClipHandler.ApplyHexColour(this.RightIcon,this.rightIconColor);
+		}
+		else
+		{
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(this.RightIcon,iconCol);
+		}
+		this.itemMC.checkMC._x = 258 + 15;
+		this.updateLabelWidth();
+	}
+
+	function textureLeftAdded_NoC()
+	{
+		this.updateLabelWidth();
+	}
+
+	function textureRightAdded_NoC()
+	{
 		this.itemMC.checkMC._x = 258 + 15;
 		this.updateLabelWidth();
 	}

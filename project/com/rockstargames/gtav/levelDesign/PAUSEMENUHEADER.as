@@ -18,6 +18,11 @@
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME = "PauseMenuHeader";
 	}
 
+	function SHOW_ARROWS()
+	{
+		this.PauseMenuHeader.menubar.SET_HEADER_ARROWS_VISIBLE(true,true);
+	}
+
 	function ENABLE_DYNAMIC_WIDTH(enabled)
 	{
 		this.PauseMenuHeader.DynamicWidthEnabled = enabled;
@@ -60,7 +65,7 @@
 
 	function ADD_HEADER_TAB(title, dim, color)
 	{
-		this.PauseMenuHeader.menubar.AddItem(title,dim,color);
+		this.PauseMenuHeader.AddItem(title,dim,color);
 	}
 
 	function GO_LEFT()
@@ -114,7 +119,7 @@
 	function DRAW_MENU()
 	{
 		this.CONTENT._alpha = 0;
-        com.rockstargames.ui.tweenStar.TweenStarLite.to(this.CONTENT,0.2,{_alpha:100,ease:com.rockstargames.ui.tweenStar.Ease.CUBIC_IN});
+		com.rockstargames.ui.tweenStar.TweenStarLite.to(this.CONTENT,0.2,{_alpha:100, ease:com.rockstargames.ui.tweenStar.Ease.CUBIC_IN});
 	}
 
 	function ADD_TXD_REF_RESPONSE(txd, strRef, success)

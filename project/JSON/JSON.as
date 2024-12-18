@@ -1,11 +1,11 @@
 ﻿/*
 ported to ScaleformUI for FiveM on Feb 2023 by Leonardo Emanuele Colecchia <manups4e@gmail.com>, github.com/manups4e
 USAGE:
-	var o:Object = JSON.JSON.parse(jsonStr);
+	var o:Object = JSON.JSON.decode(jsonStr);
 	var s:String = JSON.JSON.encode(obj);
 */
 
-class JSON.JSON {
+class JSON {
 
 	static function encode(arg):String {
 

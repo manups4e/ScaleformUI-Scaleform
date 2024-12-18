@@ -1,4 +1,4 @@
-﻿class com.rockstargames.PauseMenu.tabs.playerList.ProtoObject
+﻿class com.rockstargames.PauseMenu.elements.items.ProtoObject
 {
 	var param0;
 	var param1;

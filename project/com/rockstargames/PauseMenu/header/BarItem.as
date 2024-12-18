@@ -16,6 +16,7 @@
 	var textMC;
 	var warnAlertText;
 	var _parentBar;
+	var hasMouse;
 
 	function BarItem()
 	{
@@ -23,6 +24,30 @@
 		this.tabMC._alpha = 0;
 		this.rollover = false;
 		this.mycolour = -13799751;
+		this.hasMouse = true;
+		this.onRollOver = com.rockstargames.ui.utils.DelegateStar.create(this, this.sendMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OVER);
+		this.onRollOut = com.rockstargames.ui.utils.DelegateStar.create(this, this.sendMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OUT);
+		this.onRelease = com.rockstargames.ui.utils.DelegateStar.create(this, this.sendMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_RELEASE);
+		this.onPress = com.rockstargames.ui.utils.DelegateStar.create(this, this.sendMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_PRESS);
+	}
+
+	function sendMouseEvent(id)
+	{
+		if(!this.hasMouse)
+		return;
+		if (id == com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OVER)
+		{
+			this.mRollOver();
+		}
+		else if (id == com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OUT)
+		{
+			this.mRollOut();
+		}
+		var arr = [id, this._name, -1, this.menuenum];
+		var mouseEvt = new com.rockstargames.ui.mouse.MOUSE_EVENTS();
+		mouseEvt.UI_MOVIE = com.rockstargames.ui.mouse.MOUSE_EVENTS.UI_MOVIE_GENERIC;
+		mouseEvt.INTERFACE_TYPE = mouseEvt.SF_BASE_CLASS_MOUSE;
+		mouseEvt.triggerEvent(arr);
 	}
 
 	function mRollOver()
@@ -49,6 +74,15 @@
 		_loc3_.setDelayTimeout(120);
 		_loc3_.txtString.text = str;
 		//com.rockstargames.ui.utils.UIText.setSizedText(this.mc.textMC.txtString,str,true,false);
+	}
+
+	function addMouse()
+	{
+		this.hasMouse = true;
+	}
+	function removeMouse()
+	{
+		this.hasMouse = false;
 	}
 
 	function get label()

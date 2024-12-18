@@ -18,13 +18,14 @@
 	var txdListener;
 	var txdLoader;
 	var w;
+	var centered;
 
 	function ImageLoaderMC()
 	{
 		super();
 		this.txdListener = null;
 	}
-	function init(_gfxName, _texDict, _texFilename, __w, __h, __x, __y)
+	function init(_gfxName, _texDict, _texFilename, __w, __h, __x, __y, _centered)
 	{
 		this.gfxFileName = _gfxName;
 		this.textureDict = _texDict;
@@ -44,6 +45,10 @@
 		if (__y != undefined)
 		{
 			this.y = __y;
+		}
+		if (_centered != undefined)
+		{
+			this.centered = _centered;
 		}
 	}
 	function onResponse(_callbackFunc, _callbackScope)
@@ -160,6 +165,11 @@
 		this._height = this.h;
 		this.txdDummy._x = this.x;
 		this.txdDummy._y = this.y;
+		if (this.centered)
+		{
+			this.txdDummy._x = -this.txdDummy._width / 2;
+			this.txdDummy._y = -this.txdDummy._height / 2;
+		}
 		this.txdDummy._visible = true;
 		this.isLoaded = true;
 		if (this.callbackFunc != undefined)

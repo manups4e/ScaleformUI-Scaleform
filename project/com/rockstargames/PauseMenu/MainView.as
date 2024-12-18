@@ -21,6 +21,7 @@
 	var _min;
 	var _max;
 	var _newStyle;
+	var _isFocused = true;
 
 
 	// i type sono le stringhe in initializeColumn(type, offset)
@@ -47,15 +48,15 @@
 		switch (type)
 		{
 			case "settings" :
-				return new com.rockstargames.PauseMenu.lobby.SettingsList(this, offset);
+				return new com.rockstargames.PauseMenu.elements.columns.SettingsList(this, offset);
 			case "players" :
-				return new com.rockstargames.PauseMenu.lobby.PlayerList(this, offset);
+				return new com.rockstargames.PauseMenu.elements.columns.PlayerList(this, offset);
 			case "missions" :
-				return new com.rockstargames.PauseMenu.lobby.MissionList(this, offset);
+				return new com.rockstargames.PauseMenu.elements.columns.MissionList(this, offset);
 			case "store" :
-				return new com.rockstargames.PauseMenu.lobby.ImageColumnList(this, offset);
+				return new com.rockstargames.PauseMenu.elements.columns.ImageColumnList(this, offset);
 			case "panel" :
-				return new com.rockstargames.PauseMenu.lobby.MissionPanel(this, offset, "", "", "");
+				return new com.rockstargames.PauseMenu.elements.panels.MissionPanel(this, offset, "", "", "");
 		}
 	}
 
@@ -257,7 +258,6 @@
 			}
 			this.currentColumn.column.currentSelection = res;
 		}
-		//com.rockstargames.ui.utils.Debug.log("this.NewStyle: " + this.NewStyle);
 		return res;
 	}
 

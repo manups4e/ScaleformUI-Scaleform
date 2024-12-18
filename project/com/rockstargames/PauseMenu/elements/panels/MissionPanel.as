@@ -1,4 +1,4 @@
-﻿class com.rockstargames.PauseMenu.tabs.playerList.MissionPanel
+﻿class com.rockstargames.PauseMenu.elements.panels.MissionPanel
 {
 	var itemMC;
 	var imgLdr;
@@ -107,7 +107,7 @@
 
 	function AddItem(id, textLeft, textRight, param3, param4, param5, param6, param7, param8, param9, param10)
 	{
-		var item = new com.rockstargames.PauseMenu.tabs.playerList.FreemodeDetailsItem(this, this.listDescItem + 1, id, textLeft, textRight, param3, param4, param5, param6, param7, param8, param9, param10);
+		var item = new com.rockstargames.PauseMenu.elements.items.FreemodeDetailsItem(this, this.listDescItem + 1, id, textLeft, textRight, param3, param4, param5, param6, param7, param8, param9, param10);
 		if (this.listDescItem == 0)
 		{
 			item.itemMC._y = this.itemMC.descBG._y;

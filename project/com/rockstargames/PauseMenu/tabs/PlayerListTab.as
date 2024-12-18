@@ -76,15 +76,15 @@
 		switch (type)
 		{
 			case "settings" :
-				return new com.rockstargames.PauseMenu.tabs.playerList.SettingsList(this, offset);
+				return new com.rockstargames.PauseMenu.elements.columns.SettingsList(this, offset);
 			case "players" :
-				return new com.rockstargames.PauseMenu.tabs.playerList.PlayerList(this, offset);
+				return new com.rockstargames.PauseMenu.elements.columns.PlayerList(this, offset);
 			case "missions" :
-				return new com.rockstargames.PauseMenu.tabs.playerList.MissionList(this, offset);
+				return new com.rockstargames.PauseMenu.elements.columns.MissionList(this, offset);
 			case "store" :
-				return new com.rockstargames.PauseMenu.tabs.playerList.ImageColumnList(this, offset);
+				return new com.rockstargames.PauseMenu.elements.columns.ImageColumnList(this, offset);
 			case "panel" :
-				return new com.rockstargames.PauseMenu.tabs.playerList.MissionPanel(this, offset, "", "", "");
+				return new com.rockstargames.PauseMenu.elements.panels.MissionPanel(this, offset, "", "", "");
 		}
 	}
 

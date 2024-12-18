@@ -49,7 +49,10 @@
 	var IS3D;
 	var isItemless;
 	var bannerColor;
-
+	var bannerBGColor;
+	var tempOff;
+	var Orientation;
+	var aligns = [];
 	/* to be experimented
 	function changeWidth(movieClip:MovieClip, newWidth:Number):MovieClip {
 	  var bitmapData:BitmapData = new BitmapData(newWidth, movieClip._height);
@@ -61,10 +64,10 @@
 	}
 	*/
 
-	function UIMenu(mc, title, subtitle, alternative, x, y, txd, txn, maxItems, totItems, enableAnim, animType, buildType, counterColor, dFontName, dFontId, fadingSp, _bannerColor, itemless, descText)
+	function UIMenu(mc, title, subtitle, alternative, x, y, txd, txn, maxItems, totItems, enableAnim, animType, buildType, counterColor, dFontName, dFontId, fadingSp, _bannerColor, itemless, descText, txd2, txn2, align)
 	{
 		this.isItemless = itemless;
-		this._menuOff = new Array(x, y);
+		this.tempOff = new Array(x, y);
 		this.menuItems = new Array();
 		this.windows = new Array();
 		this._mainMC = mc;
@@ -82,21 +85,23 @@
 		this._bannerTexture = txn;
 		this.fadingSpeed = fadingSp;
 		this.bannerColor = _bannerColor;
+		this.bannerBGColor = -1;
+		this.Orientation = align;
 
-		if (txd != "" && txn != "")
+		if (txd != undefined && txn != undefined && txd != "" && txn != "")
 		{
 			this.BannerSprite = this._mainMC.attachMovie("BannerSprite", "bannerSpriteMC", this._mainMC.getNextHighestDepth());
-			this.BannerSprite._x = 0 + this._menuOff[0];
-			this.BannerSprite._y = 0 + this._menuOff[1];
-			var banner = this.BannerSprite.bannerBG.attachMovie("txdLoader", "bannerSprite", this.BannerSprite.bannerBG.getNextHighestDepth());
-			var _alreadyLoaded = true;
-			if (banner.textureFilename != txn && banner.textureDict != txd)
+			this.BannerSprite._x = 0 + this.tempOff[0];
+			this.BannerSprite._y = 0 + this.tempOff[1];
+			if (txd2 != undefined && txn2 != undefined && txd2 != "" && txn2 != "")
 			{
-				_alreadyLoaded = false;
+				var banner = this.BannerSprite.bannerBG.attachMovie("txdLoader", "bannerBGSprite", this.BannerSprite.bannerBG.getNextHighestDepth());
+				com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(banner,txd2,txn2,288,65,this.underBannerLoaded,this);
 			}
+			var banner = this.BannerSprite.bannerBG.attachMovie("txdLoader", "bannerSprite", this.BannerSprite.bannerBG.getNextHighestDepth());
 			this._bannerTxd = txd;
 			this._bannerTexture = txn;
-			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(banner,txd,txn,512,128,this.bannerLoaded,this);
+			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(banner,txd,txn,288,65,this.bannerLoaded,this);
 		}
 		if (this._menuTitle != undefined && this._menuTitle != "")
 		{
@@ -126,8 +131,8 @@
 		}
 
 		this.SubtitleSprite = this._mainMC.attachMovie("SubtitleSprite", "subtitleSprite", this._mainMC.getNextHighestDepth());
-		this.SubtitleSprite._x = 0 + this._menuOff[0];
-		this.SubtitleSprite._y = (this.BannerSprite != undefined ? 72 : 0) + this._menuOff[1];
+		this.SubtitleSprite._x = 0 + this.tempOff[0];
+		this.SubtitleSprite._y = (this.BannerSprite != undefined ? 65 : 0) + this.tempOff[1];
 		this.SubtitleSprite._width = 288;
 		this.SubtitleSprite._height = 25;
 		this.SubtitleText = this.SubtitleSprite.subtitleMC.labelTF;
@@ -151,7 +156,7 @@
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.ApplyHexColourToTF(this.CounterText,counterColor);
 
 		this.itemsBG = this._mainMC.attachMovie("backgroundBody", "backgroundBody_" + this._mainMC.getNextHighestDepth(), this._mainMC.getNextHighestDepth());
-		this.itemsBG._x = 0 + this._menuOff[0];
+		this.itemsBG._x = 0 + this.tempOff[0];
 		this.itemsBG._y = this.SubtitleSprite._y + this.SubtitleSprite._height - 1;
 		this.itemsBG.maskMC._height = 0;
 		this.itemsBG.bgMC._height = 0;
@@ -182,7 +187,135 @@
 			this.CounterText.text = "";
 
 			this.DescriptionSprite._visible = true;
-			this.DescriptionSprite._x = 0 + this._menuOff[0];
+			this.DescriptionSprite._x = 0 + this.tempOff[0];
+			this.DescriptionSprite._y = this.SubtitleSprite._y + this.SubtitleSprite._height + 1;
+			var textBlips = new com.rockstargames.ui.utils.Text();
+			//com.rockstargames.ui.utils.UIText.setDescText(this.DescriptionSprite.descriptionMC.descText,this.currentItem.subtitle,true);
+			if (this.blipLayer)
+			{
+				this.blipLayer.removeMovieClip();
+			}
+			this.DescriptionSprite.descriptionMC.descText.wordWrap = true;
+			this.DescriptionSprite.descriptionMC.descText.autoSize = true;
+			this.blipLayer = this.DescriptionSprite.descriptionMC.createEmptyMovieClip("blipLayer", 1000, {_x:this.DescriptionSprite.descriptionMC.descText._x, _y:this.DescriptionSprite.descriptionMC.descText._y});
+			textBlips.setTextWithIcons(descText,this.blipLayer,this.DescriptionSprite.descriptionMC.descText,this.descFont[1],13,2,false);
+			com.rockstargames.ScaleformUI.utils.MovieClipHandler.UpdateFont(this.DescriptionSprite.descriptionMC.descText,this.descFont[0]);
+			//this.DescriptionSprite.descriptionMC.descText.setTextFormat(format);
+			this.DescriptionSprite.bgMC._height = this.DescriptionSprite.descriptionMC.descText.textHeight + 12;
+		}
+	}
+
+	function SetBaseValues(title, subtitle, alternative, x, y, txd, txn, maxItems, totItems, enableAnim, animType, buildType, counterColor, dFontName, dFontId, fadingSp, _bannerColor, itemless, descText, txd2, txn2, align)
+	{
+		this.isItemless = itemless;
+		this.tempOff = new Array(x, y);
+		this.menuItems = new Array();
+		this.windows = new Array();
+		this._menuTitle = title;
+		this._menuSubtitle = subtitle;
+		this.maxItemsOnScreen = maxItems;
+		this._minItem = 0;
+		this._maxItem = this.maxItemsOnScreen;
+		this.itemCount = 0;
+		this.totalItems = totItems;
+		this.alternativeTitle = alternative;
+		this.countCol = counterColor;
+		this.descFont = [dFontName, dFontId];
+		this._bannerTxd = txd;
+		this._bannerTexture = txn;
+		this.fadingSpeed = fadingSp;
+		this.bannerColor = _bannerColor;
+		this.bannerBGColor = -1;
+		this.Orientation = align;
+
+		if (this.bannerColor != -1)
+		{
+			this.SetBannerColor(this.bannerColor);
+		}
+
+		if (this.bannerBGColor != -1)
+		{
+			this.SetUnderBannerColor(this.bannerBGColor);
+		}
+		else
+		{
+			this.SetUnderBannerColor(this.bannerColor);
+		}
+
+		if (this._menuTitle != undefined && this._menuTitle != "")
+		{
+			this.BannerSprite.titleMC.labelTF.text = "";
+			this.BannerSprite.titleMC.labelTF2.text = "";
+			if (!this.alternativeTitle)
+			{
+				var bannerFont = new TextFormat("$Font5", 31);
+				bannerFont.align = "center";
+				this.BannerTitle.embedFonts = true;
+				this.BannerTitle.antiAliasType = "advanced";
+				this.BannerTitle.selectable = false;
+				com.rockstargames.ui.utils.UIText.setSizedText(this.BannerSprite.titleMC.labelTF,this._menuTitle,true,true,31,31);
+				this.BannerTitle.setTextFormat(bannerFont);
+			}
+			else
+			{
+				var bannerFont = new TextFormat("$Font2_cond", 60);
+				bannerFont.align = "left";
+				//bannerFont.bold = true;
+				this.BannerTitle.embedFonts = true;
+				this.BannerTitle.antiAliasType = "advanced";
+				this.BannerTitle.selectable = false;
+				com.rockstargames.ui.utils.UIText.setSizedText(this.BannerSprite.titleMC.labelTF2,this._menuTitle,true,true,60,60);
+				this.BannerTitle.setTextFormat(bannerFont);
+			}
+		}
+		//this.SubtitleSprite._x = 0 + this.tempOff[0];             
+		//this.SubtitleSprite._y = (this.BannerSprite != undefined ? 65 : 0) + this.tempOff[1];
+		//this.SubtitleSprite._width = 288;
+		//this.SubtitleSprite._height = 25;
+		this.SubtitleText = this.SubtitleSprite.subtitleMC.labelTF;
+		this.SubtitleText.embedFonts = true;
+		this.SubtitleText.autoSize = true;
+		this.SubtitleText.antiAliasType = "advanced";
+		this.SubtitleText.selectable = false;
+		if (this._menuSubtitle != undefined && this._menuSubtitle != "")
+		{
+			com.rockstargames.ui.utils.UIText.setSizedText(this.SubtitleText,this._menuSubtitle,false,true);
+			com.rockstargames.ScaleformUI.utils.MovieClipHandler.UpdateFont(this.SubtitleText,"$Font2");
+		}
+
+		var subFont = new TextFormat("$Font2_cond", 13);
+		subFont.align = "right";
+		this.CounterText = this.SubtitleSprite.counterMC.labelTF;
+		this.CounterText.antiAliasType = "advanced";
+		this.CounterText.selectable = false;
+		com.rockstargames.ui.utils.UIText.setSizedText(this.CounterText,"0/0",true,true);
+		this.CounterText.setTextFormat(subFont);
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.ApplyHexColourToTF(this.CounterText,counterColor);
+
+		//this.itemsBG._x = 0 + this.tempOff[0];
+		//this.itemsBG._y = this.SubtitleSprite._y + this.SubtitleSprite._height - 1;
+		this.itemsBG.maskMC._height = 0;
+		this.itemsBG.bgMC._height = 0;
+		this.itemsBG.bgMC._alpha = 0;
+
+		this._itemsOffset = this.itemsBG._y + this.itemsBG.bgMC._height;
+
+		this.Footer._visible = false;
+		var _loc3_ = new com.rockstargames.ui.utils.HudColour();
+		com.rockstargames.ui.utils.Colour.setHudColour(com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG,_loc3_);
+		com.rockstargames.ui.utils.Colour.Colourise(this.DescriptionSprite.bgMC,_loc3_.r,_loc3_.g,_loc3_.b,_loc3_.a);
+		this.DescriptionSprite._visible = false;
+		this.EnableAnim = enableAnim;
+		this.AnimType = animType;
+		this.buildingType = buildType;
+		if (this.isItemless)
+		{
+			this.itemsBG.removeMovieClip();
+			this.Footer.removeMovieClip();
+			this.CounterText.text = "";
+
+			this.DescriptionSprite._visible = true;
+			this.DescriptionSprite._x = 0 + this.tempOff[0];
 			this.DescriptionSprite._y = this.SubtitleSprite._y + this.SubtitleSprite._height + 1;
 			var textBlips = new com.rockstargames.ui.utils.Text();
 			//com.rockstargames.ui.utils.UIText.setDescText(this.DescriptionSprite.descriptionMC.descText,this.currentItem.subtitle,true);
@@ -209,13 +342,29 @@
 		}
 		this._bannerTxd = txd;
 		this._bannerTexture = txn;
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.BannerSprite.bannerBG.bannerSprite,txd,txn,512,128,this.bannerLoaded,this);
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.BannerSprite.bannerBG.bannerSprite,txd,txn,288,65,this.bannerLoaded,this);
 	}
 
 	function SetBannerColor(color)
 	{
 		this.bannerColor = color;
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.ApplyHexColour(this.BannerSprite.bannerBG.bannerSprite,color);
+	}
+
+	function SetUnderBannerTexture(txd, txn)
+	{
+		this.BannerSprite.bannerBG.bannerBGSprite.removeTxdRef();
+		if (txd == undefined || txd == "" || txn == undefined || txn == "")
+		{
+			return;
+		}
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.BannerSprite.bannerBG.bannerBGSprite,txd,txn,288,65,this.underBannerLoaded,this);
+	}
+
+	function SetUnderBannerColor(color)
+	{
+		this.bannerBGColor = color;
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.ApplyHexColour(this.BannerSprite.bannerBG.bannerBGSprite,color);
 	}
 
 	function addItem(before, id, index, str, substr, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
@@ -549,16 +698,28 @@
 
 	function updateItemsDrawing()
 	{
-		this.BannerSprite._x = 0 + this._menuOff[0];
+		if (this.Orientation == 0)
+		{
+			this.BannerSprite._x = 0 + this._menuOff[0];
+			this.SubtitleSprite._x = 0 + this._menuOff[0];
+			this.itemsBG._x = 0 + this._menuOff[0];
+		}
+		else if (this.Orientation == 1)
+		{
+			this.BannerSprite._x = this._menuOff[2];
+			this.SubtitleSprite._x = this._menuOff[2];
+			this.itemsBG._x = this._menuOff[2];
+		}
+
 		this.BannerSprite._y = 0 + this._menuOff[1];
-		this.SubtitleSprite._x = 0 + this._menuOff[0];
-		this.SubtitleSprite._y = (this.BannerSprite != undefined ? 72 : 0) + this._menuOff[1];
+		this.SubtitleSprite._y = (this.BannerSprite != undefined ? 65 : 0) + this._menuOff[1];
 		if (this.isItemless)
 		{
 			return;
 		}
 
-		this.itemsBG._x = 0 + this._menuOff[0];
+		this.itemsBG._y = this.SubtitleSprite._y + this.SubtitleSprite._height - 1;
+
 		for (var item in this.menuItems)
 		{
 			this.menuItems[item].highlighted = (item == this.currentSelection);
@@ -574,7 +735,6 @@
 
 		this.itemsBG.maskMC._height = this.itemsBG.bgMC._height = this.itemsBG.bg_txd._height = this.MaxHeight;
 		this._itemsOffset = this.itemsBG._y + this.itemsBG.bgMC._height;
-
 		if (this.currentItem._enabled)
 		{
 			if (this.currentItem.sidePanel != undefined)
@@ -587,21 +747,35 @@
 
 				if (this.currentItem.sidePanel.LeftRightSide == 0)
 				{
-					this.currentItem.sidePanel.itemMC._x = this._menuOff[0] - this.currentItem.sidePanel.itemMC._width - 1;
+					var pos = this.itemsBG._x - this.currentItem.sidePanel.itemMC._width - 1;
+					if (pos < 0)
+					{
+						pos = this.itemsBG._x + 288 + 1;
+					}
+					this.currentItem.sidePanel.itemMC._x = pos;
 					if (this.IS3D)
 					{
 						this.currentItem.sidePanel.itemMC._alpha = 0;
 						this.currentItem.sidePanel.itemMC._yrotation = 270;
 					}
 				}
-				else
+				else if (this.currentItem.sidePanel.LeftRightSide == 1)
 				{
-					this.currentItem.sidePanel.itemMC._x = this._menuOff[0] + 288 + 1;
+					var pos = this.itemsBG._x + 288 + 1;
+					if (pos + 288 > 1280)
+					{
+						pos = this.itemsBG._x - this.currentItem.sidePanel.itemMC._width - 1;
+					}
+					this.currentItem.sidePanel.itemMC._x = pos;
 					if (this.IS3D)
 					{
 						this.currentItem.sidePanel.itemMC._alpha = 0;
 						this.currentItem.sidePanel.itemMC._yrotation = 90;
 					}
+				}
+				else if (this.currentItem.sidePanel.LeftRightSide == 2)
+				{
+					this.currentItem.sidePanel.itemMC._x = this.Orientation == 0 ? this._menuOff[2] - 288 : this._menuOff[0];
 				}
 				if (this.IS3D)
 				{
@@ -623,45 +797,14 @@
 				this.Footer = this._mainMC.attachMovie("Footer", "footer", this._mainMC.getNextHighestDepth());
 			}
 			this.Footer._visible = true;
-			this.Footer._x = 0 + this._menuOff[0];
+			this.Footer._x = this.Orientation == 0 ? 0 + this._menuOff[0] : this._menuOff[2];
 			this.Footer._y = offset + 1;
+			offset = this.Footer._y + this.Footer._height;
 		}
 
-		if (this.currentItem._enabled)
+		if (this.currentItem.subtitle != undefined && this.trim(this.currentItem.subtitle) != "")
 		{
-			if (this.currentItem.panels.length > 0)
-			{
-				var _offset = offset + 2;
-				if (this.Footer._visible)
-				{
-					_offset += this.Footer._height;
-				}
-				for (var i = 0; i < this.currentItem.panels.length; i++)
-				{
-					this.currentItem.panels[i].itemMC._x = 0 + this._menuOff[0];
-					this.currentItem.panels[i].itemMC._y = _offset;
-					_offset += this.currentItem.panels[i].itemMC._height + 1;
-				}
-				offset = _offset;
-			}
-			else
-			{
-				if (this.Footer._visible)
-				{
-					offset += this.Footer._height + 1;
-				}
-			}
-		}
-		else
-		{
-			if (this.Footer._visible)
-			{
-				offset += this.Footer._height + 1;
-			}
-		}
-		if (this.currentItem.subtitle != undefined && this.currentItem.subtitle != "")
-		{
-			this.DescriptionSprite._x = 0 + this._menuOff[0];
+			this.DescriptionSprite._x = this.Orientation == 0 ? 0 + this._menuOff[0] : this._menuOff[2];
 			this.DescriptionSprite._y = offset + 1;
 			this.DescriptionSprite._visible = true;
 			var textBlips = new com.rockstargames.ui.utils.Text();
@@ -694,7 +837,63 @@
 			this.DescriptionSprite._visible = false;
 			this.DescriptionSprite.iMC.gotoAndStop(1);
 		}
+
+		if (this.currentItem._enabled)
+		{
+			if (this.currentItem.panels.length > 0)
+			{
+				var _offset = offset + 2;
+				if (this.DescriptionSprite._visible)
+				{
+					_offset += this.DescriptionSprite.bgMC._height + 2;
+				}
+				for (var i = 0; i < this.currentItem.panels.length; i++)
+				{
+					this.currentItem.panels[i].itemMC._x = this.Orientation == 0 ? 0 + this._menuOff[0] : this._menuOff[2];
+					this.currentItem.panels[i].itemMC._y = _offset;
+					_offset += this.currentItem.panels[i].itemMC._height + 1;
+				}
+				offset = _offset;
+			}
+			else
+			{
+				if (this.Footer._visible)
+				{
+					offset += this.Footer._height + 1;
+				}
+			}
+		}
+		else
+		{
+			if (this.Footer._visible)
+			{
+				offset += this.Footer._height + 1;
+			}
+		}
+
 	}
+
+	function trim(str:String):String
+	{
+		var result:String = "";
+
+		// Remove leading whitespace
+		while (str.length > 0 && str.charCodeAt(0) == 32)
+		{
+			str = str.substring(1);
+		}
+
+		result = str;
+
+		// Remove trailing whitespace
+		while (result.length > 0 && result.charCodeAt(result.length - 1) == 32)
+		{
+			result = result.substring(0, result.length - 1);
+		}
+
+		return result;
+	}
+
 
 	function updateTitleSubtitle(title, sub, alternative)
 	{
@@ -836,6 +1035,14 @@
 
 	function ClearItems()
 	{
+		if (this.windows.length > 0)
+		{
+			for (var wi in this.windows)
+			{
+				this.windows[wi].Clear();
+			}
+			this.windows = new Array();
+		}
 		for (var it in this.menuItems)
 		{
 			this.menuItems[it].Clear();
@@ -865,10 +1072,35 @@
 		this.Footer.removeMovieClip();
 	}
 
+	function underBannerLoaded()
+	{
+		this.BannerSprite.bannerBG.bannerBGSprite._width = 288;
+		this.BannerSprite.bannerBG.bannerBGSprite._height = 65;
+		if (this.bannerBGColor != -1)
+		{
+			this.SetUnderBannerColor(this.bannerBGColor);
+		}
+		else if (this.bannerColor != -1)
+		{
+			this.SetUnderBannerColor(this.bannerColor);
+		}
+		if (this.fadingSpeed > 0.0)
+		{
+			var a = this.BannerSprite.bannerBG.bannerBGSprite._alpha;
+			this.BannerSprite.bannerBG.bannerBGSprite._alpha = 0;
+			com.rockstargames.ui.tweenStar.TweenStarLite.to(this.BannerSprite.bannerBG.bannerBGSprite,0.2,{_alpha:a});
+		}
+		else
+		{
+			var _loc1_ = new com.rockstargames.ui.utils.HudColour();
+			com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(this.bannerBGColor,_loc1_);
+			this.BannerSprite.bannerBG.bannerBGSprite._alpha = _loc1_.a;
+		}
+	}
 	function bannerLoaded()
 	{
 		this.BannerSprite.bannerBG.bannerSprite._width = 288;
-		this.BannerSprite.bannerBG.bannerSprite._height = 72;
+		this.BannerSprite.bannerBG.bannerSprite._height = 65;
 		if (this.bannerColor != -1)
 		{
 			this.SetBannerColor(this.bannerColor);
@@ -881,7 +1113,9 @@
 		}
 		else
 		{
-			this.BannerSprite.bannerBG.bannerSprite._alpha = 100;
+			var _loc1_ = new com.rockstargames.ui.utils.HudColour();
+			com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(this.bannerColor,_loc1_);
+			this.BannerSprite.bannerBG.bannerSprite._alpha = _loc1_.a;
 		}
 	}
 
@@ -952,19 +1186,18 @@
 		}
 		return _h;
 	}
-	
+
+	function UpdatePositions(safeLeft, safeTop, safeRight)
+	{
+		this.aligns = [safeLeft, safeTop, safeRight];
+		this._menuOff = new Array(this.tempOff[0] + safeLeft, this.tempOff[1] + safeTop, safeRight - 288 - this.tempOff[0]);
+		this.updateItemsDrawing();
+	}
+
 	function SetMenuOffset(x, y)
 	{
-
-		this._menuOff = new Array(x, y);
-
-		this.BannerSprite._x = 0 + this._menuOff[0];
-		this.BannerSprite._y = 0 + this._menuOff[1];
-		this.SubtitleSprite._x = 0 + this._menuOff[0];
-		this.SubtitleSprite._y = this.BannerSprite != undefined ? this.BannerSprite._y + this.BannerSprite._height - 1 : 0 + this._menuOff[1];
-		this.itemsBG._y = this.SubtitleSprite._y + this.SubtitleSprite._height - 1;
-		this.DescriptionSprite._x = 0 + this._menuOff[0];
-		this.DescriptionSprite._y = this.SubtitleSprite._y + this.SubtitleSprite._height + 1;
+		this.tempOff = new Array(x, y);
+		this._menuOff = new Array(this.tempOff[0] + this.aligns[0], this.tempOff[1] + this.aligns[1], this.aligns[2] - 288 - this.tempOff[0]);
 		this.updateItemsDrawing();
 	}
 }

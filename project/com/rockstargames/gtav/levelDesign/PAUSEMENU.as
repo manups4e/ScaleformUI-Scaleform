@@ -149,6 +149,11 @@
 		this.PauseMenu.Tab.LeftItemList[item].SetLeftBadge(badge);
 	}
 
+	function SET_LEFT_ITEM_CUSTOM_LEFT_BADGE(item, txd, txn)
+	{
+		this.PauseMenu.Tab.LeftItemList[item].SetCustomLeftBadge(txd,txn);
+	}
+
 	function UPDATE_LEFT_ITEM_TITLE(item, txt, param1, param2)
 	{
 		this.PauseMenu.AddRightTitle(item,txt,param1,param2);
@@ -171,6 +176,10 @@
 
 	function SET_INPUT_EVENT(direction)
 	{
+//		if (this.PauseMenu.Tab instanceof com.rockstargames.PauseMenu.tabs.VehicleSelectionTab)
+//		{
+//			return this.PauseMenu.Tab.SET_INPUT_EVENT(direction);
+//		}
 		switch (direction)
 		{
 			case com.rockstargames.ui.game.GamePadConstants.DPADUP :
@@ -192,10 +201,10 @@
 				switch (this.PauseMenu.Focus)
 				{
 					case 1 :
-						if (this.PauseMenu.Tabinstanceofcom.rockstargames.PauseMenu.tabs.PlayerListTab)
+						if (this.PauseMenu.Tab instanceof com.rockstargames.PauseMenu.tabs.PlayerListTab)
 						{
 							var col = this.PauseMenu.Tab.getColumn("settings");
-							if ((col != undefined))
+							if (col != undefined)
 							{
 								if (col.currentItem._type == 2)
 								{
@@ -213,8 +222,6 @@
 								curItem.currentItem.Checked = !curItem.currentItem.Checked;
 								com.rockstargames.ui.game.GameInterface.call("PLAY_SOUND",com.rockstargames.ui.game.GameInterface.GENERIC_TYPE,"SELECT","HUD_FRONTEND_DEFAULT_SOUNDSET");
 							}
-
-
 						};
 						break;
 				}
@@ -226,23 +233,27 @@
 	{
 		// -1 up , 1 down
 		var focus = this.PauseMenu.Focus;
-		if ((focus == 1))
+		if (focus == 1)
 		{
 			var curTab = this.PauseMenu.currentTab;
 			var curItem = curTab.currentItem;
-			if ((curTab instanceof com.rockstargames.PauseMenu.tabs.InfoTab))
+			if (curTab instanceof com.rockstargames.PauseMenu.tabs.InfoTab)
 			{
 				if (curItem.itemType == 1)
 				{
 					curItem.scrollAll(direction,true);
 				}
 			}
-			else if ((curTab instanceof com.rockstargames.PauseMenu.tabs.SimpleTab))
+			else if (curTab instanceof com.rockstargames.PauseMenu.tabs.SimpleTab)
 			{
 				if (curTab.panelHovered || isJoyPad)
 				{
 					curTab.scrollAll(direction,true);
 				}
+			}
+			else if (curTab instanceof com.rockstargames.PauseMenu.tabs.VehicleSelectionTab)
+			{
+				curTab.scrollAll(direction);
 			}
 		}
 	}
@@ -653,6 +664,24 @@
 		}
 	}
 
+	function SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_LEFT_BADGE(item, txd, txn)
+	{
+		var col = this.PauseMenu.Tab.getColumn("settings");
+		if (col != undefined)
+		{
+			col.ItemList[item].SetCustomLeftBadge(txd,txn);
+		}
+	}
+
+	function SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_RIGHT_BADGE(item, txd, txn)
+	{
+		var col = this.PauseMenu.Tab.getColumn("settings");
+		if (col != undefined)
+		{
+			col.ItemList[item].SetCustomRightBadge(txd,txn);
+		}
+	}
+
 	function ENABLE_PLAYERS_TAB_SETTINGS_ITEM(item, disable)
 	{
 		var col = this.PauseMenu.Tab.getColumn("settings");
@@ -686,6 +715,24 @@
 		if ((col != undefined))
 		{
 			col.ItemList[item].AddRightTexture(icon,checked,color);
+		}
+	}
+
+	function SET_PLAYERS_TAB_MISSION_ITEM_CUSTOM_LEFT_ICON(item, txd, txn)
+	{
+		var col = this.PauseMenu.Tab.getColumn("missions");
+		if (col != undefined)
+		{
+			col.ItemList[item].AddCustomLeftTexture(txd,txn);
+		}
+	}
+
+	function SET_PLAYERS_TAB_MISSION_ITEM_CUSTOM_RIGHT_ICON(item, txd, txn, checked)
+	{
+		var col = this.PauseMenu.Tab.getColumn("missions");
+		if (col != undefined)
+		{
+			col.ItemList[item].AddCustomRightTexture(txd,txn,checked);
 		}
 	}
 
@@ -735,9 +782,9 @@
 		this.PauseMenu.Tab.SetDescription(max,_title,date,location,track,visible);
 	}
 
-	function SET_GALLERY_SCROLL_LABEL(currentPosition, maxPosition, maxVisible, caption)
+	function SET_GALLERY_SCROLL_LABEL(currentPosition, maxPosition, maxVisible, caption, captionR)
 	{
-		this.PauseMenu.Tab.SetScrollBar(currentPosition,maxPosition,maxVisible,caption);
+		this.PauseMenu.Tab.SetScrollBar(currentPosition,maxPosition,maxVisible,caption,captionR);
 	}
 
 	function SET_GALLERY_TITLE(txd, txn, state)
@@ -757,6 +804,24 @@
 		{
 			this.PauseMenu.Tab.scrollBase.updateScroll();
 		}
+	}
+
+	function ADD_VEHICLE_SELECTOR_ITEM(_type, model, modelString, vehicleName, txd, txn, makeTxd, makeTxn, perfTxd, perfClass, bgTxd, bgTxn, isPesonal, className, locked, param15)
+	{
+		this.PauseMenu.Tab.AddItem(_type,model,modelString,vehicleName,txd,txn,makeTxd,makeTxn,perfTxd,perfClass,bgTxd,bgTxn,isPesonal,className,locked,param15);
+	}
+
+	function HOVER_VEHICLE_SELECTOR_INDEX(index, isMouse)
+	{
+		this.PauseMenu.Tab.HoverItem(index);
+	}
+	function SELECT_VEHICLE_SELECTOR_INDEX(index)
+	{
+		this.PauseMenu.Tab.SetIndex(index);
+	}
+	function SET_VEHICLE_SELECTOR_ITEM_CHECKED(item, bool)
+	{
+		this.PauseMenu.Tab.SetItemChecked(item,bool);
 	}
 
 	function CLEAR_GALLERY()
@@ -848,11 +913,11 @@
 
 	function ADD_TXD_REF_RESPONSE(txd, strRef, success)
 	{
-		if ((success == true))
+		if (success == true)
 		{
 			var pMC = this.CONTENT;
-			var il = com.rockstargames.ui.media.ImageLoaderMC(eval(((pMC + ".") + strRef)));
-			if ((pMC != undefined))
+			var il = com.rockstargames.ui.media.ImageLoaderMC(eval((pMC + ".") + strRef));
+			if (pMC != undefined)
 			{
 				il.displayTxdResponse(txd);
 			}
@@ -861,11 +926,11 @@
 
 	function TXD_HAS_LOADED(txd, success, strRef)
 	{
-		if ((success == true))
+		if (success == true)
 		{
 			var pMC = this.CONTENT;
-			var il = com.rockstargames.ui.media.ImageLoaderMC(eval(((pMC + ".") + strRef)));
-			if ((pMC != undefined))
+			var il = com.rockstargames.ui.media.ImageLoaderMC(eval((pMC + ".") + strRef));
+			if (pMC != undefined)
 			{
 				il.displayTxdResponse(txd,success);
 			}
@@ -875,8 +940,8 @@
 	function TXD_ALREADY_LOADED(txd, strRef)
 	{
 		var pMC = this.CONTENT;
-		var il = com.rockstargames.ui.media.ImageLoaderMC(eval(((pMC + ".") + strRef)));
-		if ((pMC != undefined))
+		var il = com.rockstargames.ui.media.ImageLoaderMC(eval((pMC + ".") + strRef));
+		if (pMC != undefined)
 		{
 			il.displayTxdResponse(txd,true);
 		}

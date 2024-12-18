@@ -32,6 +32,9 @@
 				break;
 			case 3 :
 				tab = new com.rockstargames.PauseMenu.tabs.GalleryTab(this, 0);
+				break;
+			case 4 :
+				tab = new com.rockstargames.PauseMenu.tabs.VehicleSelectionTab(this, 0);
 		}
 		this.Tab = tab;
 		if (this._focusLevel == 0)

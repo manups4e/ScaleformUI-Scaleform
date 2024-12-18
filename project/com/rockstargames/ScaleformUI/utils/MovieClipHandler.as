@@ -21,14 +21,14 @@
 	}
 
 
-	static function SetClip(targetMC, textureDict, textureName, w, h, callback, depth)
+	static function SetClip(targetMC, textureDict, textureName, w, h, callback, depth, centerItem)
 	{
 		var alreadyLoaded = true;
 		if (targetMC.textureFilename != textureName && targetMC.textureDict != textureDict)
 		{
 			var alreadyLoaded = false;
 		}
-		targetMC.init(com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME,textureDict,textureName,w,h);
+		targetMC.init(com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME,textureDict,textureName,w,h,0,0,centerItem);
 		var splitPath = String(targetMC).split(".");
 		var pathWithoutContent = splitPath.slice(2).join(".");
 		com.rockstargames.ui.tweenStar.TweenStarLite.removeTweenOf(targetMC);
@@ -43,7 +43,8 @@
 		tf.selectable = false;
 		var newFont = tf.getTextFormat();
 		newFont.font = fontName;
-		if(size != undefined){
+		if ((size != undefined))
+		{
 			newFont.size = size;
 		}
 		tf.setNewTextFormat(newFont);
@@ -66,7 +67,7 @@
 
 	static function HexToARGB(hex, mc)
 	{
-		var val = hex & 0xFFFFFFFF
+		var val = hex & 0xFFFFFFFF;
 		// Convert the hexadecimal string to numeric values      
 
 		// Extract the ARGB components
@@ -76,7 +77,7 @@
 		var blue = val & 0xFF;
 
 		// Create and return the ARGB object
-		mc.a = (alpha/255)*100;
+		mc.a = (alpha / 255) * 100;
 		mc.r = red;
 		mc.g = green;
 		mc.b = blue;

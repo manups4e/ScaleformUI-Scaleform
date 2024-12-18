@@ -1,10 +1,10 @@
 ﻿dynamic class com.rockstargames.ui.mouse.MouseBtn extends MovieClip implements com.rockstargames.ui.mouse.MouseBtnInterface
 {
-    var optionalMouseArgs = new Array();
-    var _isMouseEnabled: Boolean = true;
-    var MOUSE_EVT;
-    var callback;
-    var callbackArgs;
+	var optionalMouseArgs = new Array();
+	var _isMouseEnabled:Boolean = true;
+	var MOUSE_EVT;
+	var callback;
+	var callbackArgs;
 
 	function MouseBtn()
 	{

@@ -32,8 +32,8 @@
 		{
 			this.Value = 0;
 		}
-		this._slider.attachMovie("mouseCatcher","mouseCatcher",this._slider.getNextHighestDepth(),{_width:this._slider._width, _height:this._slider._height});
-		this._slider.mouseCatcher.setupGenericMouseInterface(0,11,this.onMouseEvent,[this]);
+		this.itemMC.attachMovie("mouseCatcher","mouseCatcher",this.itemMC.getNextHighestDepth(),{_width:this.itemMC._width, _height:this.itemMC._height});
+		this.itemMC.mouseCatcher.setupGenericMouseInterface(0,11,this.onMouseEvent,[this]);
 	}
 
 	function onMouseEvent(evtType, targetMC, args)
@@ -72,7 +72,7 @@
 	function set Value(val)
 	{
 		this._value = Math.max(0, Math.min(val, this._max));
-		this._slider.percent(this._value,true);
+		this._slider.percent(this._value);
 	}
 
 	function SetCoords()

@@ -1,4 +1,4 @@
-﻿class com.rockstargames.PauseMenu.lobby.tabs.MPPlayerCard
+﻿class com.rockstargames.PauseMenu.elements.panels.MPPlayerCard
 {
 	var DESC_TYPE_TXT:Number = 0;
 	var DESC_TYPE_SC:Number = 1;
@@ -39,7 +39,6 @@
 		{
 			this.itemMC = this._MC.attachMovie("mpPlayerCard", "MpPlayerCard", this._MC.getNextHighestDepth());
 		}
-		this.itemMC._x = this.parentMC._parentMC.missionDetails.OFFSET;
 		this.statMCs = [];
 		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.headerBGMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
 		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.statsBGMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
@@ -60,6 +59,7 @@
 		com.rockstargames.ui.utils.Colour.ApplyHudColour(_loc3_.bgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
 		com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.itemMC.crewInfoMC.crewNameTF,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
 		com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.itemMC.crewInfoMC.rankNameTF,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
+		this.itemMC._x = this.parentMC._parentMC.missionDetails.OFFSET + (this.collapsed ? 144 : 0);
 		if (bCollapse)
 		{
 			this.RANK_TEXT_CENTER_X = 69;
@@ -100,9 +100,9 @@
 		tf.setTextFormat(newFont);
 	}
 
-	function SET_TITLE(title)
+	function SET_TITLE()
 	{
-		com.rockstargames.ui.utils.UIText.setSizedText(this.itemMC.titleTF,title,true,false,18,18);
+		com.rockstargames.ui.utils.UIText.setSizedText(this.itemMC.titleTF,arguments[0],true,false,18,18);
 		this.updateFont(this.itemMC.titleTF,"$Font2");
 		this.playerColourEnum = arguments[2];
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.ApplyHexColour(this.itemMC.titleBGMC,this.playerColourEnum);
@@ -144,7 +144,7 @@
 					{
 						this.crewEmblemMC.removeTxdRef();
 					}
-					this.crewEmblemMC.init("lobbymenu",__reg4,__reg3,61,61);
+					this.crewEmblemMC.init(com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME,__reg4,__reg3,61,61);
 					var __reg7 = 3;
 					var __reg5 = String(this.crewEmblemMC).split(".");
 					var __reg8 = __reg5.slice(__reg5.length - __reg7).join(".");
@@ -185,6 +185,7 @@
 		var bool3 = args[3];
 		var bool4 = args[4];
 		var _icon = args[5];
+		this.itemMC.vehiclePanelMC._visible = args[15];
 		var __reg15 = this.itemMC.vehiclePanelMC.wrapperMC;
 		var __reg19 = _icon;
 		if (__reg19 > 0 && __reg15.micMC)
@@ -218,7 +219,7 @@
 				com.rockstargames.ui.utils.UIText.setSizedText(__reg5,__reg9,true);
 				this.updateFont(__reg5,"$Font2");
 			}
-			////// FARE CODICE PER CUSTOM ICONS      
+			////// FARE CODICE PER CUSTOM ICONS                
 			var __reg8 = args[__reg4 + 1];
 			var __reg7 = this.itemMC["icon" + __reg6 + "MC"];
 			__reg7.gotoAndStop(com.rockstargames.gtav.constants.MPIconLabels.lookUp(__reg8)[1]);
@@ -230,7 +231,7 @@
 					com.rockstargames.ui.utils.Colour.ApplyHudColour(__reg7,args[__reg4 + 2]);
 				}
 			}
-			////// FARE CODICE PER CUSTOM ICONS      
+			////// FARE CODICE PER CUSTOM ICONS                
 			__reg4 = __reg4 + 3;
 			++__reg6;
 		}
@@ -339,7 +340,7 @@
 	{
 		if (!this.collapsed)
 		{
-			var item = new com.rockstargames.PauseMenu.lobby.FreemodeDetailsItem(this, this.listDescItem + 1, id, textLeft, textRight, param3, param4, param5, param6, param7, param8, param9, param10);
+			var item = new com.rockstargames.PauseMenu.elements.items.FreemodeDetailsItem(this, this.listDescItem + 1, id, textLeft, textRight, param3, param4, param5, param6, param7, param8, param9, param10);
 			if (this.listDescItem == 0)
 			{
 				item.itemMC._y = this.itemMC.descMC._y;
@@ -418,5 +419,18 @@
 	function get Visible()
 	{
 		return this.visible;
+	}
+
+	function Clear()
+	{
+		for (var i in this.descItems)
+		{
+			this.descItems[i].itemMC.Clear();
+		}
+		for (var i in this.statMCs)
+		{
+			this.statMCs[i].removeMovieClip();
+		}
+		this.itemMC.removeMovieClip();
 	}
 }

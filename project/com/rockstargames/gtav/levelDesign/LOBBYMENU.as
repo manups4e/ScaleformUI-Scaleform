@@ -55,7 +55,7 @@
 	function DRAW_MENU()
 	{
 		this.CONTENT._alpha = 0;
-        com.rockstargames.ui.tweenStar.TweenStarLite.to(this.CONTENT,0.2,{_alpha:100,ease:com.rockstargames.ui.tweenStar.Ease.CUBIC_IN});
+		com.rockstargames.ui.tweenStar.TweenStarLite.to(this.CONTENT,0.2,{_alpha:100, ease:com.rockstargames.ui.tweenStar.Ease.CUBIC_IN});
 	}
 
 	function ADD_LEFT_ITEM(id, str, sub, enabled, blink, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
@@ -69,20 +69,11 @@
 	}
 	function ADD_MISSIONS_ITEM(id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14)
 	{
-		this.LobbyMenu.AddMissionsItem(id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13, param14);
+		this.LobbyMenu.AddMissionsItem(id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13,param14);
 	}
 	function ADD_STORE_ITEM(id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
 	{
 		this.LobbyMenu.AddStoreItem(id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13);
-	}
-
-	function SET_MISSION_ITEM_ENABLED(item, bool)
-	{
-		var col = this.LobbyMenu.getColumn("players");
-		if (col != undefined)
-		{
-			col.ItemList[item].Enabled = bool;
-		}
 	}
 
 	function REMOVE_PLAYER_ITEM(id)
@@ -150,7 +141,7 @@
 			col.ItemList[item].updateLabelWidth();
 		}
 	}
-	
+
 	function UPDATE_SETTINGS_LISTITEM_LIST(item, list, index)
 	{
 		var col = this.LobbyMenu.getColumn("settings");
@@ -168,6 +159,7 @@
 		if (col != undefined)
 		{
 			col.ItemList[item].subtitle = desc;
+			col.updateItemsDrawing();
 		}
 	}
 
@@ -215,6 +207,25 @@
 			col.ItemList[item].SetRightBadge(badge);
 		}
 	}
+
+	function SET_SETTINGS_ITEM_CUSTOM_LEFT_BADGE(item, txd, txn)
+	{
+		var col = this.LobbyMenu.getColumn("settings");
+		if (col != undefined)
+		{
+			col.ItemList[item].SetCustomLeftBadge(txd,txn);
+		}
+	}
+
+	function SET_SETTINGS_ITEM_CUSTOM_RIGHT_BADGE(item, txd, txn)
+	{
+		var col = this.LobbyMenu.getColumn("settings");
+		if (col != undefined)
+		{
+			col.ItemList[item].SetCustomRightBadge(txd,txn);
+		}
+	}
+
 
 	function SET_SETTINGS_ITEM_LABEL_FONT(item, fontN, fontId)
 	{
@@ -460,7 +471,7 @@
 		}
 	}
 
-	function SET_PLAYERS_TAB_MISSION_ITEM_ENABLED(item, bool)
+	function SET_MISSION_ITEM_ENABLED(item, bool)
 	{
 		var col = this.LobbyMenu.getColumn("missions");
 		if (col != undefined)
@@ -469,7 +480,7 @@
 		}
 	}
 
-	function SET_PLAYERS_TAB_MISSION_ITEM_LEFT_ICON(item, icon, color)
+	function SET_MISSION_ITEM_LEFT_ICON(item, icon, color)
 	{
 		var col = this.LobbyMenu.getColumn("missions");
 		if (col != undefined)
@@ -478,12 +489,30 @@
 		}
 	}
 
-	function SET_PLAYERS_TAB_MISSION_ITEM_RIGHT_ICON(item, icon, checked, color)
+	function SET_MISSION_ITEM_RIGHT_ICON(item, icon, checked, color)
 	{
 		var col = this.LobbyMenu.getColumn("missions");
 		if (col != undefined)
 		{
 			col.ItemList[item].AddRightTexture(icon,checked,color);
+		}
+	}
+
+	function SET_MISSION_ITEM_CUSTOM_LEFT_ICON(item, txd, txn)
+	{
+		var col = this.LobbyMenu.getColumn("missions");
+		if (col != undefined)
+		{
+			col.ItemList[item].AddCustomLeftTexture(txd,txn);
+		}
+	}
+
+	function SET_MISSION_ITEM_CUSTOM_RIGHT_ICON(item, txd, txn, checked)
+	{
+		var col = this.LobbyMenu.getColumn("missions");
+		if (col != undefined)
+		{
+			col.ItemList[item].AddCustomRightTexture(txd,txn,checked);
 		}
 	}
 
@@ -572,10 +601,5 @@
 		this.LobbyMenu.columnCenter.Clear();
 		this.LobbyMenu.columnRight.Clear();
 		this.LobbyMenu = undefined;
-	}
-
-	function debugData()
-	{
-
 	}
 }
