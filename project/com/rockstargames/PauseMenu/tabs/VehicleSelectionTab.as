@@ -18,6 +18,8 @@
 	var scrollBase = undefined;
 	var currentSelection;
 	var HALF_ITEM = 141.333333 / 2;
+	var statsMC;
+	var STAT_TWEEN_DURATION = 0.175;
 
 	function VehicleSelectionTab(mc, m)
 	{
@@ -33,6 +35,46 @@
 		this.currentSelected = 0;
 	}
 
+	function SetStatsLabelsAndValues(item, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14, param15)
+	{
+		this.ItemList[item].SetStatsLabelsAndValues(param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13,param14,param15);
+	}
+	function ClearStatsAndValues()
+	{
+		this.statsMC.CONTENT.stat1.text = "";
+		this.statsMC.CONTENT.stat2.text = "";
+		this.statsMC.CONTENT.stat3.text = "";
+		this.statsMC.CONTENT.stat4.text = "";
+		this.statsMC.CONTENT.stat5.text = "";
+	}
+	function SetStatsVisible()
+	{
+		this.statsMC._visible = arguments[0];
+	}
+
+	function DoBar(bar, base, attachment)
+	{
+		if (attachment >= 0)
+		{
+			var _loc5_ = base / 100 * bar.bg._width;
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(bar.percentage,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(bar.attPercentage,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_BLUE);
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(bar.bg,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_GREY);
+			bar.bg._alpha = 50;
+			com.rockstargames.ui.tweenStar.TweenStarLite.to(bar.percentage,this.STAT_TWEEN_DURATION,{_xscale:base, ease:com.rockstargames.ui.tweenStar.Ease.QUADRATIC_OUT});
+			com.rockstargames.ui.tweenStar.TweenStarLite.to(bar.attPercentage,this.STAT_TWEEN_DURATION,{_x:_loc5_, _xscale:attachment, ease:com.rockstargames.ui.tweenStar.Ease.QUADRATIC_OUT});
+		}
+		else
+		{
+			_loc5_ = (base + attachment) / 100 * bar.bg._width;
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(bar.percentage,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(bar.attPercentage,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_RED);
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(bar.bg,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_GREY);
+			bar.bg._alpha = 50;
+			com.rockstargames.ui.tweenStar.TweenStarLite.to(bar.percentage,this.STAT_TWEEN_DURATION,{_xscale:base + attachment, ease:com.rockstargames.ui.tweenStar.Ease.QUADRATIC_OUT});
+			com.rockstargames.ui.tweenStar.TweenStarLite.to(bar.attPercentage,this.STAT_TWEEN_DURATION,{_x:_loc5_, _xscale:attachment * -1, ease:com.rockstargames.ui.tweenStar.Ease.QUADRATIC_OUT});
+		}
+	}
 
 
 	function mOverST()
@@ -169,7 +211,7 @@
 			this.visibleRowBot = 2;
 			return;
 		}
-		// GO UP      
+		// GO UP           
 		if (this.scrollableContent._y > (-this.GetFirstItemAtRow(this.visibleRowTop)._y + this.HALF_ITEM))
 		{
 			if (this.scrollableContent._y >= (-this.GetFirstItemAtRow(this.visibleRowTop - 1)._y + this.HALF_ITEM))

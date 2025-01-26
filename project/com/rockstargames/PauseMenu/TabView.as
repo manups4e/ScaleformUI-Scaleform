@@ -306,20 +306,17 @@
 			this._focusLevel = 0;
 		}
 		this.currentTab.focused = this._focusLevel == 0 ? false : true;
+		if (this.CONTENT.mouseCatcher)
+		{
+			this.CONTENT.mouseCatcher.dispose();
+			this.CONTENT.mouseCatcher.removeMovieClip();
+		}
 		if (this._focusLevel == 0)
 		{
 			if (!this.CONTENT.mouseCatcher)
 			{
 				this.CONTENT.attachMovie("mouseCatcher","mouseCatcher",this.CONTENT.getNextHighestDepth(),{_width:this.CONTENT._width, _height:this.CONTENT._height});
 				this.CONTENT.mouseCatcher.setupGenericMouseInterface(-1,0,this.onMouseEvent,[this]);
-			}
-		}
-		else
-		{
-			if (this.CONTENT.mouseCatcher)
-			{
-				this.CONTENT.mouseCatcher.dispose();
-				this.CONTENT.mouseCatcher.removeMovieClip();
 			}
 		}
 	}

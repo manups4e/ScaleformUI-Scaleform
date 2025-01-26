@@ -3,12 +3,12 @@
 	var CONTENT;
 	var bgImgLoaderMC;
 	var detailsXPositions = [868, 822, 775];
-	var showChar:Boolean = false;
-	var showCrew:Boolean = false;
+	var showChar = false;
+	var showCrew = false;
 	var bgLoaderList = new Array();
-	var imgSize:Number = 46;
-	var detailsShown:Boolean = true;
-	var detailsCoronaLayout:Boolean = false;
+	var imgSize = 46;
+	var detailsShown = true;
+	var detailsCoronaLayout = false;
 	var charImgLoaderMC;
 	var charMC;
 	var crewImgLoaderMC;
@@ -55,102 +55,100 @@
 
 	function SetHeaderTitle(title, description, isChallenge)
 	{
-		var __reg2 = this.CONTENT.headerMC.titleMC;
-		var __reg9 = false;
+		var _loc2_ = this.CONTENT.headerMC.titleMC;
+		var _loc9_ = false;
 		if (description == "" || description == undefined)
 		{
-			__reg9 = true;
+			_loc9_ = true;
 		}
-		if (__reg9 == true)
+		if (_loc9_ == true)
 		{
 			if (title != undefined)
 			{
 				var size = 36;
-				__reg2.headingTF.autoSize = "left";
-				__reg2.headingTF.multiline = false;
-				__reg2.headingTF.htmlText = "<font face=\'$Font2_cond_NOT_GAMERNAME\' size=\'" + size + "\'>" + title + "</font>";
+				_loc2_.headingTF.autoSize = "left";
+				_loc2_.headingTF.multiline = false;
+				_loc2_.headingTF.htmlText = "<font face=\'$Font2_cond_NOT_GAMERNAME\' size=\'" + size + "\'>" + title + "</font>";
 			}
-			__reg2._y = 16;
-			return;
+			_loc2_._y = 16;
 		}
 		else
 		{
-			var __reg3 = 34;
-			var __reg5 = 13;
-			var __reg10 = 65;
-			__reg2.headingTF.multiline = true;
-			__reg2.headingTF.wordWrap = true;
-			__reg2.headingTF.autoSize = "left";
-			var __reg4 = description.length;
-			var __reg7 = title.length;
-			var __reg6 = -1.6;
-			if (__reg4 < 146)
+			var _loc3_ = 34;
+			var _loc5_ = 13;
+			var _loc10_ = 65;
+			_loc2_.headingTF.multiline = true;
+			_loc2_.headingTF.wordWrap = true;
+			_loc2_.headingTF.autoSize = "left";
+			var _loc4_ = description.length;
+			var _loc7_ = title.length;
+			var _loc6_ = -1.6;
+			if (_loc4_ < 146)
 			{
-				if (__reg7 < 49)
+				if (_loc7_ < 49)
 				{
-					__reg3 = 36;
+					_loc3_ = 36;
 				}
 				else
 				{
-					__reg3 = 31;
+					_loc3_ = 31;
 				}
 			}
-			else if (__reg4 > 146 && __reg4 <= 219)
+			else if (_loc4_ > 146 && _loc4_ <= 219)
 			{
-				if (__reg7 < 49)
+				if (_loc7_ < 49)
 				{
-					__reg3 = 32;
+					_loc3_ = 32;
 				}
 				else
 				{
-					__reg3 = 28;
+					_loc3_ = 28;
 				}
-				__reg5 = 12;
+				_loc5_ = 12;
 			}
-			else if (__reg4 > 219 && __reg4 <= 316)
+			else if (_loc4_ > 219 && _loc4_ <= 316)
 			{
-				if (__reg7 < 49)
+				if (_loc7_ < 49)
 				{
-					__reg3 = 32;
+					_loc3_ = 32;
 				}
 				else
 				{
-					__reg3 = 28;
+					_loc3_ = 28;
 				}
-				__reg5 = 12;
-				__reg6 = -2;
+				_loc5_ = 12;
+				_loc6_ = -2;
 			}
-			else if (__reg4 > 316 && __reg4 <= 430)
+			else if (_loc4_ > 316 && _loc4_ <= 430)
 			{
-				__reg3 = 26;
-				__reg5 = 12;
-				__reg6 = -2.2;
+				_loc3_ = 26;
+				_loc5_ = 12;
+				_loc6_ = -2.2;
 			}
-			else if (__reg4 > 430)
+			else if (_loc4_ > 430)
 			{
-				__reg3 = 26;
-				__reg5 = 11;
-				__reg6 = -3;
+				_loc3_ = 26;
+				_loc5_ = 11;
+				_loc6_ = -3;
 			}
 			if (isChallenge)
 			{
-				__reg3 = Math.max(com.rockstargames.gtav.utils.GTAVUIUtils.getFontSizeToFitSingle(title, __reg2.headingTF), 13);
+				_loc3_ = Math.max(com.rockstargames.gtav.utils.GTAVUIUtils.getFontSizeToFitSingle(title, _loc2_.headingTF), 13);
 			}
-			__reg2.headingTF.leading = __reg6;
-			__reg2.headingTF.htmlText = "<font face=\'$Font2_cond_NOT_GAMERNAME\' size=\'" + __reg3 + "\'>" + title + "</font><br><font face=\'$Font2\' size=\'" + __reg5 + "\'>" + description + "</font>";
+			_loc2_.headingTF.leading = _loc6_;
+			_loc2_.headingTF.htmlText = "<font face=\'$Font2_cond_NOT_GAMERNAME\' size=\'" + _loc3_ + "\'>" + title + "</font><br><font face=\'$Font2\' size=\'" + _loc5_ + "\'>" + description + "</font>";
 			if (this.detailsCoronaLayout)
 			{
-				if (__reg2.headingTF.textHeight == 53)
+				if (_loc2_.headingTF.textHeight == 53)
 				{
-					__reg10 = 32;
+					_loc10_ = 32;
 				}
-				else if (__reg2.headingTF.textHeight == 67)
+				else if (_loc2_.headingTF.textHeight == 67)
 				{
-					__reg10 = 10;
+					_loc10_ = 10;
 				}
 			}
-			__reg2._y = Math.max(-9, __reg10 - __reg2.headingTF.textHeight / 2);
-			com.rockstargames.ScaleformUI.utils.MovieClipHandler.UpdateFont(__reg2.headingTF,"$Font2_cond_NOT_GAMERNAME");
+			_loc2_._y = Math.max(-9, _loc10_ - _loc2_.headingTF.textHeight / 2);
 		}
 	}
 
@@ -173,61 +171,61 @@
 
 	function SetHeadingDetails(str1, str2, str3, isSingleplayer)
 	{
-		var __reg2 = this.detailsMC;
-		__reg2.details1TF.autoSize = __reg2.details1condTF.autoSize = "left";
-		__reg2.details1TF.wordWrap = __reg2.details1condTF.wordWrap = false;
-		__reg2.details1TF.multiline = __reg2.details1condTF.multiline = false;
+		var _loc2_ = this.detailsMC;
+		_loc2_.details1TF.autoSize = _loc2_.details1condTF.autoSize = "left";
+		_loc2_.details1TF.wordWrap = _loc2_.details1condTF.wordWrap = false;
+		_loc2_.details1TF.multiline = _loc2_.details1condTF.multiline = false;
 		if (isSingleplayer)
 		{
-			__reg2.details1condTF.text = "";
-			__reg2.details1TF.text = "<font face=\'$Font2_cond_NOT_GAMERNAME\' size=\'" + 18 + "\'>" + str1.toUpperCase() + "</font>";
+			_loc2_.details1condTF.text = "";
+			_loc2_.details1TF.text = str1.toUpperCase();
 		}
 		else
 		{
-			__reg2.details1condTF.text = "";
-			__reg2.details1TF.text = "<font face=\'$Font2_cond_NOT_GAMERNAME\' size=\'" + 18 + "\'>" + str1 + "</font>";
+			_loc2_.details1condTF.text = "";
+			_loc2_.details1TF.text = str1;
 		}
-		__reg2.details1TF._x = 0 - __reg2.details1TF._width;
-		__reg2.details1condTF._x = 0 - __reg2.details1condTF._width;
+		_loc2_.details1TF._x = -_loc2_.details1TF._width;
+		_loc2_.details1condTF._x = -_loc2_.details1condTF._width;
 		if (str2 != undefined)
 		{
-			var __reg7 = str2.split(":").length > 1;
-			if (__reg7)
+			var _loc7_ = str2.split(":").length > 1;
+			if (!_loc7_)
 			{
-				var __reg3 = str2.split(" ");
-				var __reg5 = __reg3[__reg3.length - 1];
-				__reg3.pop();
-				var __reg6 = __reg3.join(" ");
-				__reg2.timeTF.text = "<font face=\'$Font2_cond_NOT_GAMERNAME\' size=\'" + 18 + "\'>" + __reg5 + "</font>";
-				__reg2.timeTF.autoSize = "left";
-				__reg2.timeTF.wordWrap = false;
-				__reg2.timeTF.multiline = false;
-				__reg2.timeTF._x = 0 - __reg2.timeTF._width;
-				__reg2.details2TF.text = "<font face=\'$Font2_cond_NOT_GAMERNAME\' size=\'" + 18 + "\'>" + __reg6 + "</font>";
-				__reg2.details2TF.autoSize = "left";
-				__reg2.details2TF.wordWrap = false;
-				__reg2.details2TF.multiline = false;
-				__reg2.details2TF._x = __reg2.timeTF._x - __reg2.details2TF._width;
+				_loc2_.details2TF.text = str2;
+				_loc2_.details2TF.autoSize = "left";
+				_loc2_.details2TF.wordWrap = false;
+				_loc2_.details2TF.multiline = false;
+				_loc2_.details2TF._x = -_loc2_.details2TF._width;
+				_loc2_.timeTF.text = "";
 			}
 			else
 			{
-				__reg2.details2TF.text = "<font face=\'$Font2_cond_NOT_GAMERNAME\' size=\'" + 18 + "\'>" + str2 + "</font>";
-				__reg2.details2TF.autoSize = "left";
-				__reg2.details2TF.wordWrap = false;
-				__reg2.details2TF.multiline = false;
-				__reg2.details2TF._x = 0 - __reg2.details2TF._width;
-				__reg2.timeTF.text = "";
+				var _loc3_ = str2.split(" ");
+				var _loc5_ = _loc3_[_loc3_.length - 1];
+				_loc3_.pop();
+				var _loc6_ = _loc3_.join(" ");
+				_loc2_.timeTF.text = _loc5_;
+				_loc2_.timeTF.autoSize = "left";
+				_loc2_.timeTF.wordWrap = false;
+				_loc2_.timeTF.multiline = false;
+				_loc2_.timeTF._x = -_loc2_.timeTF._width;
+				_loc2_.details2TF.text = _loc6_;
+				_loc2_.details2TF.autoSize = "left";
+				_loc2_.details2TF.wordWrap = false;
+				_loc2_.details2TF.multiline = false;
+				_loc2_.details2TF._x = _loc2_.timeTF._x - _loc2_.details2TF._width;
 			}
 		}
 		if (str3 != undefined)
 		{
-			__reg2.details3TF.text = "<font face=\'$Font2_cond_NOT_GAMERNAME\' size=\'" + 18 + "\'>" + str3 + "</font>";
-			__reg2.details3TF.autoSize = "left";
-			__reg2.details3TF.wordWrap = false;
-			__reg2.details3TF.multiline = false;
-			__reg2.details3TF._x = 0 - __reg2.details3TF._width;
+			_loc2_.details3TF.text = str3;
+			_loc2_.details3TF.autoSize = "left";
+			_loc2_.details3TF.wordWrap = false;
+			_loc2_.details3TF.multiline = false;
+			_loc2_.details3TF._x = -_loc2_.details3TF._width;
 		}
-		if (!this.detailsShown)
+		if (this.detailsShown)
 		{
 			this.setDescWidth();
 		}

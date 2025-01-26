@@ -22,6 +22,8 @@
 	var Checked;
 	var row;
 	var col;
+	var statsMC;
+	var STAT_TWEEN_DURATION = 0.175;
 
 	function VehicleItem(mc, index, model, modelString, vehicleName, txd, txn, makeTxd, makeTxn, perfTxd, perfClass, bgTxd, bgTxn, isPesonal, className, locked, checked)
 	{
@@ -90,6 +92,54 @@
 		{
 			var _aa = 120 / 255 * 100;
 			this.itemMC.vehNameTF._alpha = _aa;
+		}
+		
+		this.itemMC.statsMC.BOUNDING_BOX._visible = false;
+		this.itemMC.statsMC.CONTENT._visible = false;
+	}
+
+	function SetStatsLabelsAndValues()
+	{
+//		Debug.Debug.Log(String(arguments));
+//		this.itemMC.statsMC.CONTENT._visible = true;
+////		this.itemMC.statsMC.CONTENT.stat1.text = arguments[0];
+////		this.itemMC.statsMC.CONTENT.stat2.text = arguments[1];
+////		this.itemMC.statsMC.CONTENT.stat3.text = arguments[2];
+////		this.itemMC.statsMC.CONTENT.stat4.text = arguments[3];
+////		this.itemMC.statsMC.CONTENT.stat5.text = arguments[4];
+//		this.DoBar(this.itemMC.statsMC.CONTENT.statBar1,arguments[5],arguments[10]);
+//		this.DoBar(this.itemMC.statsMC.CONTENT.statBar2,arguments[6],arguments[11]);
+//		this.DoBar(this.itemMC.statsMC.CONTENT.statBar3,arguments[7],arguments[12]);
+//		this.DoBar(this.itemMC.statsMC.CONTENT.statBar4,arguments[8],arguments[13]);
+//		this.DoBar(this.itemMC.statsMC.CONTENT.statBar5,arguments[9],arguments[14]);
+//		
+//		com.rockstargames.ScaleformUI.utils.MovieClipHandler.UpdateFont(this.itemMC.statsMC.CONTENT.stat1, "$Font2_cond_NOT_GAMERNAME");
+//		com.rockstargames.ScaleformUI.utils.MovieClipHandler.UpdateFont(this.itemMC.statsMC.CONTENT.stat2, "$Font2_cond_NOT_GAMERNAME");
+//		com.rockstargames.ScaleformUI.utils.MovieClipHandler.UpdateFont(this.itemMC.statsMC.CONTENT.stat3, "$Font2_cond_NOT_GAMERNAME");
+//		com.rockstargames.ScaleformUI.utils.MovieClipHandler.UpdateFont(this.itemMC.statsMC.CONTENT.stat4, "$Font2_cond_NOT_GAMERNAME");
+//		com.rockstargames.ScaleformUI.utils.MovieClipHandler.UpdateFont(this.itemMC.statsMC.CONTENT.stat5, "$Font2_cond_NOT_GAMERNAME");
+	}
+	function DoBar(bar, base, attachment)
+	{
+		if (attachment >= 0)
+		{
+			var _loc5_ = base / 100 * bar.bg._width;
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(bar.percentage,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(bar.attPercentage,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_BLUE);
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(bar.bg,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_GREY);
+			bar.bg._alpha = 50;
+			com.rockstargames.ui.tweenStar.TweenStarLite.to(bar.percentage,this.STAT_TWEEN_DURATION,{_xscale:base, ease:com.rockstargames.ui.tweenStar.Ease.QUADRATIC_OUT});
+			com.rockstargames.ui.tweenStar.TweenStarLite.to(bar.attPercentage,this.STAT_TWEEN_DURATION,{_x:_loc5_, _xscale:attachment, ease:com.rockstargames.ui.tweenStar.Ease.QUADRATIC_OUT});
+		}
+		else
+		{
+			_loc5_ = (base + attachment) / 100 * bar.bg._width;
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(bar.percentage,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(bar.attPercentage,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_RED);
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(bar.bg,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_GREY);
+			bar.bg._alpha = 50;
+			com.rockstargames.ui.tweenStar.TweenStarLite.to(bar.percentage,this.STAT_TWEEN_DURATION,{_xscale:base + attachment, ease:com.rockstargames.ui.tweenStar.Ease.QUADRATIC_OUT});
+			com.rockstargames.ui.tweenStar.TweenStarLite.to(bar.attPercentage,this.STAT_TWEEN_DURATION,{_x:_loc5_, _xscale:attachment * -1, ease:com.rockstargames.ui.tweenStar.Ease.QUADRATIC_OUT});
 		}
 	}
 

@@ -268,7 +268,7 @@
 				this.BannerTitle.setTextFormat(bannerFont);
 			}
 		}
-		//this.SubtitleSprite._x = 0 + this.tempOff[0];             
+		//this.SubtitleSprite._x = 0 + this.tempOff[0];              
 		//this.SubtitleSprite._y = (this.BannerSprite != undefined ? 65 : 0) + this.tempOff[1];
 		//this.SubtitleSprite._width = 288;
 		//this.SubtitleSprite._height = 25;
@@ -713,12 +713,19 @@
 
 		this.BannerSprite._y = 0 + this._menuOff[1];
 		this.SubtitleSprite._y = (this.BannerSprite != undefined ? 65 : 0) + this._menuOff[1];
+
 		if (this.isItemless)
 		{
 			return;
 		}
 
-		this.itemsBG._y = this.SubtitleSprite._y + this.SubtitleSprite._height - 1;
+		var off = 0;
+		for (var w in this.windows)
+		{
+			off += this.windows[w].itemMC._height + 1;
+		}
+
+		this.itemsBG._y = this.SubtitleSprite._y + this.SubtitleSprite._height - 1 + off;
 
 		for (var item in this.menuItems)
 		{
@@ -775,7 +782,7 @@
 				}
 				else if (this.currentItem.sidePanel.LeftRightSide == 2)
 				{
-					this.currentItem.sidePanel.itemMC._x = this.Orientation == 0 ? this._menuOff[2] - 288 : this._menuOff[0];
+					this.currentItem.sidePanel.itemMC._x = this.Orientation == 0 ? this._menuOff[2] : this._menuOff[0];
 				}
 				if (this.IS3D)
 				{

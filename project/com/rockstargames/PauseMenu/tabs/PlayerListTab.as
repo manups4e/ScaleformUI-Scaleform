@@ -616,7 +616,7 @@
 	function set focused(_f)
 	{
 		super.focused = _f;
-		this.currentColumn.column.ItemList[this.currentColumn.column.currentSelection].highlighted = _f && this.Parent.Focus > 0;
+		this.currentColumn.column.ItemList[this.currentColumn.column.currentSelection].highlighted = _f;
 		for (var c in this.orderedColumns)
 		{
 			var col = this.orderedColumns[c];

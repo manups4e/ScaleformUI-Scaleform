@@ -84,8 +84,6 @@
 		this.UIMenu.UpdatePositions(this.safeLeft,this.safeTop,this.safeRight);
 	}
 
-
-
 	function IS_MOUSE_ON_MENU()
 	{
 		if (this.menuContainer != undefined)

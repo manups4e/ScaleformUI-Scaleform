@@ -93,7 +93,7 @@
 				{
 					com.rockstargames.ui.utils.Colour.Colourise(item.itemMC.colourBGMC,__reg2.r,__reg2.g,__reg2.b,30);
 				}
-				//item.mOver();       
+				//item.mOver();          
 				break;
 			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_PRESS :
 				break;
@@ -272,6 +272,11 @@
 		this.customIconL._height = 24;
 		this.customIconL._x = this.itemMC.labelMC.platformMC._x;
 		this.customIconL._y = this.itemMC.labelMC.platformMC._y;
+		var color = com.rockstargames.ScaleformUI.utils.Badges.BadgeToColor(this.iconL, this.highlighted);
+		if (color != -1)
+		{
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(this.customIconL,color);
+		}
 	}
 	function iconLoadedR()
 	{
@@ -280,6 +285,11 @@
 		this.customIconR._height = 24;
 		this.customIconR._x = this.itemMC.labelMC.iconMC._x;
 		this.customIconR._y = this.itemMC.labelMC.iconMC._y;
+		var color = com.rockstargames.ScaleformUI.utils.Badges.BadgeToColor(this.iconR, this.highlighted);
+		if (color != -1)
+		{
+			com.rockstargames.ui.utils.Colour.ApplyHudColour(this.customIconR,color);
+		}
 	}
 
 	function setStatus(statusStr, statusColID)
@@ -429,7 +439,7 @@
 		}
 		this._highlighted = _h;
 	}
-	
+
 	function Clear()
 	{
 		this.itemMC.mouseCatcher.dispose();

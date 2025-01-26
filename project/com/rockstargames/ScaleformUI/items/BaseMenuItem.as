@@ -43,8 +43,16 @@
 		if (!this.highlighted)
 		{
 			var _loc1_ = new com.rockstargames.ui.utils.HudColour();
-			com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(this._highlightColor,_loc1_);
-			com.rockstargames.ui.utils.Colour.Colourise(this.backgroundMC,_loc1_.r,_loc1_.g,_loc1_.b,_loc1_.a - 80);
+			if (this._parentMenu instanceof com.rockstargames.ScaleformUI.UIMenu)
+			{
+				com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(this._highlightColor,_loc1_);
+				com.rockstargames.ui.utils.Colour.Colourise(this.backgroundMC,_loc1_.r,_loc1_.g,_loc1_.b,_loc1_.a - 80);
+			}
+			else
+			{
+				com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(this._mainColor,_loc1_);
+				com.rockstargames.ui.utils.Colour.Colourise(this.backgroundMC,_loc1_.r,_loc1_.g,_loc1_.b,_loc1_.a - 20);
+			}
 		}
 	}
 	function mOut()

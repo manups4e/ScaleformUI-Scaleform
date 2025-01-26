@@ -176,10 +176,10 @@
 
 	function SET_INPUT_EVENT(direction)
 	{
-//		if (this.PauseMenu.Tab instanceof com.rockstargames.PauseMenu.tabs.VehicleSelectionTab)
-//		{
-//			return this.PauseMenu.Tab.SET_INPUT_EVENT(direction);
-//		}
+		//if (this.PauseMenu.Tab instanceof com.rockstargames.PauseMenu.tabs.VehicleSelectionTab)
+		//{
+		//return this.PauseMenu.Tab.SET_INPUT_EVENT(direction);
+		//}
 		switch (direction)
 		{
 			case com.rockstargames.ui.game.GamePadConstants.DPADUP :
@@ -736,6 +736,15 @@
 		}
 	}
 
+	function UPDATE_PLAYERS_TAB_MISSIONS_ITEM_ICONS(item)
+	{
+		var col = this.PauseMenu.Tab.getColumn("missions");
+		if (col != undefined)
+		{
+			col.ItemList[item].refreshIcons();
+		}
+	}
+
 	function CLEAR_PLAYERS_TAB_PLAYERS_COLUMN()
 	{
 		var col = this.PauseMenu.Tab.getColumn("players");
@@ -822,6 +831,27 @@
 	function SET_VEHICLE_SELECTOR_ITEM_CHECKED(item, bool)
 	{
 		this.PauseMenu.Tab.SetItemChecked(item,bool);
+	}
+
+	function SET_VEHICLE_SELECTOR_ITEM_STATS(item, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14, param15)
+	{
+		this.PauseMenu.Tab.SetStatsLabelsAndValues(item,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13,param14,param15);
+	}
+
+
+	function SET_VEHICLE_SELECTOR_STATS(param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14, param15)
+	{
+		this.PauseMenu.Tab.SetStatsVisible(true);
+		this.PauseMenu.Tab.SetStatsLabelsAndValues(param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13,param14,param15);
+	}
+
+	function CLEAR_VEHICLE_SELECTOR_STATS()
+	{
+		this.PauseMenu.Tab.ClearStatsAndValues();
+	}
+	function SET_VEHICLE_SELECTOR_STATS_VISIBLE(_v)
+	{
+		this.PauseMenu.Tab.SetStatsVisible(_v);
 	}
 
 	function CLEAR_GALLERY()

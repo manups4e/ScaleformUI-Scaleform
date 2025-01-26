@@ -27,6 +27,7 @@
 	var isSeparator;
 	var rightIcon_ICON;
 	var leftIcon_ICON;
+	var rightChecked;
 
 	function mpFreemodeItem(parentMenu, id, index, str, baseColor, highlightColor, iconL, colL, iconR, colR, checked, _enabled, jumpable)
 	{
@@ -206,6 +207,7 @@
 	function AddRightTexture(icon, checked, color)
 	{
 		this._rightIcon = icon;
+		this.rightChecked = checked;
 		if (checked)
 		{
 			this.itemMC.checkMC._visible = true;
@@ -277,6 +279,12 @@
 	{
 		this.itemMC.checkMC._x = 258 + 15;
 		this.updateLabelWidth();
+	}
+
+	function refreshIcons()
+	{
+		this.AddLeftTexture(this._leftIcon,this.leftIconColor);
+		this.AddRightTexture(this._rightIcon,this.rightChecked,this.rightIconColor);
 	}
 
 	function get highlighted()
