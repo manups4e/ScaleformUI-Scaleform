@@ -1,13 +1,14 @@
-class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsView extends com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuViewBase
+﻿class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsView extends com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuViewBase
 {
    var initialValueIndex = 4;
+   var bgMC;
    function PauseMenuSettingsView()
    {
       super();
    }
-   function __set__params(_p)
+   function set params(_p)
    {
-      super.__set__params(_p);
+      super.params = _p;
       if(this.bgMC == undefined)
       {
          this.bgMC = this.viewContainer.attachMovie("settingsBg","settingsBgMC",-1);
@@ -16,7 +17,6 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsView exte
          com.rockstargames.ui.utils.Colour.Colourise(this.bgMC,_loc3_.r,_loc3_.g,_loc3_.b,_loc3_.a);
          this.bgMC._visible = false;
       }
-      return this.__get__params();
    }
    function displayView()
    {
@@ -29,7 +29,7 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsView exte
       var _loc4_ = this.viewLinkageList[0];
       var _loc3_ = this.viewContainer.attachMovie(_loc4_,_loc4_ + i + "MC",i);
       _loc3_._y = this.itemY;
-      var _loc2_ = (com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsTextItem)_loc3_;
+      var _loc2_ = _loc3_;
       _loc2_.initStoreMethod(this.storeDataChange,this);
       _loc2_.__set__isLastItem(i + 1 == this.visibleItems);
       _loc2_.__set__data(_dataArray);

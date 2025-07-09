@@ -59,7 +59,7 @@
 		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.bgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
 		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.allArrowsMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
 		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.upDownMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
-		//this.INIT_BUTTONS();
+		this.INIT_BUTTONS();
 	}
 
 	function INIT_BUTTONS()
@@ -270,6 +270,7 @@
 			if (this._caption != undefined)
 			{
 				this.scrollPosMC._visible = true;
+				this.scrollPosTXT.autoSize = true;
 				this.captionBlipLayer = this.scrollPosMC.createEmptyMovieClip("captionBlipLayer", 1000);
 				var __reg3 = new com.rockstargames.ui.utils.Text();
 				__reg3.setTextWithIcons(this._caption,this.captionBlipLayer,this.scrollPosTXT,0,13.5,0,false);

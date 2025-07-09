@@ -5,7 +5,7 @@ USAGE:
 	var s:String = JSON.JSON.encode(obj);
 */
 
-class JSON {
+class JSON.JSON {
 
 	static function encode(arg):String {
 

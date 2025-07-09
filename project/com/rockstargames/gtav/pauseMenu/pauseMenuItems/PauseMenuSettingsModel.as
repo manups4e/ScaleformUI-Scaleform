@@ -1,4 +1,4 @@
-class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsModel extends com.rockstargames.ui.components.GUIModel
+﻿class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsModel extends com.rockstargames.ui.components.GUIModel
 {
    var menuItemStateIndex = 5;
    function PauseMenuSettingsModel()
@@ -13,7 +13,7 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsModel ext
          _loc2_ = new com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsView();
       }
       _loc2_.viewIndex = _viewIndex;
-      _loc2_.__set__params(_params);
+      _loc2_.params = _params;
       this.viewList[_viewIndex] = _loc2_;
    }
    function removeDataFromSlot(_viewIndex, _slotIndex)
@@ -21,16 +21,16 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsModel ext
       var _loc2_ = this.viewList[_viewIndex];
       _loc2_.destroy();
       this.viewIndex = 0;
-      var _loc3_ = (com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsView)this.getCurrentView();
+      var _loc3_ = this.getCurrentView();
    }
    function nextItem()
    {
-      var _loc3_ = (com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsView)this.getCurrentView();
+      var _loc3_ = this.getCurrentView();
       var _loc7_ = 0;
       var _loc4_ = 0;
       while(_loc4_ < _loc3_.dataList.length)
       {
-         var _loc2_ = _loc3_.__get__index() + 1 + _loc4_;
+         var _loc2_ = _loc3_.index + 1 + _loc4_;
          if(_loc2_ > _loc3_.dataList.length - 1)
          {
             _loc2_ = _loc2_ - _loc3_.dataList.length;
@@ -48,12 +48,12 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsModel ext
    }
    function prevItem()
    {
-      var _loc4_ = (com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsView)this.getCurrentView();
+      var _loc4_ = this.getCurrentView();
       var _loc7_ = 0;
       var _loc3_ = 0;
       while(_loc3_ < _loc4_.dataList.length)
       {
-         var _loc2_ = _loc4_.__get__index() - 1 - _loc3_;
+         var _loc2_ = _loc4_.index - 1 - _loc3_;
          if(_loc2_ < 0)
          {
             _loc2_ = _loc4_.dataList.length + _loc2_;
@@ -71,12 +71,12 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsModel ext
    }
    function highlightNext()
    {
-      var _loc3_ = (com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsView)this.getCurrentView();
+      var _loc3_ = this.getCurrentView();
       var _loc7_ = 0;
       var _loc4_ = 0;
       while(_loc4_ < _loc3_.dataList.length)
       {
-         var _loc2_ = _loc3_.__get__index() + _loc4_;
+         var _loc2_ = _loc3_.index + _loc4_;
          if(_loc2_ > _loc3_.dataList.length - 1)
          {
             _loc2_ = _loc2_ - _loc3_.dataList.length;
@@ -94,7 +94,7 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsModel ext
    }
    function clearHighlight()
    {
-      var _loc3_ = (com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuSettingsView)this.getCurrentView();
+      var _loc3_ = this.getCurrentView();
       var _loc2_ = 0;
       while(_loc2_ < _loc3_.itemList.length)
       {

@@ -15,14 +15,24 @@
 	var _title;
 	var titleTF;
 	var colorType;
+	var titleMC;
 
-	function UIMenuColorPanel(parentItem, title, type, index, colors)
+	function UIMenuColorPanel()
 	{
-		super(parentItem);
+		super();
 		this.itemCount = 0;
 		this.colorItems = new Array();
 		this.selectedColors = new Array();
-		this._title = title;
+		this.leftArrow = this.attachMovie("hairColourArrow", "leftArMC_" + this._name, this.getNextHighestDepth(), {_x:7.35, _y:12.6});
+		this.rightArrow = this.attachMovie("hairColourArrow", "rightArMC_" + this._name, this.getNextHighestDepth(), {_x:282, _y:12.6, _xscale:-100});
+		this.selector = this.attachMovie("ColorSelector", "selector_" + this._name, this.getNextHighestDepth());
+	}
+
+	function set data(d)
+	{
+		super.data = d;
+		this._title = this.data[3];
+		var type = this.data[4];
 		switch (type)
 		{
 			case 0 :
@@ -33,7 +43,7 @@
 				break;
 			case 2 :
 				this.colorsArray = new Array();
-				var arr = colors.split(",");
+				var arr = this.data[6].split(",");
 				for (var i = 0; i < arr.length; i++)
 				{
 					var _loc5_ = new com.rockstargames.ui.utils.HudColour();
@@ -45,32 +55,27 @@
 				break;
 		}
 		this.itemCount = this.colorsArray.length;
-		this.itemMC = parentItem._parentMenu._mainMC.attachMovie("UIMenuColorPanel", "colorPanel_" + parentItem.itemMC._name + "_" + (parentItem.panels.length + 1), parentItem._parentMenu._mainMC.getNextHighestDepth());
-		this.backgroundMC = this.itemMC.bgMC;
-		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.bgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
-		this.titleTF = this.itemMC.titleMC.titleTF;
-		this.leftArrow = this.itemMC.attachMovie("hairColourArrow", "leftArMC_" + this.itemMC._name, this.itemMC.getNextHighestDepth(), {_x:7.35, _y:12.6});
-		this.rightArrow = this.itemMC.attachMovie("hairColourArrow", "rightArMC_" + this.itemMC._name, this.itemMC.getNextHighestDepth(), {_x:282, _y:12.6, _xscale:-100});
+		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.bgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
+		this.titleTF = this.titleMC.titleTF;
 		this.leftArrow.setupGenericMouseInterface(-1,10,this.mouseEvent,[this, -1]);
 		this.rightArrow.setupGenericMouseInterface(-2,10,this.mouseEvent,[this, -2]);
 
-		if (index != undefined)
+		if (this.data[5] != undefined)
 		{
-			this._index = index;
+			this.currentSelection = this.data[5];
 		}
 		else
 		{
-			this._index = 0;
+			this.currentSelection = 0;
 		}
-		this.selector = this.itemMC.attachMovie("ColorSelector", "selector_" + this.itemMC._name, this.itemMC.getNextHighestDepth());
+		this.clearItems();
 		for (var i = 0; i < this.visibleItems; i++)
 		{
-			this.colorItems.push(this.itemMC.attachMovie("swatch", "_swatch_" + this.itemMC._name, this.itemMC.getNextHighestDepth()));
+			this.colorItems.push(this.attachMovie("swatch", "_swatch_" + this._name, this.getNextHighestDepth()));
 			this.colorItems[i].setupGenericMouseInterface(i,10,this.mouseEvent,[this, i]);
 			this.colorItems[i]._x = 8 + this.colorItems[i]._width * i;
 			this.colorItems[i]._y = 31.05;
 		}
-
 		this.selector._y = 31.05 - 5;
 		this.selector._x = this.colorItems[this.currentSelection]._x;
 		this.selector._visible = false;
@@ -78,6 +83,15 @@
 		this.titleTF.antiAliasType = "advanced";
 		this.Value = this.currentSelection;
 		com.rockstargames.ui.utils.UIText.setSizedText(this.titleTF,this._title + " (" + (this.currentSelection + 1) + "/" + this.itemCount + ")",true,true);
+	}
+
+	function clearItems()
+	{
+		for (var i in this.colorItems)
+		{
+			this.colorItems[i].removeMovieClip();
+		}
+		this.colorItems = [];
 	}
 
 	function mouseEvent(evtType, targetMC, args)
@@ -263,6 +277,6 @@
 		}
 		this.leftArrow.dispose();
 		this.rightArrow.dispose();
-		this.itemMC.removeMovieClip();
+		this.removeMovieClip();
 	}
 }

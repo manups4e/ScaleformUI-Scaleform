@@ -15,7 +15,7 @@
 	function FreemodeDetailsItem(_parentPanel, index, type, textLeft, textRight, param3, param4, param5, param6, param7, param8, param9, param10)
 	{
 		this.parentPanel = _parentPanel;
-		this.itemMC = this.parentPanel.itemMC.attachMovie("freemodeDetailsItem", "detailsItem_" + this.parentPanel.itemMC.getNextHighestDepth(), this.parentPanel.itemMC.getNextHighestDepth());
+		this.itemMC = _parentPanel.attachMovie("freemodeDetailsItem", "detailsItem_" + _parentPanel.getNextHighestDepth(), _parentPanel.getNextHighestDepth());
 		this.itemMC.outlineMC._visible = false;
 		this.itemTextRight = this.itemMC.labelMC.valueTF;
 		this.itemTextLeft = this.itemMC.leftlabelMC.titleTF;
@@ -81,6 +81,8 @@
 				this.updateRightLabelFont(param8,param9);
 				break;
 			case 3 :
+				break;
+			case 4 :
 				var _loc0_ = 2;
 				this.itemMC.outlineMC._visible = true;
 				this.itemMC.leftlabelMC._y = _loc0_ = 2;
@@ -89,7 +91,7 @@
 				this.updateLabelFont(param6,param7);
 				this.updateRightLabelFont(param8,param9);
 				break;
-			case 4 :
+			case 5:
 				this.itemMC.outlineMC._visible = this.parentPanel.listDescItem > 0;
 				var _loc9_ = textLeft;
 				var _loc5_ = this.itemTextLeft.getTextFormat();

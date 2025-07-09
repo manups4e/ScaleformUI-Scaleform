@@ -1,13 +1,28 @@
-﻿class com.rockstargames.ScaleformUI.panels.BasePanel
+﻿class com.rockstargames.ScaleformUI.panels.BasePanel extends MovieClip
 {
 	var parentItem;
 	var _enabled;
-	var backgroundMC;
-	var itemMC;
 	var _hovered = false;
-	function BasePanel(parent)
+	var _data;
+	var ownIndex;
+	var _type;
+	var bgMC;
+	
+	function BasePanel()
 	{
-		this.parentItem = parent;
+		super();
+	}
+	function set data(d)
+	{
+		this._data = d;
+		this.parentItem = d[0];
+		this.ownIndex = d[1];
+		this._type = d[2];
+	}
+
+	function get data()
+	{
+		return this._data;
 	}
 
 	function setRightText(tf, str, autoShrink, sizeOffset, sizeOverride)
@@ -34,18 +49,13 @@
 		}
 	}
 
-
-	function set Width(w){
-		this.itemMC._width = w;
-	}
-
 	function set isVisible(_h)
 	{
-		this.itemMC._visible = _h;
+		this._visible = _h;
 	}
 
 	function get isVisible()
 	{
-		return this.itemMC._visible;
+		return this._visible;
 	}
 }

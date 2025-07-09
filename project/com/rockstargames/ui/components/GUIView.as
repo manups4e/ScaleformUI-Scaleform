@@ -58,7 +58,6 @@
 	}
 	function addItem(i, _dataArray)
 	{
-        com.rockstargames.ui.utils.Debug.log("3 - addItem: " + arguments.toString());
 		this.dataList[i] = _dataArray;
 	}
 	function addDisplayItem(i, _dataArray)
@@ -90,6 +89,30 @@
 		}
 		this.addDisplayItem(i,this.dataList[i]);
 	}
+	function removeDataSlot(i)
+	{
+		this.dataList.splice(i,1);
+		if (this.dataList.length < this.itemList.length)
+		{
+			var _loc2_ = 0;
+			while (_loc2_ < this.itemList.length)
+			{
+				Debug.Debug.Log("Checking index: " + _loc2_ + ", on a total of: " + this.itemList.length + " visible items and " + this.dataList.length + " available items");
+				if (_loc2_ >= this.dataList.length)
+				{
+					this.itemList[_loc2_].removeMovieClip();
+					this.itemList.splice(_loc2_,1);
+				}
+				else
+				{
+					this.itemList[_loc2_].data = this.dataList[this.topEdge + _loc2_];
+					this.itemList[_loc2_].highlighted = this.itemList[_loc2_].index == this.topEdge + _loc2_;
+				}
+				_loc2_ = _loc2_ + 1;
+			}
+		}
+	}
+
 	function set params(_p)
 	{
 		var _loc3_ = _p.container;
@@ -397,5 +420,6 @@
 		}
 		this.itemList = [];
 		this.dataList = [];
+		this.itemY = 0;
 	}
 }

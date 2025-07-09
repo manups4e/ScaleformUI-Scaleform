@@ -516,14 +516,6 @@
 		}
 	}
 
-	function UPDATE_MISSION_ITEM_ICONS(item)
-	{
-		var col = this.LobbyMenu.getColumn("missions");
-		if (col != undefined)
-		{
-			col.ItemList[item].refreshIcons();
-		}
-	}
 
 	function SET_FOCUS(f)
 	{

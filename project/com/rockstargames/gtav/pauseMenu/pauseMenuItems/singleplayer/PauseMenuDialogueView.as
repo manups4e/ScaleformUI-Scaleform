@@ -1,4 +1,4 @@
-class com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuDialogueView extends com.rockstargames.ui.components.GUIView
+﻿class com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuDialogueView extends com.rockstargames.ui.components.GUIView
 {
    static var MAX_ITEMS_ON_SCREEN = 8;
    function PauseMenuDialogueView()
@@ -8,16 +8,15 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuDial
    function addDisplayItem(i, _dataArray)
    {
       var _loc3_ = this.viewLinkageList[0];
-      var _loc2_ = (com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuDialogueItem)this.viewContainer.attachMovie(_loc3_,"dialogueItem" + i + "MC",i);
+      var _loc2_ = this.viewContainer.attachMovie(_loc3_,"dialogueItem" + i + "MC",i);
       _loc2_._y = this.itemY;
-      _loc2_.__set__data(_dataArray);
+      _loc2_.data = _dataArray;
       this.itemList[i] = _loc2_;
       this.itemY = this.itemY + (_loc2_.getHeight() + this.rowSpacing);
    }
-   function __set__params(_p)
+   function set params(_p)
    {
-      super.__set__params(_p);
-      return this.__get__params();
+      super.params = _p;
    }
    function scrollToBottom()
    {
@@ -41,7 +40,7 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuDial
          var _loc2_ = this.__get__index();
          while(_loc2_ != this.__get__index() + _loc6_)
          {
-            var _loc3_ = (com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuDialogueItem)this.itemList[_loc2_].getHeight();
+            var _loc3_ = this.itemList[_loc2_].getHeight();
             _loc4_ = _loc4_ - (_loc3_ + this.rowSpacing) * _loc5_;
             _loc2_ = _loc2_ + _loc5_;
          }
@@ -72,7 +71,7 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuDial
       var _loc2_ = 0;
       while(_loc2_ < _loc4_)
       {
-         _loc3_ = _loc3_ + (com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuDialogueItem)this.itemList[_loc2_].getHeight();
+         _loc3_ = _loc3_ + this.itemList[_loc2_].getHeight();
          if(_loc2_ < _loc4_ - 1)
          {
             _loc3_ = _loc3_ + this.rowSpacing;

@@ -1,4 +1,4 @@
-class com.rockstargames.gtav.pauseMenu.pauseMenuItems.multiplayer.PauseMPMenuFriendsListItem extends com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuBaseItem
+﻿class com.rockstargames.gtav.pauseMenu.pauseMenuItems.multiplayer.PauseMPMenuFriendsListItem extends com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuBaseItem
 {
    var isColour = false;
    var kick = 0;
@@ -278,11 +278,11 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.multiplayer.PauseMPMenuFri
       {
          if(!this.__get__highlighted())
          {
-            (com.rockstargames.gtav.pauseMenu.PAUSE_MENU_SP_CONTENT)_level0.TIMELINE.M_PRESS_EVENT(this.index,this.__get__columnID(),false,true);
+            _level0.TIMELINE.M_PRESS_EVENT(this.index,this.__get__columnID(),false,true);
          }
          else
          {
-            (com.rockstargames.gtav.pauseMenu.PAUSE_MENU_SP_CONTENT)_level0.TIMELINE.M_PRESS_EVENT(this.index,this.__get__columnID(),true,true);
+            _level0.TIMELINE.M_PRESS_EVENT(this.index,this.__get__columnID(),true,true);
          }
       }
    }

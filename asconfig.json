@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"output": "bin-debug/temp.swf",
+		"target-player": "10.0.45"
+	},
+	"files": [
+		"temp.as"
+	],
+	"copySourcePathAssets": true,
+	"htmlTemplate": "html-template",
+	"additionalOptions": "-locale en_US"
+}

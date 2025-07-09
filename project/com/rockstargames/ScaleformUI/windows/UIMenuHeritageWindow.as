@@ -1,32 +1,46 @@
-﻿class com.rockstargames.ScaleformUI.windows.UIMenuHeritageWindow
+﻿class com.rockstargames.ScaleformUI.windows.UIMenuHeritageWindow extends MovieClip
 {
-	var itemMC;
 	var _parentMenu;
 	var momIdx;
 	var dadIdx;
-
 	var _background;
 	var _momSprite;
 	var _dadSprite;
-	function UIMenuHeritageWindow(parentMenu, mom, dad)
+	var momMC;
+	var dadMC;
+	var bgMC;
+
+	function UIMenuHeritageWindow()
 	{
-		this._parentMenu = parentMenu;
-		this.itemMC = this._parentMenu._mainMC.attachMovie("UIMenuHeritageWindow", "heritageWindow_" + this._parentMenu._name, this._parentMenu._mainMC.getNextHighestDepth());
-		this._background = this.itemMC.bgMC;
-		this._momSprite = this.itemMC.momMC;
-		this._dadSprite = this.itemMC.dadMC;
-		if (mom != undefined)
+		super();
+		this.bgMC._visible = false;
+		this.momMC._visible = false;
+		this.dadMC._visible = false;
+		this._background = this.attachMovie("txdLoader", "heritageBG", this.getNextHighestDepth());
+		this._dadSprite = this.attachMovie("txdLoader", "heritageDad", this.getNextHighestDepth(), {_x:124});
+		this._momSprite = this.attachMovie("txdLoader", "heritageMom", this.getNextHighestDepth(), {_x:20});
+	}
+	function set data(d)
+	{
+		//parentMenu, id, mom, dad
+		this._parentMenu = d[0];
+		if (d[2] != undefined)
 		{
-			this.momIdx = mom;
+			this.momIdx = d[2];
 		}
-		if (dad != undefined)
+		if (d[3] != undefined)
 		{
-			this.dadIdx = dad;
+			this.dadIdx = d[3];
 		}
-		this._background = this.itemMC.attachMovie("txdLoader", "heritageBG", this.itemMC.getNextHighestDepth());
-		this._dadSprite = this.itemMC.attachMovie("txdLoader", "heritageDad", this.itemMC.getNextHighestDepth(), {_x:124});
-		this._momSprite = this.itemMC.attachMovie("txdLoader", "heritageMom", this.itemMC.getNextHighestDepth(), {_x:20});
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this._background,"pause_menu_pages_char_mom_dad","mumdadbg",288,158);
+		if (this._background.textureDict == "pause_menu_pages_char_mom_dad")
+		{
+			this._background.init(com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME,"pause_menu_pages_char_mom_dad","mumdadbg",288,158);
+			this._background.displayTxdResponse("pause_menu_pages_char_mom_dad");
+		}
+		else
+		{
+			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this._background,"pause_menu_pages_char_mom_dad","mumdadbg",288,158);
+		}
 		this.setIndex(this.momIdx,this.dadIdx);
 	}
 
@@ -50,8 +64,8 @@
 		{
 			this.dadIdx = 0;
 		}
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this._dadSprite,"char_creator_portraits",this.dadIdx < 21 ? "male_" + this.dadIdx : "special_male_" + (this.dadIdx - 21),144,158,this.dadLoaded, this);
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this._momSprite,"char_creator_portraits",this.momIdx < 21 ? "female_" + this.momIdx : "special_female_" + (this.momIdx - 21),144,158,this.momLoaded, this);
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this._dadSprite,"char_creator_portraits",this.dadIdx < 21 ? "male_" + this.dadIdx : "special_male_" + (this.dadIdx - 21),144,158,this.dadLoaded,this);
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this._momSprite,"char_creator_portraits",this.momIdx < 21 ? "female_" + this.momIdx : "special_female_" + (this.momIdx - 21),144,158,this.momLoaded,this);
 	}
 
 
@@ -66,7 +80,7 @@
 
 	function set Width(w)
 	{
-		this.itemMC._width = w;
+		this._width = w;
 	}
 
 
@@ -93,6 +107,6 @@
 				this._momSprite.removeTxdRef();
 			}
 		}
-		this.itemMC.removeMovieClip();
+		this.removeMovieClip();
 	}
 }

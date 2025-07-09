@@ -1,21 +1,22 @@
-class com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuConfigurationView extends com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuViewBase
+﻿class com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuConfigurationView extends com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuViewBase
 {
+   var bgMC;
    function PauseMenuConfigurationView()
    {
       super();
    }
-   function __set__params(_p)
+   function set params(_p)
    {
-      super.__set__params(_p);
+      super.params = _p;
       if(this.bgMC == undefined)
       {
          this.bgMC = this.viewContainer.attachMovie("settingsBg","settingsBgMC",-1);
          var _loc3_ = new com.rockstargames.ui.utils.HudColour();
          com.rockstargames.ui.utils.Colour.setHudColour(com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG,_loc3_);
          com.rockstargames.ui.utils.Colour.Colourise(this.bgMC,_loc3_.r,_loc3_.g,_loc3_.b,_loc3_.a);
+         this.bgMC._width = 288;
          this.bgMC._visible = false;
       }
-      return this.__get__params();
    }
    function displayView()
    {
@@ -28,11 +29,11 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuConf
       var _loc4_ = this.viewLinkageList[0];
       var _loc2_ = this.viewContainer.attachMovie(_loc4_,_loc4_ + i + "MC",i);
       _loc2_._y = this.itemY;
-      var _loc3_ = (com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuConfigurationItem)_loc2_;
+      var _loc3_ = com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuConfigurationItem(_loc2_);
       _loc3_.isLastItem = i + 1 == this.visibleItems;
-      _loc3_.__set__data(_dataArray);
+      _loc3_.data = _dataArray;
       this.itemList[i] = _loc3_;
-      this.itemY = this.itemY + (_loc2_.bgMC._height + this.rowSpacing);
+      this.itemY += _loc2_.bgMC._height + this.rowSpacing;
    }
    function scrollHighlightStyle(targetIndex)
    {
@@ -41,7 +42,7 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuConf
       var _loc4_ = 0;
       if(targetIndex > this.topEdge + this.visibleItems - 1)
       {
-         _loc4_ = _loc4_ + (targetIndex - (this.visibleItems - 1));
+         _loc4_ += targetIndex - (this.visibleItems - 1);
          this.topEdge = _loc4_;
          targetIndex = this.visibleItems - 1;
       }
@@ -54,7 +55,7 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuConf
       else
       {
          _loc4_ = this.topEdge;
-         targetIndex = targetIndex - this.topEdge;
+         targetIndex -= this.topEdge;
       }
       _loc2_ = 0;
       while(_loc2_ < this.itemList.length)

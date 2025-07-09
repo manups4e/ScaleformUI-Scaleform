@@ -6,34 +6,42 @@
 	var _value = 0;
 	var _coords;
 	var hover = -1;
+	var opacityTF;
+	var minTF;
+	var maxTF;
+	var mouseCatcher;
 
-	function UIMenuPercentagePanel(parentItem, title, minText, maxText, startIndex)
+	function UIMenuPercentagePanel()
 	{
-		super(parentItem);
-		this.itemMC = parentItem._parentMenu._mainMC.attachMovie("UIMenuPercentagePanel", "percentagePanel_" + parentItem.itemMC._name + "_" + parentItem.panels.length + 1, parentItem._parentMenu._mainMC.getNextHighestDepth());
-		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.bgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
-		this.backgroundMC = this.itemMC.bgMC;
-		this.itemMC.opacityTF.embedFonts = true;
-		this.itemMC.opacityTF.antiAliasType = "advanced";
-		com.rockstargames.ui.utils.UIText.setSizedText(this.itemMC.opacityTF,title,true,true);
-		this.itemMC.minTF.embedFonts = true;
-		this.itemMC.minTF.antiAliasType = "advanced";
-		com.rockstargames.ui.utils.UIText.setSizedText(this.itemMC.minTF,minText,true,true);
-		this.itemMC.maxTF.embedFonts = true;
-		this.itemMC.maxTF.antiAliasType = "advanced";
-		com.rockstargames.ui.utils.UIText.setSizedText(this.itemMC.maxTF,maxText,true,true);
-		this._slider = this.itemMC.attachMovie("GenericColourBar", "progress_bar", this.itemMC.getNextHighestDepth(), {_x:4, _y:30});
+		super();
+		this._slider = this.attachMovie("GenericColourBar", "progress_bar", this.getNextHighestDepth(), {_x:4, _y:30});
+		this.attachMovie("mouseCatcher","mouseCatcher",this.getNextHighestDepth(),{_width:this._width, _height:this._height});
+	}
+	
+	function set data(d)
+	{
+		//parentItem, title, minText, maxText, startIndex		
+		super.data = d;
+		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.bgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
+		this.opacityTF.embedFonts = true;
+		this.opacityTF.antiAliasType = "advanced";
+		com.rockstargames.ui.utils.UIText.setSizedText(this.opacityTF,this.data[3],true,true);
+		this.minTF.embedFonts = true;
+		this.minTF.antiAliasType = "advanced";
+		com.rockstargames.ui.utils.UIText.setSizedText(this.minTF,this.data[4],true,true);
+		this.maxTF.embedFonts = true;
+		this.maxTF.antiAliasType = "advanced";
+		com.rockstargames.ui.utils.UIText.setSizedText(this.maxTF,this.data[5],true,true);
 		this._slider.init(this._sliderColor,279,8);
-		if (startIndex != undefined)
+		if (this.data[6] != undefined)
 		{
-			this.Value = startIndex;
+			this.Value = this.data[6];
 		}
 		else
 		{
 			this.Value = 0;
 		}
-		this.itemMC.attachMovie("mouseCatcher","mouseCatcher",this.itemMC.getNextHighestDepth(),{_width:this.itemMC._width, _height:this.itemMC._height});
-		this.itemMC.mouseCatcher.setupGenericMouseInterface(0,11,this.onMouseEvent,[this]);
+		this.mouseCatcher.setupGenericMouseInterface(0,11,this.onMouseEvent,[this]);
 	}
 
 	function onMouseEvent(evtType, targetMC, args)
@@ -77,7 +85,7 @@
 
 	function SetCoords()
 	{
-		var m = (_xmouse - this.parentItem._parentMenu._menuOff[0]);
+		var m = _xmouse;
 		var val = (m - this._slider._x) / this._slider._width * this._max;
 		this._value = Math.max(0, Math.min(val, this._max));
 		this._slider.percent(this._value);
@@ -88,7 +96,6 @@
 	}
 	function Clear()
 	{
-		this.itemMC.removeMovieClip();
+		this.removeMovieClip();
 	}
-
 }

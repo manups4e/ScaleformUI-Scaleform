@@ -789,7 +789,6 @@
 			case com.rockstargames.ScaleformUI.utils.Badges.ROCKSTAR :
 			case com.rockstargames.ScaleformUI.utils.Badges.PLUS :
 			case com.rockstargames.ScaleformUI.utils.Badges.ARROW_RIGHT :
-
 			case com.rockstargames.ScaleformUI.utils.Badges.ARROW_LEFT :
 				return selected ? com.rockstargames.ui.utils.HudColour.HUD_COLOUR_BLACK : com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE;
 			case com.rockstargames.ScaleformUI.utils.Badges.GLOBE_WHITE :
@@ -821,7 +820,7 @@
 			case com.rockstargames.ScaleformUI.utils.Badges.MISSION_AQUA :
 				return com.rockstargames.ui.utils.HudColour.HUD_COLOUR_FRIENDLY;
 			default :
-				return -1;
+				return com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE;
 				break;
 		}
 	}

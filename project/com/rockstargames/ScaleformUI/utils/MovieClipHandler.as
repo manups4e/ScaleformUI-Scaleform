@@ -3,10 +3,10 @@
 	static var GFXNAME;
 	static var txd_loader;
 	static var callback;
-	static function LoadClip(targetMC, textureDict, textureName, callback)
+	static function LoadClip(targetMC,textureDict,textureName,callback)
 	{
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.callback = callback;
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.txd_loader = new MovieClipLoader();
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.txd_loader = new MovieClipLoader  ;
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.txd_loader.addListener(com.rockstargames.ScaleformUI.utils.MovieClipHandler);
 		var _loc2_ = "img://" + textureDict + "/" + textureName;
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.txd_loader.loadClip(_loc2_,targetMC);
@@ -20,8 +20,7 @@
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.callback = null;
 	}
 
-
-	static function SetClip(targetMC, textureDict, textureName, w, h, callback, depth, centerItem)
+	static function SetClip(targetMC,textureDict,textureName,w,h,callback,depth,centerItem)
 	{
 		var alreadyLoaded = true;
 		if (targetMC.textureFilename != textureName && targetMC.textureDict != textureDict)
@@ -35,8 +34,51 @@
 		targetMC._alpha = 100;
 		targetMC.requestTxdRef(pathWithoutContent,alreadyLoaded,callback,depth);
 	}
+	static function SetClipPM(targetMC,textureDict,textureName,w,h,callback,depth,centerItem)
+	{
+		var alreadyLoaded = true;
+		if (targetMC.textureFilename != textureName && targetMC.textureDict != textureDict)
+		{
+			var alreadyLoaded = false;
+		}
+		targetMC.init(com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME,textureDict,textureName,w,h,0,0,centerItem);
+		var splitPath = String(targetMC).split(".");
+		var pathWithoutContent = splitPath.slice(5).join(".");
+		com.rockstargames.ui.tweenStar.TweenStarLite.removeTweenOf(targetMC);
+		targetMC._alpha = 100;
+		targetMC.requestTxdRef(pathWithoutContent,alreadyLoaded,callback,depth);
+	}
+	static function SetClipWithPosPM(targetMC,textureDict,textureName,x,y,w,h,callback,depth,centerItem)
+	{
+		var alreadyLoaded = true;
+		if (targetMC.textureFilename != textureName && targetMC.textureDict != textureDict)
+		{
+			var alreadyLoaded = false;
+		}
+		targetMC.init(com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME,textureDict,textureName,w,h,x,y,centerItem);
+		var splitPath = String(targetMC).split(".");
+		var pathWithoutContent = splitPath.slice(5).join(".");
+		com.rockstargames.ui.tweenStar.TweenStarLite.removeTweenOf(targetMC);
+		targetMC._alpha = 100;
+		targetMC.requestTxdRef(pathWithoutContent,alreadyLoaded,callback,depth);
+	}
+	
+	static function SetClipWithPos(targetMC,textureDict,textureName,x,y,w,h,callback,depth,centerItem)
+	{
+		var alreadyLoaded = true;
+		if (targetMC.textureFilename != textureName && targetMC.textureDict != textureDict)
+		{
+			var alreadyLoaded = false;
+		}
+		targetMC.init(com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME,textureDict,textureName,w,h,x,y,centerItem);
+		var splitPath = String(targetMC).split(".");
+		var pathWithoutContent = splitPath.slice(2).join(".");
+		com.rockstargames.ui.tweenStar.TweenStarLite.removeTweenOf(targetMC);
+		targetMC._alpha = 100;
+		targetMC.requestTxdRef(pathWithoutContent,alreadyLoaded,callback,depth);
+	}
 
-	static function UpdateFont(tf, fontName, size)
+	static function UpdateFont(tf,fontName,size)
 	{
 		tf.embedFonts = true;
 		tf.antiAliasType = "advanced";
@@ -51,21 +93,21 @@
 		tf.setTextFormat(newFont);
 	}
 
-	static function ApplyHexColour(mc, hexCol)
+	static function ApplyHexColour(mc,hexCol)
 	{
-		var _loc1_ = new com.rockstargames.ui.utils.HudColour();
+		var _loc1_ = new com.rockstargames.ui.utils.HudColour  ;
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(hexCol,_loc1_);
 		com.rockstargames.ui.utils.Colour.Colourise(mc,_loc1_.r,_loc1_.g,_loc1_.b,_loc1_.a);
 	}
 
-	static function ApplyHexColourToTF(tf, hexCol)
+	static function ApplyHexColourToTF(tf,hexCol)
 	{
-		var _loc1_ = new com.rockstargames.ui.utils.HudColour();
+		var _loc1_ = new com.rockstargames.ui.utils.HudColour  ;
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(hexCol,_loc1_);
-		tf.textColor = com.rockstargames.ui.utils.Colour.RGBToHex(_loc1_.r, _loc1_.g, _loc1_.b);
+		tf.textColor = com.rockstargames.ui.utils.Colour.RGBToHex(_loc1_.r,_loc1_.g,_loc1_.b);
 	}
 
-	static function HexToARGB(hex, mc)
+	static function HexToARGB(hex,mc)
 	{
 		var val = hex & 0xFFFFFFFF;
 		// Convert the hexadecimal string to numeric values      

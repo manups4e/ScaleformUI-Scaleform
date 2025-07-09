@@ -1,6 +1,5 @@
-﻿class com.rockstargames.ScaleformUI.windows.UIMenuDetailsWindow
+﻿class com.rockstargames.ScaleformUI.windows.UIMenuDetailsWindow extends MovieClip
 {
-	var itemMC;
 	var _parentMenu;
 	var detail0;
 	var detail1;
@@ -17,136 +16,116 @@
 	var PI_OVER_180 = 0.017453292519943295;
 	var TextureID;
 	var totalStats;
-	function UIMenuDetailsWindow(parentMenu, _det0, _det1, _det2, txd, txn, x, y, w, h)
+	var statWheelMC;
+	var headerBGMC;
+	var item0TF;
+	var item1TF;
+	var item2TF;
+	var cMC;
+	var rankEmblemMC;
+	var rankEmblemBG;
+	function UIMenuDetailsWindow()
 	{
-		this.statsMaxDegrees = new Array();
+		super();
+		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.headerBGMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
+		com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.item0TF,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
+		com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.item1TF,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
+		com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.item2TF,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
+	}
+	function set data(d)
+	{
+		// parentMenu, id, d[2], d[3], d[4], txd, txn, x, y, w, h
+		this.statsMaxDegrees = new Array  ;
 		this.totalStats = 0;
 		this.currentAngle = 0;
-		this.itemMC.statWheelMC.wheelMC.clear();
-		this._parentMenu = parentMenu;
-		this.itemMC = this._parentMenu._mainMC.attachMovie("UIMenuDetailsWindow", "detailsWindow_" + this._parentMenu._mainMC.getNextHighestDepth(), this._parentMenu._mainMC.getNextHighestDepth());
-		this._background = this.itemMC.headerBGMC;
+		this.statWheelMC.wheelMC.clear();
+		this._parentMenu = d[0];
+		this._background = this.headerBGMC;
 
-		this.detail0 = this.itemMC.item0TF;
-		this.detail1 = this.itemMC.item1TF;
-		this.detail2 = this.itemMC.item2TF;
-		com.rockstargames.ui.utils.UIText.setSizedText(this.detail0,_det0,true,true);
-		com.rockstargames.ui.utils.UIText.setSizedText(this.detail1,_det1,true,true);
-		com.rockstargames.ui.utils.UIText.setSizedText(this.detail2,_det2,true,true);
+		this.detail0 = this.item0TF;
+		this.detail1 = this.item1TF;
+		this.detail2 = this.item2TF;
+		com.rockstargames.ui.utils.UIText.setSizedText(this.detail0,d[2],true,true);
+		com.rockstargames.ui.utils.UIText.setSizedText(this.detail1,d[3],true,true);
+		com.rockstargames.ui.utils.UIText.setSizedText(this.detail2,d[4],true,true);
 
-		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.headerBGMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
-		com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.itemMC.item0TF,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
-		com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.itemMC.item1TF,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
-		com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.itemMC.item2TF,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
-		if (x == undefined)
+		if (d[7] == undefined)
 		{
-			x = 0;
+			d[7] = 0;
 		}
-		if (y == undefined)
+		if (d[8] == undefined)
 		{
-			y = 0;
+			d[8] = 0;
 		}
-		if (w == undefined)
+		if (d[9] == undefined)
 		{
-			w = 64;
+			d[9] = 64;
 		}
-		if (h == undefined)
+		if (d[10] == undefined)
 		{
-			h = 64;
+			d[10] = 64;
 		}
-		if (txd != undefined && txd != "" && txn != undefined && txn != "")
+		if (d[5] != undefined && d[5] != "" && d[6] != undefined && d[6] != "")
 		{
-			this.itemMC.statWheelMC._visible = false;
-			this.leftEmblemMC = this.itemMC.cMC.attachMovie("txdLoader", "leftEmblem", this.itemMC.getNextHighestDepth(), {_x:14, _y:9});
-			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.leftEmblemMC,txd,txn,w,h,this.txdloaded,this);
+			this.statWheelMC._visible = false;
+			if (this.leftEmblemMC == undefined)
+			{
+				this.leftEmblemMC = this.cMC.attachMovie("txdLoader","leftEmblem",this.getNextHighestDepth());
+			}
+			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClipWithPos(this.leftEmblemMC,d[5],d[6],d[7],d[8],d[9],d[10],this.txdloaded,this);
 		}
 		else
 		{
-			this.TextureID = txd;
+			this.TextureID = d[5];
 			if (this.TextureID == "statWheel")
 			{
-				this.itemMC.statWheelMC._visible = true;
-				this.itemMC.rankEmblemMC._visible = false;
-				this.itemMC.rankEmblemBG._visible = false;
-				com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.statWheelMC.bgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_BLACK);
-				com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.statWheelMC.bgFillMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
-				this.itemMC.statWheelMC.bgFillMC._alpha = 20;
-				this.wheelRadius = this.itemMC.statWheelMC.bgFillMC._width * 0.5;
-				this.itemMC.statWheelMC.createEmptyMovieClip("wheelMC",this.itemMC.getNextHighestDepth(),{_x:0, _y:0});
-				this.itemMC.statWheelMC.wheelMC.setMask(this.itemMC.statWheelMC.maskMC);
+				this.statWheelMC._visible = true;
+				this.rankEmblemMC._visible = false;
+				this.rankEmblemBG._visible = false;
+				com.rockstargames.ui.utils.Colour.ApplyHudColour(this.statWheelMC.bgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_BLACK);
+				com.rockstargames.ui.utils.Colour.ApplyHudColour(this.statWheelMC.bgFillMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
+				this.statWheelMC.bgFillMC._alpha = 20;
+				this.wheelRadius = this.statWheelMC.bgFillMC._width * 0.5;
+				this.statWheelMC.createEmptyMovieClip("wheelMC",this.getNextHighestDepth(),{_x:0,_y:0});
+				this.statWheelMC.wheelMC.setMask(this.statWheelMC.maskMC);
 			}
 			else
 			{
-				this.itemMC.statWheelMC._visible = false;
-				this.itemMC.rankEmblemMC._visible = true;
-				this.itemMC.rankEmblemBG._visible = true;
-				com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.rankEmblemMC,116);
+				this.statWheelMC._visible = false;
+				this.rankEmblemMC._visible = true;
+				this.rankEmblemBG._visible = true;
+				com.rockstargames.ui.utils.Colour.ApplyHudColour(this.rankEmblemMC,116);
 			}
 		}
 	}
 
-	function setValues(_det0, _det1, _det2, txd, txn, x, y, w, h)
+	function set extraData(d)
 	{
-		if (x == undefined)
+		this.clearStats();
+		for (var i in d)
 		{
-			x = 0;
+			var stat = d[i];
+			this.addStatToWheel(stat[0],stat[1]);
 		}
-		if (y == undefined)
-		{
-			y = 0;
-		}
-		if (w == undefined || w == 0)
-		{
-			w = 64;
-		}
-		if (h == undefined || h == 0)
-		{
-			h = 64;
-		}
-		if (txd != undefined && txd != "" && txn != undefined && txn != "")
-		{
-			this.itemMC.statWheelMC._visible = false;
-			this.leftEmblemMC = this.itemMC.cMC.attachMovie("txdLoader", "leftEmblem", this.itemMC.getNextHighestDepth());
-			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.leftEmblemMC,txd,txn,w,h,this.txdloaded,this);
-		}
-		else
-		{
-			this.TextureID = txd;
-			if (txd == "statWheel")
-			{
-				this.itemMC.rankEmblemMC._visible = false;
-				this.itemMC.rankEmblemBG._visible = false;
-				this.itemMC.statWheelMC._visible = true;
-				com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.statWheelMC.bgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_BLACK);
-				com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.statWheelMC.bgFillMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
-				this.itemMC.statWheelMC.bgFillMC._alpha = 20;
-				this.wheelRadius = this.itemMC.statWheelMC.bgFillMC._width * 0.5;
-			}
-			else
-			{
-				this.itemMC.statWheelMC._visible = false;
-				this.itemMC.rankEmblemMC._visible = true;
-				this.itemMC.rankEmblemBG._visible = true;
-				com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.rankEmblemMC,116);
-			}
-		}
-		com.rockstargames.ui.utils.UIText.setSizedText(this.detail0,_det0,true,true);
-		com.rockstargames.ui.utils.UIText.setSizedText(this.detail1,_det1,true,true);
-		com.rockstargames.ui.utils.UIText.setSizedText(this.detail2,_det2,true,true);
 	}
 
 	function txdloaded()
 	{
-		this.itemMC.rankEmblemMC._visible = false;
-		this.itemMC.rankEmblemBG._visible = false;
+		this.rankEmblemMC._visible = false;
+		this.rankEmblemBG._visible = false;
 		this.leftEmblemMC._alpha = 0;
 		com.rockstargames.ui.tweenStar.TweenStarLite.to(this.leftEmblemMC,0.2,{_alpha:100});
 	}
 
-	function addStatToWheel(pctComplete, statColourEnum)
+	function clearStats()
 	{
-		pctComplete = Math.min(pctComplete, 100);
-		var stat = new com.rockstargames.ScaleformUI.windows.WheelStat(pctComplete, statColourEnum);
+		this.statsMaxDegrees = [];
+	}
+
+	function addStatToWheel(pctComplete,statColourEnum)
+	{
+		pctComplete = Math.min(pctComplete,100);
+		var stat = new com.rockstargames.ScaleformUI.windows.WheelStat(pctComplete,statColourEnum);
 		this.statsMaxDegrees.push(stat);
 		this.updateStatWheel();
 	}
@@ -154,11 +133,11 @@
 	function updateStatWheel()
 	{
 		this.currentAngle = 0;
-		this.itemMC.statWheelMC.wheelMC.clear();
-		this.itemMC.statWheelMC.wheelMC.removeMovieClip();
+		this.statWheelMC.wheelMC.clear();
+		this.statWheelMC.wheelMC.removeMovieClip();
 		this.totalStats = 0;
-		this.itemMC.statWheelMC.createEmptyMovieClip("wheelMC",this.itemMC.getNextHighestDepth(),{_x:0, _y:0});
-		this.itemMC.statWheelMC.wheelMC.setMask(this.itemMC.statWheelMC.maskMC);
+		this.statWheelMC.createEmptyMovieClip("wheelMC",this.getNextHighestDepth(),{_x:0,_y:0});
+		this.statWheelMC.wheelMC.setMask(this.statWheelMC.maskMC);
 		for (var i in this.statsMaxDegrees)
 		{
 			this.totalStats = this.totalStats + this.statsMaxDegrees[i].Percentage;
@@ -175,29 +154,29 @@
 		}
 	}
 
-	function updateStatistic(id, pctComplete, statColourEnum)
+	function updateStatistic(id,pctComplete,statColourEnum)
 	{
-		pctComplete = Math.min(pctComplete, 100);
-		this.statsMaxDegrees[id] = new com.rockstargames.ScaleformUI.windows.WheelStat(pctComplete, statColourEnum);
+		pctComplete = Math.min(pctComplete,100);
+		this.statsMaxDegrees[id] = new com.rockstargames.ScaleformUI.windows.WheelStat(pctComplete,statColourEnum);
 		this.updateStatWheel();
 	}
 
-	function drawArc(startAngle, endAngle, colourId)
+	function drawArc(startAngle,endAngle,colourId)
 	{
-		endAngle = Math.min(endAngle, 360);
-		var _loc5_ = this.itemMC.statWheelMC.wheelMC;
-		var _loc6_ = new com.rockstargames.ui.utils.HudColour();
+		endAngle = Math.min(endAngle,360);
+		var _loc5_ = this.statWheelMC.wheelMC;
+		var _loc6_ = new com.rockstargames.ui.utils.HudColour  ;
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(colourId,_loc6_);
 		_loc5_.moveTo(0,0);
-		_loc5_.beginFill(com.rockstargames.ui.utils.Colour.RGBToHex(_loc6_.r, _loc6_.g, _loc6_.b),100);
+		_loc5_.beginFill(com.rockstargames.ui.utils.Colour.RGBToHex(_loc6_.r,_loc6_.g,_loc6_.b),100);
 		var _loc2_ = startAngle;
 		var _loc4_ = 0.25;
-		while (_loc2_ <= endAngle)
+		while ((_loc2_ <= endAngle))
 		{
 			this.lineToPtOnWheel(_loc2_);
 			_loc2_ = _loc2_ + _loc4_;
 		}
-		if (_loc2_ < endAngle + _loc4_)
+		if ((_loc2_ < endAngle + _loc4_))
 		{
 			this.lineToPtOnWheel(endAngle);
 		}
@@ -206,19 +185,19 @@
 	}
 	function lineToPtOnWheel(angle)
 	{
-		this.itemMC.statWheelMC.wheelMC.lineTo(Math.sin(angle * this.PI_OVER_180) * this.wheelRadius,(-Math.cos(angle * this.PI_OVER_180)) * this.wheelRadius);
+		this.statWheelMC.wheelMC.lineTo(Math.sin((angle * this.PI_OVER_180)) * this.wheelRadius, -  Math.cos((angle * this.PI_OVER_180)) * this.wheelRadius);
 	}
 
 	function set Width(w)
 	{
-		this.itemMC._width = w;
+		this._width = w;
 	}
 
 
 	function Clear()
 	{
 		this.currentAngle = 0;
-		this.itemMC.statWheelMC.wheelMC.clear();
+		this.statWheelMC.wheelMC.clear();
 		this.totalStats = 0;
 		if (this.leftEmblemMC != undefined)
 		{
@@ -227,6 +206,6 @@
 				this.leftEmblemMC.removeTxdRef();
 			}
 		}
-		this.itemMC.removeMovieClip();
+		this.removeMovieClip();
 	}
 }

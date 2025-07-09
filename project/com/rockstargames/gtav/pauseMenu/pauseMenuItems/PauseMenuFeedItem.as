@@ -1,4 +1,4 @@
-class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem extends com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuBaseItem
+﻿class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem extends com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuBaseItem
 {
    static var IMAGE_X = 8;
    static var IMAGE_Y = 6;
@@ -12,16 +12,16 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem extends 
       this.feedImgContainer2 = this.createEmptyMovieClip("feedImgContainer2",this.getNextHighestDepth());
       this.feedImgContainer1 = this.createEmptyMovieClip("feedImgContainer1",this.getNextHighestDepth());
    }
-   function __set__data(_d)
+   function set data(_d)
    {
-      super.__set__data(_d);
+      super.data = _d;
       com.rockstargames.ui.utils.Colour.ApplyHudColour(this.labelMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
       com.rockstargames.ui.utils.Colour.ApplyHudColour(this.bodyMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
-      this.itemTextLeft.htmlText = this.parseForTitleFonts(this.__get__data()[0]);
-      var _loc8_ = !this.__get__data()[1]?"":this.__get__data()[1];
-      var _loc10_ = !this.__get__data()[2]?"":this.__get__data()[2];
-      var _loc4_ = !this.__get__data()[3]?"":this.__get__data()[3];
-      var _loc5_ = !this.__get__data()[4]?"":this.__get__data()[4];
+      this.itemTextLeft.htmlText = this.parseForTitleFonts(this.data[0]);
+      var _loc8_ = !this.data[1]?"":this.data[1];
+      var _loc10_ = !this.data[2]?"":this.data[2];
+      var _loc4_ = !this.data[3]?"":this.data[3];
+      var _loc5_ = !this.data[4]?"":this.data[4];
       this.indentLabel(_loc4_ != undefined && _loc5_ != undefined && _loc4_ != "" && _loc5_ != "");
       this.feedImgDefaultMC = this.loadFeedTexture(this.feedImgDefaultMC,this.feedImgContainer1,"feedImgDefault",_loc4_,_loc5_,com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_X,com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_Y,com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_LENGTH,com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_LENGTH,this.fadeDefaultImgIn);
       this.labelMC.subtitleTF.htmlText = this.parseForFonts(_loc8_);
@@ -33,7 +33,7 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem extends 
       switch(this.type)
       {
          case com.rockstargames.gtav.levelDesign.GAME_STREAM_ENUMS.AWARD:
-            var _loc6_ = this.__get__data()[5];
+            var _loc6_ = this.data[5];
             com.rockstargames.ui.utils.Colour.ApplyHudColour(this.feedImgDefaultMC,_loc6_);
             com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.labelMC.subtitleTF,_loc6_);
             break;
@@ -41,7 +41,7 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem extends 
             this.indentLabel(true);
             this.placeholderImgMC._visible = false;
             this.iconMC._visible = true;
-            this.iconMC.gotoAndStop(this.__get__data()[5] + 1);
+            this.iconMC.gotoAndStop(this.data[5] + 1);
             break;
          case com.rockstargames.gtav.levelDesign.GAME_STREAM_ENUMS.TOOLTIPS:
          case com.rockstargames.gtav.levelDesign.GAME_STREAM_ENUMS.TICKER:
@@ -62,17 +62,17 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem extends 
             {
                this.crewTagMC = this.attachMovie("CREW_TAG_MOVIECLIP","crewTagMC",this.getNextHighestDepth(),{_x:com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_X + com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_LENGTH + 14,_y:com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_Y + 6,_xscale:70,_yscale:70});
             }
-            this.crewTagMC.UNPACK_CREW_TAG(this.__get__data()[5]);
+            this.crewTagMC.UNPACK_CREW_TAG(this.data[5]);
             break;
          case com.rockstargames.gtav.levelDesign.GAME_STREAM_ENUMS.VERSUS:
-            this.feedImgSecondaryMC = this.loadFeedTexture(this.feedImgSecondaryMC,this.feedImgContainer2,"feedImgSecondary",this.__get__data()[5],this.__get__data()[6],this.labelMC._x + this.itemTextLeft.textWidth + 10,com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_Y,com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_LENGTH,com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_LENGTH,this.fadeSecondaryImgIn);
+            this.feedImgSecondaryMC = this.loadFeedTexture(this.feedImgSecondaryMC,this.feedImgContainer2,"feedImgSecondary",this.data[5],this.data[6],this.labelMC._x + this.itemTextLeft.textWidth + 10,com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_Y,com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_LENGTH,com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem.IMAGE_LENGTH,this.fadeSecondaryImgIn);
             break;
          case com.rockstargames.gtav.levelDesign.GAME_STREAM_ENUMS.STATS:
             this.placeholderImgMC._visible = true;
             this.bodyMC._visible = false;
-            var _loc7_ = !this.__get__data()[5]?0:this.__get__data()[5];
-            var _loc9_ = !this.__get__data()[6]?0:this.__get__data()[6];
-            var _loc3_ = !this.__get__data()[7]?com.rockstargames.ui.utils.HudColour.HUD_COLOUR_FREEMODE:this.__get__data()[7];
+            var _loc7_ = !this.data[5]?0:this.data[5];
+            var _loc9_ = !this.data[6]?0:this.data[6];
+            var _loc3_ = !this.data[7]?com.rockstargames.ui.utils.HudColour.HUD_COLOUR_FREEMODE:this.data[7];
             switch(_loc4_)
             {
                case "CHAR_MICHAEL":
@@ -96,7 +96,6 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem extends 
       this.itemTextLeft.multiline = true;
       this.itemTextLeft.wordWrap = true;
       this.labelMC.subtitleTF._y = this.labelMC.titleTF._y + this.labelMC.titleTF.textHeight;
-      return this.__get__data();
    }
    function indentLabel(bIndent)
    {
@@ -135,13 +134,13 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem extends 
       {
          if(loaderMC == undefined)
          {
-            loaderMC = (com.rockstargames.ui.media.ImageLoaderMC)containerMC.attachMovie("GenericImageLoader",name,containerMC.getNextHighestDepth(),{_x:x,_y:y});
+            loaderMC = containerMC.attachMovie("GenericImageLoader",name,containerMC.getNextHighestDepth(),{_x:x,_y:y});
          }
          if(loaderMC.textureDict == txd)
          {
             if(loaderMC.isLoaded)
             {
-               loaderMC.init("PAUSE_MENU_SP_CONTENT",txd,txn,w,h);
+               loaderMC.init("ScaleformUIPause",txd,txn,w,h);
                loaderMC.displayTxdResponse(txd);
                this.fadeImageIn(loaderMC);
             }
@@ -152,7 +151,7 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem extends 
             {
                loaderMC.removeTxdRef();
             }
-            loaderMC.init("PAUSE_MENU_SP_CONTENT",txd,txn,w,h);
+            loaderMC.init("ScaleformUIPause",txd,txn,w,h);
             if(txd.substr(0,5) == "CHAR_" || txn.substr(0,5) == "HC_N_")
             {
                var _loc5_ = loaderMC.splitPath(String(loaderMC),6);
@@ -175,8 +174,8 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem extends 
          _loc2_.progBarMC = new com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuColourBar(_loc2_.progBarMC);
          _loc2_.progBarMC.mc._height = _loc2_.barMaskMC._height = h;
       }
-      (com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuColourBar)_loc2_.progBarMC.init(eHudColour);
-      (com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuColourBar)_loc2_.progBarMC.percent(iProgress);
+      _loc2_.progBarMC.init(eHudColour);
+      _loc2_.progBarMC.percent(iProgress);
       _loc2_.nameTF.text = sName;
    }
    function getHeight()
@@ -215,9 +214,8 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuFeedItem extends 
    {
       this.placeholderImgMC._visible = false;
    }
-   function __set__highlighted(_h)
+   function set highlighted(_h)
    {
       this._highlighted = _h;
-      return this.__get__highlighted();
    }
 }

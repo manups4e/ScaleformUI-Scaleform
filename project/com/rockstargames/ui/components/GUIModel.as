@@ -20,7 +20,7 @@
 	function getCurrentSelection(forceTarget)
 	{
 		var __reg2 = this.getCurrentView(forceTarget);
-		return __reg2.__get__index();
+		return __reg2.index;
 	}
 
 	function set scrollBar(s)
@@ -41,7 +41,7 @@
 			__reg2 = new com.rockstargames.ui.components.GUIView();
 		}
 		__reg2.viewIndex = _viewIndex;
-		__reg2.__set__params(_params);
+		__reg2.params = _params;
 		this.viewList[_viewIndex] = __reg2;
 	}
 
@@ -55,7 +55,7 @@
 	{
 		this.addDataToView(_viewIndex,_itemIndex,_dataArray);
 		var __reg2 = this.getCurrentView(_viewIndex);
-		var __reg3 = _itemIndex - __reg2.__get__index() + __reg2.highlightedItem;
+		var __reg3 = _itemIndex - __reg2.index + __reg2.highlightedItem;
 		__reg2.itemList[__reg3].data = _dataArray;
 	}
 
@@ -65,13 +65,18 @@
 		var __reg2 = this.getCurrentView(_viewIndex);
 		__reg2.addDisplayItemOnce(_itemIndex,_dataArray);
 	}
+	function removeDataSlot(_viewIndex, _slotIndex)
+	{
+		var _loc2_ = this.viewList[_viewIndex];
+		_loc2_.removeDataSlot(_slotIndex);
+	}
 
 	function removeDataFromSlot(_viewIndex, _slotIndex)
 	{
 		var __reg2 = this.viewList[_viewIndex];
 		__reg2.destroy();
 		this.viewIndex = 0;
-		this.getCurrentView(_viewIndex).__set__index(0);
+		this.getCurrentView(_viewIndex).index = 0;
 	}
 
 	function displayView(_viewIndex, _itemIndex)
@@ -89,7 +94,7 @@
 			while (__reg2 < this.viewList.length)
 			{
 				var __reg3 = this.viewList[__reg2];
-				__reg3.__set__highlighted(__reg2 == _viewIndex);
+				__reg3.highlighted = (__reg2 == _viewIndex);
 				++__reg2;
 			}
 		}
@@ -129,8 +134,8 @@
 	function nextItem()
 	{
 		var __reg2 = this.getCurrentView();
-		var __reg3 = __reg2.__get__index() + 1;
-		if (__reg3 > __reg2.__get__maxitems() - 1)
+		var __reg3 = __reg2.index + 1;
+		if (__reg3 > __reg2.maxitems - 1)
 		{
 			__reg3 = 0;
 		}
@@ -140,25 +145,25 @@
 	function prevItem()
 	{
 		var __reg2 = this.getCurrentView();
-		var __reg3 = __reg2.__get__index() - 1;
+		var __reg3 = __reg2.index - 1;
 		if (__reg3 < 0)
 		{
-			__reg3 = __reg2.__get__maxitems() - 1;
+			__reg3 = __reg2.maxitems - 1;
 		}
 		this.setItem(__reg2,__reg3);
 	}
 
 	function setItem(_currentView, _itemIndex)
 	{
-		_currentView.__set__index(_itemIndex);
-		if (this.__get__scrollBar() != undefined)
+		_currentView.index = _itemIndex;
+		if (this.scrollBar != undefined)
 		{
-			if (_itemIndex < _currentView.__get__maxitems() - _currentView.visibleItems + 1)
+			if (_itemIndex < _currentView.maxitems - _currentView.visibleItems + 1)
 			{
-				this.__get__scrollBar().__set__scrollpercent(100 * (_itemIndex / _currentView.__get__maxitems()));
+				this.scrollBar.scrollpercent = (100 * (_itemIndex / _currentView.maxitems));
 				return;
 			}
-			this.__get__scrollBar().__set__scrollpercent(100 * ((_currentView.__get__maxitems() - _currentView.visibleItems) / _currentView.__get__maxitems()));
+			this.scrollBar.scrollpercent = (100 * ((_currentView.maxitems - _currentView.visibleItems) / _currentView.maxitems));
 		}
 	}
 

@@ -12,6 +12,7 @@
 	var itemHeight = 25;
 	var menuPrefOffset = 1000;
 	var _columnID = -1;
+	var labelMC;
 	function PauseMenuBaseItem()
 	{
 		super();
@@ -161,7 +162,7 @@
 	}
 	function mPress()
 	{
-		if (!this.__get__highlighted())
+		if (!this.highlighted)
 		{
 			_level0.TIMELINE.M_PRESS_EVENT(this.index,this.columnID,false);
 		}

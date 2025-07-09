@@ -13,23 +13,32 @@
 	var labelMC;
 	var _value;
 	var txd_loader;
-	var type;
+	var gridType;
 	var _coords;
 	var hovered = false;
+	var mouse;
+	var _grid;
+	var MOUSE_EVT;
 
-	function UIMenuGridPanel(parentItem, upTx, rxTx, lxTx, downTx, valX, valY, animate, _hori)
+	function UIMenuGridPanel()
 	{
-		super(parentItem);
+		super();
+		this._grid = this.gridMC.attachMovie("txdLoader", "gridPanel", this.gridMC.getNextHighestDepth());
+		this.MOUSE_EVT = new com.rockstargames.ui.mouse.MOUSE_EVENTS();
+		this.MOUSE_EVT.INTERFACE_TYPE = 10;
+		this.MOUSE_EVT.UI_MOVIE = 4;
+		this.padding = this.dotMC._x - this.gridMC._x;
+		this.mx = this.gridMC._width - this.padding * 2;
+	}
+
+	function set data(d)
+	{
+		super.data = d;
 		this._value = new Array();
-		this.type = _hori;
-		this.itemMC = parentItem._parentMenu._mainMC.attachMovie("UIMenuGridPanel", "gridPanel_" + parentItem.itemMC._name + "_" + (parentItem.panels.length + 1), parentItem._parentMenu._mainMC.getNextHighestDepth());
-		this.backgroundMC = this.itemMC.bgMC;
-		this.dotMC = this.itemMC.dotMC;
-		this.gridMC = this.itemMC.gridMC;
-		var _grid;
-		if (animate != undefined)
+		this.gridType = this.data[10];
+		if (this.data[9] != undefined)
 		{
-			if (animate)
+			if (this.data[9])
 			{
 				if (this.dotMC._currentframe != 2)
 				{
@@ -41,62 +50,56 @@
 				this.dotMC.gotoAndStop(1);
 			}
 		}
-		if (this.type == 1)
+		if (this.gridType == 1)
 		{
-			this.gridMC.gotoAndStop(_hori + 1);
-			this.backgroundMC.gotoAndStop(_hori + 1);
-			this.itemMC.labelMC.gotoAndStop(_hori + 1);
+			this.gridMC.gotoAndStop(this.gridType + 1);
+			this.bgMC.gotoAndStop(this.gridType + 1);
+			this.labelMC.gotoAndStop(this.gridType + 1);
 		}
 		else
 		{
-			_grid = this.gridMC.attachMovie("txdLoader", "gridPanel", this.gridMC.getNextHighestDepth());
-			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(_grid,"pause_menu_pages_char_mom_dad","nose_grid");
+			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this._grid,"pause_menu_pages_char_mom_dad","nose_grid");
 		}
-		//this.gridMC.onRollOver = com.rockstargames.ui.utils.DelegateStar.create(this, this.mOverGP, this.gridMC);
-		//this.gridMC.onRollOut = com.rockstargames.ui.utils.DelegateStar.create(this, this.mOutGP, this.gridMC);
+		//upTx, rxTx, lxTx, downTx, valX, valY, animate, _hori
+		this.my = this.gridMC._height - this.padding * 2;
 
 		this.itemTextRight = this.labelMC.valueTF;
 		this.isAdjustable = true;
-		this.padding = this.dotMC._x - this.gridMC._x;
-		this.mx = this.gridMC._width - this.padding * 2;
-		this.my = this.gridMC._height - this.padding * 2;
-		com.rockstargames.ui.utils.UIText.setSizedText(this.itemMC.labelMC.upTF,upTx,true);
-		com.rockstargames.ui.utils.UIText.setSizedText(this.itemMC.labelMC.rightTF,rxTx,true);
-		com.rockstargames.ui.utils.UIText.setSizedText(this.itemMC.labelMC.downTF,downTx,true);
-		com.rockstargames.ui.utils.UIText.setSizedText(this.itemMC.labelMC.leftTF,lxTx,true);
-		if (valX != undefined && valY != undefined)
+		com.rockstargames.ui.utils.UIText.setSizedText(this.labelMC.upTF,this.data[3],true);
+		com.rockstargames.ui.utils.UIText.setSizedText(this.labelMC.rightTF,this.data[4],true);
+		com.rockstargames.ui.utils.UIText.setSizedText(this.labelMC.downTF,this.data[6],true);
+		com.rockstargames.ui.utils.UIText.setSizedText(this.labelMC.leftTF,this.data[5],true);
+		if (this.data[7] != undefined && this.data[8] != undefined)
 		{
-			this._value = new Array(valX, valY);
+			this.Value = new Array(this.data[7], this.data[8]);
 		}
 		else
 		{
-			this._value = new Array(0, 0);
+			this.Value = new Array(0, 0);
 		}
-		this.Value = this._value;
-		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.backgroundMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
-		this.gridMC.attachMovie("mouseCatcher","mouseCatcher",this.gridMC.getNextHighestDepth(),{_width:this.gridMC._width, _height:this.gridMC._height});
-		this.gridMC.mouseCatcher.setupGenericMouseInterface(0,12,this.onMouseEvent,[this]);
+		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.bgMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
+		this.gridMC.onRollOver = com.rockstargames.ui.utils.DelegateStar.create(this, this.onMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OVER);
+		this.gridMC.onRollOut = com.rockstargames.ui.utils.DelegateStar.create(this, this.onMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OUT);
+		this.gridMC.onDragOver = com.rockstargames.ui.utils.DelegateStar.create(this, this.onMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_DRAG_OVER);
+		this.gridMC.onDragOut = com.rockstargames.ui.utils.DelegateStar.create(this, this.onMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_DRAG_OUT);
+		this.gridMC.onPress = com.rockstargames.ui.utils.DelegateStar.create(this, this.onMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_PRESS);
+		this.gridMC.onRelease = com.rockstargames.ui.utils.DelegateStar.create(this, this.onMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_RELEASE);
+		this.gridMC.onReleaseOutside = com.rockstargames.ui.utils.DelegateStar.create(this, this.onMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_RELEASE_OUTSIDE);
 	}
 
-	function onMouseEvent(evtType, targetMC, args)
+	function onMouseEvent(id)
 	{
-		var panel = args[0];
-		switch (evtType)
+		switch (id)
 		{
 			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OUT :
-				panel.mOutGP();
+				this.mOutGP();
 				break;
 			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OVER :
-				panel.mOverGP();
-				break;
-			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_PRESS :
-				break;
-			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_RELEASE :
-				break;
-			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_RELEASE_OUTSIDE :
+				this.mOverGP();
 				break;
 		}
-
+		var _loc4_ = [id, this._name, 12, 0];
+		this.MOUSE_EVT.triggerEvent(_loc4_);
 	}
 
 	function mPressGP(mc)
@@ -146,7 +149,7 @@
 			this._value[1] = 0;
 		}
 		this.dotMC._x = this.gridMC._x + this.padding + (this.mx * this._value[0]);
-		if (this.type == 0)
+		if (this.data[10] == 0)
 		{
 			this.dotMC._y = this.gridMC._y + this.padding + (this.my * this._value[1]);
 		}
@@ -162,13 +165,14 @@
 
 	function SetCoords()
 	{
-		var coords = [(_xmouse - this.parentItem._parentMenu._menuOff[0]), _ymouse];
-		if (this.type == 0)
-		{
-			this.my = this.gridMC._height - this.padding * 2;
-			var offset = ((this.itemMC._y + this.my) - this.padding * 2) - (this.gridMC._height / 2) - this.padding;
-			coords[1] -= offset;
-		}
+		var coords = [_xmouse, _ymouse];
+//		if (this.data[10] == 0)
+//		{
+//			this.my = this.gridMC._height - this.padding * 2;
+//			var offset = ((this._y + this.my) - this.padding * 2) - (this.gridMC._height / 2) - this.padding;
+//			Debug.Debug.Log(offset);
+//			coords[1] -= offset;
+//		}
 		var valX = (coords[0] - this.gridMC._x - this.padding) / this.mx;
 		var valY = (coords[1] - this.gridMC._y - this.padding) / this.my;
 		this.Value = new Array(valX, valY);
@@ -192,7 +196,7 @@
 				this.gridMC.gridPanel.removeTxdRef();
 			}
 		}
-		this.itemMC.removeMovieClip();
+		this.removeMovieClip();
 	}
 
 }

@@ -13,7 +13,7 @@
 	function INITIALISE(mc)
 	{
 		super.INITIALISE(mc);
-		this.PauseMenuHeader = new com.rockstargames.PauseMenu.header.Header(this.CONTENT);
+		this.PauseMenuHeader = new com.rockstargames.ScaleformUIPause.header.Header(this.CONTENT);
 		this.CONTENT._alpha = 0;
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME = "PauseMenuHeader";
 	}
@@ -164,6 +164,6 @@
 			item.removeMovieClip();
 		}
 		this.PauseMenuHeader.menubar.headerContainerMC.removeMovieClip();
-		this.PauseMenuHeader = new com.rockstargames.PauseMenu.header.Header(this.CONTENT);
+		this.PauseMenuHeader = new com.rockstargames.ScaleformUIPause.header.Header(this.CONTENT);
 	}
 }

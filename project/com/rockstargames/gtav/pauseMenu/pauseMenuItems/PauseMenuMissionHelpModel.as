@@ -1,4 +1,4 @@
-class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuMissionHelpModel extends com.rockstargames.ui.components.GUIModel
+﻿class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuMissionHelpModel extends com.rockstargames.ui.components.GUIModel
 {
    function PauseMenuMissionHelpModel()
    {
@@ -12,7 +12,7 @@ class com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuMissionHelpModel 
          _loc2_ = new com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuMissionHelpView();
       }
       _loc2_.viewIndex = _viewIndex;
-      _loc2_.__set__params(_params);
+      _loc2_.params = _params;
       this.viewList[_viewIndex] = _loc2_;
    }
    function removeDataFromSlot(_viewIndex, _slotIndex)

@@ -23,7 +23,7 @@
 	{
 		if (this.dbgOn)
 		{
-			com.rockstargames.ui.utils.Debug.log("*** SCALEFORM | " + this.dbgID + " : " + dbgStr);
+			Debug.Debug.Log("*** SCALEFORM | " + this.dbgID + " : " + dbgStr);
 		}
 	}
 
@@ -33,7 +33,7 @@
 
 	function set columnID(_cID)
 	{
-		com.rockstargames.ui.utils.Debug.log("SET INDUVIDUAL COLUMNID to: " + _cID);
+		Debug.Debug.Log("SET INDUVIDUAL COLUMNID to: " + _cID);
 		this._columnID = _cID;
 		this.setScrollColumnID();
 	}
@@ -124,7 +124,7 @@
 	function SET_FOCUS(isFocused)
 	{
 		this.columnIsFocused = isFocused;
-		com.rockstargames.ui.utils.Debug.log("COLUMN SET FOCUS columnID: " + this.columnID + " = SET isFocused to: " + isFocused);
+		Debug.Debug.Log("COLUMN SET FOCUS columnID: " + this.columnID + " = SET isFocused to: " + isFocused);
 		this.SEND_COLUMN_PARAMS();
 		var __reg4 = this.model.getCurrentView().itemList;
 		var __reg2 = 0;
@@ -144,13 +144,13 @@
 	function SEND_COLUMN_PARAMS()
 	{
 		var __reg4 = this.model.getCurrentView().itemList;
-		com.rockstargames.ui.utils.Debug.log(" ====== SEND_COLUMN_PARAMS: items: " + __reg4.length);
+		Debug.Debug.Log(" ====== SEND_COLUMN_PARAMS: items: " + __reg4.length);
 		var __reg2 = 0;
 		while (__reg2 < __reg4.length)
 		{
 			var __reg3 = __reg4[__reg2];
 			__reg3.columnID = this.columnID;
-			com.rockstargames.ui.utils.Debug.log(__reg2 + "  " + __reg3 + " = SET COLUMNID to: " + __reg3.columnID);
+			Debug.Debug.Log(__reg2 + "  " + __reg3 + " = SET COLUMNID to: " + __reg3.columnID);
 			++__reg2;
 		}
 		this.setScrollColumnID();

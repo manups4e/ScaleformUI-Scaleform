@@ -1,0 +1,96 @@
+﻿class com.rockstargames.gtav.constants.BlipColors
+{
+	static var BLIP_COLOUR_DEFAULT = 0;
+	static var BLIP_COLOUR_RED = 1;
+	static var BLIP_COLOUR_GREEN = 2;
+	static var BLIP_COLOUR_BLUE = 3;
+	static var BLIP_COLOUR_WHITE = 4;
+	static var BLIP_COLOUR_YELLOW = 5;
+	static var BLIP_COLOUR_NET_PLAYER1 = 6;
+	static var BLIP_COLOUR_NET_PLAYER2 = 7;
+	static var BLIP_COLOUR_NET_PLAYER3 = 8;
+	static var BLIP_COLOUR_NET_PLAYER4 = 9;
+	static var BLIP_COLOUR_NET_PLAYER5 = 10;
+	static var BLIP_COLOUR_NET_PLAYER6 = 11;
+	static var BLIP_COLOUR_NET_PLAYER7 = 12;
+	static var BLIP_COLOUR_NET_PLAYER8 = 13;
+	static var BLIP_COLOUR_NET_PLAYER9 = 14;
+	static var BLIP_COLOUR_NET_PLAYER10 = 15;
+	static var BLIP_COLOUR_NET_PLAYER11 = 16;
+	static var BLIP_COLOUR_NET_PLAYER12 = 17;
+	static var BLIP_COLOUR_NET_PLAYER13 = 18;
+	static var BLIP_COLOUR_NET_PLAYER14 = 19;
+	static var BLIP_COLOUR_NET_PLAYER15 = 20;
+	static var BLIP_COLOUR_NET_PLAYER16 = 21;
+	static var BLIP_COLOUR_NET_PLAYER17 = 22;
+	static var BLIP_COLOUR_NET_PLAYER18 = 23;
+	static var BLIP_COLOUR_NET_PLAYER19 = 24;
+	static var BLIP_COLOUR_NET_PLAYER20 = 25;
+	static var BLIP_COLOUR_NET_PLAYER21 = 26;
+	static var BLIP_COLOUR_NET_PLAYER22 = 27;
+	static var BLIP_COLOUR_NET_PLAYER23 = 28;
+	static var BLIP_COLOUR_NET_PLAYER24 = 29;
+	static var BLIP_COLOUR_NET_PLAYER25 = 30;
+	static var BLIP_COLOUR_NET_PLAYER26 = 31;
+	static var BLIP_COLOUR_NET_PLAYER27 = 32;
+	static var BLIP_COLOUR_NET_PLAYER28 = 33;
+	static var BLIP_COLOUR_NET_PLAYER29 = 34;
+	static var BLIP_COLOUR_NET_PLAYER30 = 35;
+	static var BLIP_COLOUR_NET_PLAYER31 = 36;
+	static var BLIP_COLOUR_NET_PLAYER32 = 37;
+	static var BLIP_COLOUR_FREEMODE = 38;
+	static var BLIP_COLOUR_INACTIVE_MISSION = 39;
+	static var BLIP_COLOUR_STEALTH_GREY = 40;
+	static var BLIP_COLOUR_WANTED = 41;
+
+	static var BLIP_COLOUR_MICHAEL = 42;
+	static var BLIP_COLOUR_FRANKLIN = 43;
+	static var BLIP_COLOUR_TREVOR = 44;
+
+	static var BLIP_COLOUR_GOLF_P1 = 45;
+	static var BLIP_COLOUR_GOLF_P2 = 46;
+	static var BLIP_COLOUR_GOLF_P3 = 47;
+	static var BLIP_COLOUR_GOLF_P4 = 48;
+
+	static var BLIP_COLOUR_FRIENDLY = 49;
+	static var BLIP_COLOUR_PURPLE = 50;
+	static var BLIP_COLOUR_ORANGE = 51;
+	static var BLIP_COLOUR_GREENDARK = 52;
+	static var BLIP_COLOUR_BLUELIGHT = 53;
+	static var BLIP_COLOUR_BLUEDARK = 54;
+	static var BLIP_COLOUR_GREY = 55;
+	static var BLIP_COLOUR_YELLOWDARK = 56;
+	static var BLIP_COLOUR_HUDCOLOUR_BLUE = 57;
+	static var BLIP_COLOUR_PURPLEDARK = 58;
+	static var BLIP_COLOUR_HUDCOLOUR_RED = 59;
+	static var BLIP_COLOUR_HUDCOLOUR_YELLOW = 60;
+	static var BLIP_COLOUR_PINK = 61;
+	static var BLIP_COLOUR_HUDCOLOUR_GREYLIGHT = 62;
+
+	static var BLIP_COLOUR_GANG1 = 63;
+	static var BLIP_COLOUR_GANG2 = 64;
+	static var BLIP_COLOUR_GANG3 = 65;
+
+	// the ones below here are not set by the scripters:
+	static var BLIP_COLOUR_COORD = 66;
+	static var BLIP_COLOUR_CONTACT = 67;
+	static var BLIP_COLOUR_OBJECT = 68;
+	static var BLIP_COLOUR_MISSION_OBJECT = 69;
+	static var BLIP_COLOUR_CHECKPOINT = 70;
+	static var BLIP_COLOUR_DESTINATION = 71;
+	static var BLIP_COLOUR_GANGS = 72;
+	static var BLIP_COLOUR_MISSION_MARKER = 73;
+	static var BLIP_COLOUR_MISSION_ARROW = 74;
+	static var BLIP_COLOUR_POLICE = 75;
+	static var BLIP_COLOUR_POLICE_INACTIVE = 76;
+	static var BLIP_COLOUR_POLICE2 = 77;
+	static var BLIP_COLOUR_POLICE2_INACTIVE = 78;
+	static var BLIP_COLOUR_POLICE_RADAR_RED = 79;
+	static var BLIP_COLOUR_POLICE_RADAR_BLUE = 80;
+	static var BLIP_COLOUR_FRONTEND_YELLOW = 81;
+	static var BLIP_COLOUR_SIMPLEBLIP_DEFAULT = 82;
+	static var BLIP_COLOUR_WAYPOINT = 83;
+
+	static var BLIP_COLOUR_USE_COLOUR32 = 84;
+	static var BLIP_COLOUR_MAX = 85;
+}

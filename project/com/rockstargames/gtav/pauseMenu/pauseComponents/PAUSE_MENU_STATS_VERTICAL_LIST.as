@@ -1,4 +1,4 @@
-class com.rockstargames.gtav.pauseMenu.pauseComponents.PAUSE_MENU_STATS_VERTICAL_LIST extends com.rockstargames.gtav.pauseMenu.pauseComponents.PauseMenuComponentBase
+﻿class com.rockstargames.gtav.pauseMenu.pauseComponents.PAUSE_MENU_STATS_VERTICAL_LIST extends com.rockstargames.gtav.pauseMenu.pauseComponents.PauseMenuComponentBase
 {
    function PAUSE_MENU_STATS_VERTICAL_LIST()
    {
@@ -20,8 +20,8 @@ class com.rockstargames.gtav.pauseMenu.pauseComponents.PAUSE_MENU_STATS_VERTICAL
    }
    function SET_HIGHLIGHT(i)
    {
-      var _loc2_ = (com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuVerticalView)this.model.getCurrentView();
-      _loc2_.__set__index(i);
+      var _loc2_ = this.model.getCurrentView();
+      _loc2_.index = i;
    }
    function SET_INPUT_EVENT(direction)
    {

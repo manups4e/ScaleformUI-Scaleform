@@ -1,4 +1,4 @@
-class com.rockstargames.gtav.pauseMenu.pauseComponents.PAUSE_MP_MENU_FRIENDS_LIST extends com.rockstargames.gtav.pauseMenu.pauseComponents.PauseMenuComponentBase
+﻿class com.rockstargames.gtav.pauseMenu.pauseComponents.PAUSE_MP_MENU_FRIENDS_LIST extends com.rockstargames.gtav.pauseMenu.pauseComponents.PauseMenuComponentBase
 {
    static var ICON_START_INDEX = 9;
    function PAUSE_MP_MENU_FRIENDS_LIST()
@@ -82,6 +82,6 @@ class com.rockstargames.gtav.pauseMenu.pauseComponents.PAUSE_MP_MENU_FRIENDS_LIS
    }
    function ON_DESTROY()
    {
-      (com.rockstargames.gtav.pauseMenu.pauseMenuItems.multiplayer.PauseMPMenuFriendsListView)this.model.getCurrentView().animateKickOut();
+      this.model.getCurrentView().animateKickOut();
    }
 }

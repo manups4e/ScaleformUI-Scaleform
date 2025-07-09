@@ -1,7 +1,6 @@
 class com.rockstargames.gtav.constants.SatNavIconsLUT
 {
-   var HASHTABLE = new Object();
-   var PREFIX = "sn";
+   static var _instance;
    static var BLANK = new Array(0,"BLANK");
    static var FORWARD = new Array(1,"FORWARD");
    static var BACK = new Array(2,"BACK");
@@ -14,6 +13,8 @@ class com.rockstargames.gtav.constants.SatNavIconsLUT
    static var MERGE_LEFT = new Array(9,"MERGE_LEFT");
    static var MERGE_RIGHT = new Array(10,"MERGE_RIGHT");
    static var U_TURN = new Array(11,"U_TURN");
+   var HASHTABLE = new Object();
+   var PREFIX = "sn";
    function SatNavIconsLUT()
    {
       this.HASHTABLE = new Object();

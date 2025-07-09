@@ -1,15 +1,21 @@
 ﻿class com.rockstargames.ScaleformUI.panels.UIMenuColorPickerPanel extends com.rockstargames.ScaleformUI.panels.BasePanel
 {
-	var itemMC;
 	var colorsArray = [];
 	var hovered = -1;
 	var colorIncludedArray = [];
+	var BannerSprite;
+	var imgPlaceholderMC;
+	var honeyComb;
 
-	function UIMenuColorPickerPanel(parentItem, type)
+	function UIMenuColorPickerPanel()
 	{
-		super(parentItem);
+		super();
+	}
+
+	function set data(d)
+	{
 		this.colorsArray = com.rockstargames.ScaleformUI.utils.ColorPanelColors.VEHICLE_COLORS;
-		switch (type)
+		switch (this.data[3])
 		{
 			case 2 :// CHROMES AND METALS
 				this.colorIncludedArray = com.rockstargames.ScaleformUI.utils.ColorPanelColors.VEHICLE_METALLIC;
@@ -22,22 +28,24 @@
 				break;
 		}
 		//this.colorsArray.sort(compareColors);
-		this.itemMC = parentItem._parentMenu._mainMC.attachMovie("ColourPicker", "colourPicker_" + parentItem._parentMenu._mainMC.getNextHighestDepth(), parentItem._parentMenu._mainMC.getNextHighestDepth());
-		this.itemMC.gotoAndStop(1);
-		this.itemMC.BannerSprite.removeMovieClip();
-		this.itemMC.imgPlaceholderMC._y = this.itemMC.honeyComb._y = 0;
+		this.gotoAndStop(1);
+		this.BannerSprite.removeMovieClip();
+		this.imgPlaceholderMC._y = this.honeyComb._y = 0;
 
-		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.itemMC.imgPlaceholderMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
-		this.itemMC.honeyComb.maskMC._alpha = 0;
+		com.rockstargames.ui.utils.Colour.ApplyHudColour(this.imgPlaceholderMC,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_PAUSE_BG);
+		this.honeyComb.maskMC._alpha = 0;
 		for (var i = 0; i < this.colorsArray.length; i++)
 		{
 			var col = this.colorsArray[i];
-			var cell = this.itemMC.honeyComb["colour_" + i];
+			var cell = this.honeyComb["colour_" + i];
 
 			if (this.isIncluded(col.i))
 			{
 				com.rockstargames.ui.utils.Colour.Colourise(cell,col.r,col.g,col.b,100);
-				cell.attachMovie("mouseCatcher","mouseCatcher",cell.getNextHighestDepth(),{_x:-35, _y:-40, _width:cell._width, _height:cell._height});
+				if (cell.mouseCatcher == undefined)
+				{
+					cell.attachMovie("mouseCatcher","mouseCatcher",cell.getNextHighestDepth(),{_x:-35, _y:-40, _width:cell._width, _height:cell._height});
+				}
 				cell.mouseCatcher.setupGenericMouseInterface(col.i,14,this.onMouseEvent,[cell, col.i, this]);
 			}
 			else
@@ -78,7 +86,7 @@
 			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OVER :
 				if (panel.hovered != -1)
 				{
-					panel.mOutCP(panel.itemMC.honeyComb["colour_" + panel.hovered],panel.hovered);
+					panel.mOutCP(panel.honeyComb["colour_" + panel.hovered],panel.hovered);
 				}
 				panel.mOverCP(cell,id);
 				break;
@@ -89,7 +97,7 @@
 
 	function mOverCP(cell, id)
 	{
-		cell.swapDepths(this.itemMC.honeyComb.maskMC);
+		cell.swapDepths(this.honeyComb.maskMC);
 		cell._width += 30;
 		cell._height += 30;
 		this.hovered = id;
@@ -97,7 +105,7 @@
 
 	function mOutCP(cell, id)
 	{
-		cell.swapDepths(this.itemMC.honeyComb.maskMC);
+		cell.swapDepths(this.honeyComb.maskMC);
 		cell._width -= 30;
 		cell._height -= 30;
 		this.hovered = -1;
@@ -127,7 +135,7 @@
 	{
 		if (this.hovered != -1)
 		{
-			this.mOutCP(this.itemMC.honeyComb["colour_" + this.hovered],this.hovered);
+			this.mOutCP(this.honeyComb["colour_" + this.hovered],this.hovered);
 		}
 		this.hovered = _v;
 		this.hovered = _v;
@@ -135,7 +143,7 @@
 		{
 			return;
 		}
-		this.mOverCP(this.itemMC.honeyComb["colour_" + this.hovered],this.hovered);
+		this.mOverCP(this.honeyComb["colour_" + this.hovered],this.hovered);
 	}
 	function get Value()
 	{
@@ -144,6 +152,6 @@
 
 	function Clear()
 	{
-		this.itemMC.removeMovieClip();
+		this.removeMovieClip();
 	}
 }

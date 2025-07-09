@@ -1,952 +1,961 @@
-﻿class com.rockstargames.gtav.levelDesign.PAUSEMENU extends com.rockstargames.gtav.levelDesign.BaseScriptUI
+﻿class com.rockstargames.gtav.levelDesign.PAUSEMENU extends com.rockstargames.gtav.pauseMenu.pauseMenuItems.PauseMenuContentBase
 {
-	var PauseMenu;
-	static var MouseEnabled = true;
+	var CONTENT;
+	var clickRepeat;
+	var currentPage;
+	var mListener;
+	var ref;
+	var lastHoveredItem;
+	var context;
+	var errorImgMC;
+	var contextMenu;
+	var bFullMenuWarningScreen;
+	var errorMsg;
+	var blipLayer;
+	var content;
+	var columnWidth = 288;
+	var canHeaderAdvance = true;
+	var isLoggedSC = false;
+	var mOn = true;
+	var mClickOn = true;
+	var mRollOverOn = true;
+	var mScrollType = 0;
+	var debugCol = false;
+	var debugColIndex = 0;
+	var isAsianLang = false;
+	var secondClickCancel = true;
+	var canHighlightAll = true;
+	var footerScrollOverride = 99;
+	var sendClickEventOnly = false;
+	var MOUSE_EVT;
+	var mouseEventTriggered;
+	var menuData;
 	function PAUSEMENU()
 	{
 		super();
+		this.dbgID = "PAUSEMENU";
 		_global.gfxExtensions = true;
 	}
-
 	function INITIALISE(mc)
 	{
+		com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME = "ScaleformUIPause";
 		super.INITIALISE(mc);
-		//this.getDisplayConfig(true);
-		this.PauseMenu = new com.rockstargames.PauseMenu.TabView(this.CONTENT);
-		this.CONTENT._alpha = 0;
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME = "PauseMenu";
+		this.dbgOn = Boolean(1);
+		this.debug = Boolean(1);
+		var _loc3_ = this.CONTENT.createEmptyMovieClip("clickRepeatMC", this.CONTENT.getNextHighestDepth());
+		this.clickRepeat = new com.rockstargames.gtav.pauseMenu.pauseComponents.ClickRepeat(_loc3_);
+		this.INIT_M_AUX();
 	}
-
-	function ADD_TAB(type)
+	function SET_MENU_LEVEL(_menuLevel)
 	{
-		this.PauseMenu.AddTab(type);
+		this.menuLevel = _menuLevel;
 	}
-
-	function SET_FOCUS(foc)
+	function dbg(dbgStr)
 	{
-		this.PauseMenu.Focus = foc;
-	}
-
-	function UPDATE_BASE_TAB_BACKGROUND(txd, txn)
-	{
-		var curTab = this.PauseMenu.Tab;
-		if (curTab instanceof com.rockstargames.PauseMenu.tabs.SimpleTab)
+		if (this.dbgOn)
 		{
-			curTab.updateBackground(txd,txn);
-		}
-	}
-
-	function SET_BASE_TAB_RIGHT_PICTURE(txd, txn)
-	{
-		var curTab = this.PauseMenu.Tab;
-		if ((curTab instanceof com.rockstargames.PauseMenu.tabs.SimpleTab))
-		{
-			curTab.AddPicture(txd,txn);
-		}
-	}
-
-	function UPDATE_LEFT_ITEM_RIGHT_BACKGROUND(item, txd, txn, resType)
-	{
-		var curTab = this.PauseMenu.Tab;
-		if ((curTab instanceof com.rockstargames.PauseMenu.tabs.InfoTab))
-		{
-			var leftItem = curTab.LeftItemList[item];
-			if (leftItem.itemType == 1 || leftItem.itemType == 2 || leftItem.itemType == 3)
+			var _loc2_ = "  " + dbgStr;
+			Debug.Debug.Log(_loc2_);
+			if (this.localdebug)
 			{
-				leftItem.updateBackground(txd,txn,resType);
+				trace(_loc2_);
 			}
 		}
 	}
 
-	function SELECT_LEFT_ITEM_INDEX(item)
+	function set debug(d)
 	{
-		this.PauseMenu.currentTab.currentSelection = item;
+		this.debugCol = d;
+	}
+	function get debug()
+	{
+		return this.debugCol;
 	}
 
-	function SELECT_RIGHT_ITEM_INDEX(item)
+	function LOCK_MOUSE_SUPPORT(_mClickOn, _mRollOverOn)
 	{
-		if (this.PauseMenu.currentTab.currentItem.itemType == 3)
+		if (_mClickOn != undefined)
 		{
-			if (this.PauseMenu.Focus == 2)
+			this.mClickOn = _mClickOn;
+		}
+		if (_mRollOverOn != undefined)
+		{
+			this.mRollOverOn = _mRollOverOn;
+		}
+	}
+
+	// debug mouse to be tested
+	function INIT_M_AUX()
+	{
+		if (this.mOn)
+		{
+			this.MOUSE_EVT = new com.rockstargames.ui.mouse.MOUSE_EVENTS();
+			this.MOUSE_EVT.INTERFACE_TYPE = 10;
+			this.MOUSE_EVT.UI_MOVIE = 4;
+			if (this.mListener)
 			{
-				this.PauseMenu.currentTab.currentItem.currentSelection = item;
+				Mouse.removeListener(this.mListener);
+				this.mListener = null;
+			}
+			this.mListener = new Object();
+			this.mListener.ref = this;
+			this.mListener.onMouseWheel = function(delta, target)
+			{
+				this.ref.DELTA_MOUSE_WHEEL(delta);
+			};
+			this.mListener.onMouseUp = function()
+			{
+				this.ref.clickRepeat.repeatStop();
+			};
+			Mouse.addListener(this.mListener);
+		}
+	}
+	function DELTA_MOUSE_WHEEL(delta)
+	{
+		var _loc5_ = this.menuLevel - 1;
+		var _loc2_ = this.GET_COLUMN(_loc5_);
+		if (!_loc2_)
+		{
+			return undefined;
+		}
+		var _loc4_ = _loc2_.columnIsFocused;
+		if (_loc4_ && _loc2_.canWheelScroll)
+		{
+			switch (this.mScrollType)
+			{
+				case 0 :
+					this.MENU_INTERACTION(delta <= 0 ? com.rockstargames.ui.game.GamePadConstants.DPADDOWN : com.rockstargames.ui.game.GamePadConstants.DPADUP,false);
+					com.rockstargames.ui.game.GameInterface.call("PLAY_SOUND",com.rockstargames.ui.game.GameInterface.GENERIC_TYPE,"NAV_UP_DOWN","HUD_FRONTEND_DEFAULT_SOUNDSET");
+					break;
+				case 1 :
+					var _loc3_ = this.GET_COLUMN(this.mScrollType);
+					_loc3_.SET_INPUT_EVENT.apply(_loc3_,[delta <= 0 ? 9 : 8]);
+			}
+		}
+		var col = this.GET_COLUMN(this.menuLevel - 1);
+		var _loc4_ = [delta <= 0 ? 11 : 10, "FREAKING MOUSE EVENT", this.mScrollType, col.model.getCurrentView().index];
+		this.MOUSE_EVT.triggerEvent(_loc4_);
+		if (this.inContext)
+		{
+			this.MENU_INTERACTION(delta <= 0 ? com.rockstargames.ui.game.GamePadConstants.DPADDOWN : com.rockstargames.ui.game.GamePadConstants.DPADUP,false);
+			com.rockstargames.ui.game.GameInterface.call("PLAY_SOUND",com.rockstargames.ui.game.GameInterface.GENERIC_TYPE,"NAV_UP_DOWN","HUD_FRONTEND_DEFAULT_SOUNDSET");
+		}
+	}
+	function MOUSE_COLUMN_SHIFT(_mScrollType)
+	{
+		this.mScrollType = _mScrollType;
+	}
+
+	function RESET_MOUSE_EVENT()
+	{
+		this.menuData = [];
+	}
+
+	function GET_MOUSE_EVENT()
+	{
+		if (this.menuData.length > 0)
+		{
+			return String(this.menuData);
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	function PRESS_SHIFT_DEPTH(dir)
+	{
+		Debug.Debug.Log("PRESS_SHIFT_DEPTH " + dir + " : mClickOn: " + this.mClickOn);
+		if (!this.mOn)
+		{
+			return undefined;
+		}
+		if (!this.mClickOn)
+		{
+			return undefined;
+		}
+		if (dir == 1)
+		{
+			if (this.inTopMenu)
+			{
+				this.MENU_SHIFT_DEPTH(1,false,false);
+			}
+		}
+	}
+	function M_OVER_EVENT(index, colID, pmb)
+	{
+		if (this.lastHoveredItem != undefined && this.lastHoveredItem.onMouseMove != undefined)
+		{
+			delete this.lastHoveredItem.onMouseMove;
+		}
+		this.lastHoveredItem = pmb;
+		this.lastHoveredItem.onMouseMove = com.rockstargames.ui.utils.DelegateStar.create(this.lastHoveredItem, this.lastHoveredItem.mOver);
+		this.FILTER_M_EVENT(index,colID,0,false,pmb);
+		var _loc4_ = [9, "FREAKING MOUSE EVENT", colID, this.GET_COLUMN(colID).model.getCurrentView().itemList[index].index];
+		this.MOUSE_EVT.triggerEvent(_loc4_);
+	}
+	function M_OUT_EVENT(index, colID)
+	{
+		if (this.lastHoveredItem != undefined && this.lastHoveredItem.onMouseMove != undefined)
+		{
+			delete this.lastHoveredItem.onMouseMove;
+		}
+		this.FILTER_M_EVENT(index,colID,-1,false);
+		var _loc4_ = [8, "FREAKING MOUSE EVENT", colID, this.GET_COLUMN(colID).model.getCurrentView().itemList[index].index];
+		this.MOUSE_EVT.triggerEvent(_loc4_);
+	}
+	function M_PRESS_EVENT(index, colID, advance, bIgnoreStateChange)
+	{
+		this.FILTER_M_EVENT(index,colID,1,advance,undefined,bIgnoreStateChange);
+	}
+	function FILTER_M_EVENT(index, colID, action, advance, pmb, bIgnoreStateChange)
+	{
+		if (!this.mOn)
+		{
+			return undefined;
+		}
+		if (!this.inTopMenu)
+		{
+			var _loc7_ = this.menuLevel - 1;
+			var _loc5_ = this.GET_COLUMN(_loc7_);
+			if (this.canHighlightAll)
+			{
+				_loc5_ = this.GET_COLUMN(colID);
+			}
+			if (this.inContext)
+			{
+				_loc5_ = this.context;
+			}
+			if (!_loc5_)
+			{
+				return undefined;
+			}
+			var _loc9_ = _loc5_.columnIsFocused;
+			var _loc10_ = _loc5_.canMouseNav;
+			this.dbg("---->FILTER_M_EVENT <---- action: " + action);
+			this.dbg("Column ID: " + colID + " == Menu Level: " + _loc7_);
+			this.dbg(" ");
+			if (this.secondClickCancel)
+			{
+				if (_loc10_ && action == 1)
+				{
+					var _loc6_ = colID - _loc7_;
+					this.dbg("diff : " + _loc6_);
+					this.dbg("************************ MENU STATE " + this.menuState);
+					this.dbg("sendClickEventOnly " + this.sendClickEventOnly);
+					if (_loc6_ == -1)
+					{
+						if (!this.sendClickEventOnly)
+						{
+							this.restartInteractState();
+							this.MENU_SHIFT_DEPTH(-1,false,false);
+							this.restartInteractState();
+							this.MENU_INTERACTION(com.rockstargames.ui.game.GamePadConstants.DPADUP,true,index);
+						}
+						this.CLICK_PAUSE_MENU_ITEM(index,colID);
+						com.rockstargames.ui.game.GameInterface.call("PLAY_SOUND",com.rockstargames.ui.game.GameInterface.GENERIC_TYPE,"BACK","HUD_FRONTEND_DEFAULT_SOUNDSET");
+						return undefined;
+					}
+					if (_loc6_ == 1)
+					{
+						if (!this.sendClickEventOnly)
+						{
+							this.restartInteractState();
+							this.MENU_SHIFT_DEPTH(1,false,false);
+							this.restartInteractState();
+							this.MENU_INTERACTION(com.rockstargames.ui.game.GamePadConstants.DPADUP,true,index);
+						}
+						this.CLICK_PAUSE_MENU_ITEM(index,colID);
+						return undefined;
+					}
+					if (_loc6_ != 0 && Math.abs(_loc6_) > 1)
+					{
+						this.dbg("column to column click over a greater span");
+						this.CLICK_PAUSE_MENU_ITEM(index,colID);
+						return undefined;
+					}
+					this.dbg("colID " + colID);
+					if (this.inContext && colID != 99)
+					{
+						this.dbg("Close submenu");
+						this.inContext = false;
+						this.restartInteractState();
+						this.MENU_INTERACTION(com.rockstargames.ui.game.GamePadConstants.DPADUP,true,index);
+						return undefined;
+					}
+				}
+			}
+			var _loc8_ = _loc9_ && colID == _loc7_ && !this.inContext || this.inContext && colID == 99;
+			if (this.canHighlightAll)
+			{
+				_loc8_ = !this.inContext || this.inContext && colID == 99;
+			}
+			this.dbg("menuLevel? : " + this.menuLevel);
+			this.dbg("colID? : " + colID);
+			this.dbg("colFocused? : " + _loc9_);
+			this.dbg("progress? : " + _loc8_);
+			if (_loc8_)
+			{
+				switch (action)
+				{
+					case -1 :
+						if (!this.mRollOverOn)
+						{
+							return undefined;
+						}
+						this.MENU_ROLLOVER_HIGHLIGHT(_loc5_,false,index);
+						break;
+					case 0 :
+						if (!this.mRollOverOn)
+						{
+							return undefined;
+						}
+						if (pmb != null && pmb != undefined)
+						{
+							this.MENU_ROLLOVER_HIGHLIGHT(_loc5_,false,index);
+							pmb.mouseOver(true);
+						}
+						break;
+					case 1 :
+						this.dbg("Menu Action is 1 so i'm going to check these");
+						this.dbg("this.mClickOn: " + this.mClickOn);
+						this.dbg("this.isTopMenu: " + this.isTopMenu);
+						this.dbg("advance: " + advance);
+						if (!this.mClickOn)
+						{
+							return undefined;
+						}
+						this.CLICK_PAUSE_MENU_ITEM(index,colID);
+						break;
+				}
 			}
 		}
 	}
 
-	function ADD_LEFT_ITEM(type, str, enabled, param1, param2, param3, param4)
+	function CLICK_PAUSE_MENU_ITEM(index, colID)
 	{
-		this.PauseMenu.AddLeftItem(type,str,enabled,param1,param2,param3,param4);
-	}
-
-	function ADD_RIGHT_TITLE(leftIndex, param1, param2, param3)
-	{
-		this.PauseMenu.AddRightTitle(leftIndex,param1,param2,param3);
-	}
-
-	function ADD_RIGHT_LIST_ITEM(leftIndex, type, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)
-	{
-		this.PauseMenu.AddRightItem(leftIndex,type,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10);
-	}
-
-	function SET_RIGHT_SETTINGS_ITEM_VALUE(leftIndex, itemIndex, value)
-	{
-		this.PauseMenu.Tab.LeftItemList[leftIndex].ItemList[itemIndex].Value = value;
-	}
-
-	function UPDATE_COLORED_BAR_COLOR(leftIndex, itemIndex, hudColor)
-	{
-		this.PauseMenu.Tab.LeftItemList[leftIndex].ItemList[itemIndex].bar.updateColor(hudColor);
-	}
-
-	function UPDATE_RIGHT_ITEM_RIGHT_LABEL(leftIndex, itemIndex, label)
-	{
-		com.rockstargames.ui.utils.UIText.setSizedText(this.PauseMenu.Tab.LeftItemList[leftIndex].ItemList[itemIndex].itemTextRight,label);
-	}
-
-	function UPDATE_RIGHT_STATS_ITEM(leftIndex, itemIndex, label, rightLabel, hudColor)
-	{
-		this.PauseMenu.Tab.LeftItemList[leftIndex].ItemList[itemIndex].updateItem(label,rightLabel,hudColor);
-	}
-
-	function UPDATE_KEYMAP_ITEM(leftIndex, itemIndex, value1, value2)
-	{
-		this.PauseMenu.Tab.LeftItemList[leftIndex].ItemList[itemIndex].UpdateValues(value1,value2);
-	}
-
-	function UPDATE_LEFT_ITEM_LABELS(item, lbl, rtxt)
-	{
-		com.rockstargames.ui.utils.UIText.setSizedText(this.PauseMenu.Tab.LeftItemList[item].leftTextTF,lbl,true,true);
-		if (this.PauseMenu.Tab.LeftItemList[item]._type == 0)
+		com.rockstargames.ui.utils.Debug.log("---->CLICK_PAUSE_MENU_ITEM <----");
+		var _loc4_ = this.GET_COLUMN(colID);
+		var _loc3_ = _loc4_.model.getCurrentView().itemList[index];
+		com.rockstargames.ui.utils.Debug.log(" CLICK_PAUSE_MENU_ITEM ------------------------- args: " + arguments);
+		com.rockstargames.ui.utils.Debug.log(" pmb -------------------------  " + _loc3_);
+		if (_loc3_)
 		{
-			this.PauseMenu.Tab.LeftItemList[item].SetRightText(rtxt);
+			if (_loc3_.menuID != undefined && _loc3_.uniqueID != undefined)
+			{
+				com.rockstargames.ui.utils.Debug.log(" ------------------------- pmb.menuID: " + _loc3_.menuID);
+				com.rockstargames.ui.utils.Debug.log(" ------------------------- pmb.uniqueID: " + _loc3_.uniqueID);
+				com.rockstargames.ui.game.GameInterface.call("CLICK_PAUSE_MENU_ITEM",com.rockstargames.ui.game.GameInterface.PAUSE_TYPE,index,_loc3_.menuID,_loc3_.uniqueID);
+				var _loc4_ = [5, "FREAKING MOUSE EVENT", colID, _loc3_.index];
+				this.MOUSE_EVT.triggerEvent(_loc4_);
+			}
 		}
-		this.PauseMenu.Tab.LeftItemList[item].refreshLabelFonts();
-		this.PauseMenu.Tab.LeftItemList[item].updateLabelWidth();
+	}
+	function CLICK_SCROLL_COLUMN_ARROW(scrollDirEnum, colID)
+	{
+		com.rockstargames.ui.utils.Debug.log(" ");
+		com.rockstargames.ui.utils.Debug.log(" CLICK_SCROLL_COLUMN_ARROW ------------------------- args: " + arguments);
+		var _loc3_ = this.menuLevel - 1;
+		com.rockstargames.ui.utils.Debug.log(" colLevel " + _loc3_ + " = colID: " + colID);
+		if (_loc3_ == colID || colID == this.footerScrollOverride)
+		{
+			com.rockstargames.ui.game.GameInterface.call("HANDLE_SCROLL_CLICK",com.rockstargames.ui.game.GameInterface.PAUSE_TYPE,scrollDirEnum,colID);
+		}
+		var _loc4_ = [5, "FREAKING MOUSE EVENT", 1000 + colID, scrollDirEnum];
+		this.MOUSE_EVT.triggerEvent(_loc4_);
+		this.menuData = [5, colID + 1000, scrollDirEnum];
+	}
+	function CLEAR_ALL_HOVER()
+	{
+		var _loc4_ = this.currentPage.columnList.length;
+		if (_loc4_ != undefined && _loc4_ > 0)
+		{
+			var _loc2_ = 0;
+			while (_loc2_ < _loc4_)
+			{
+				var _loc3_ = this.GET_COLUMN(_loc2_);
+				this.MENU_ROLLOVER_HIGHLIGHT(_loc3_,false,-1);
+				_loc2_ = _loc2_ + 1;
+			}
+		}
+		com.rockstargames.ui.game.GameInterface.call("HOVER_PAUSE_MENU_ITEM",com.rockstargames.ui.game.GameInterface.PAUSE_TYPE,-1,-1,-1);
 	}
 
-	function SET_LEFT_ITEM_LABEL_FONT(item, fName, fId)
+	/////////////////////////////////////////////////////////////////////////////////
+
+	function GET_HOVERED_COLUMN()
 	{
-		this.PauseMenu.Tab.LeftItemList[item].leftItem.updateLabelFont(fName,fId);
-	}
-	function SET_LEFT_ITEM_RIGHT_LABEL_FONT(item, fName, fId)
-	{
-		this.PauseMenu.Tab.LeftItemList[item].updateRightLabelFont(fName,fId);
+		return this.mScrollType;
 	}
 
-	function UPDATE_LEFT_ITEM_LABEL(item, _label)
+	function CALL_CUSTOM_COLUMN_FUNCTION()
 	{
-		this.PauseMenu.Tab.LeftItemList[item].Label = _label;
+		var _loc5_ = arguments[0];
+		var _loc4_ = arguments[1];
+		var _loc3_ = this.GET_COLUMN(_loc5_);
+		this.dbg("CALL_CUSTOM_COLUMN_FUNCTION columnMC: " + _loc3_ + " | function: " + _loc4_ + " | args: " + arguments.slice(2));
+		if (_loc3_ != undefined)
+		{
+			_loc3_[_loc4_].apply(_loc3_,arguments.slice(2));
+		}
 	}
 
-	function UPDATE_LEFT_ITEM_LABEL_RIGHT(item, _label)
+
+	function SET_COLUMN_INPUT_EVENT()
 	{
-		this.PauseMenu.Tab.LeftItemList[item].SetRightText(_label);
+		var _loc5_ = arguments[0];
+		var _loc4_ = arguments[1];
+		var _loc3_ = this.GET_COLUMN(_loc5_);
+		this.dbg("SET_COLUMN_INPUT_EVENT columnMC: " + _loc3_ + " | inputID: " + _loc4_);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_INPUT_EVENT.apply(_loc3_,arguments.slice(1));
+		}
+	}
+	function GET_COLUMN_SELECTION()
+	{
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("GET_COLUMN_SELECTION columnMC: " + _loc3_ + " | selection: " + _loc3_.model.getCurrentSelection());
+		if (_loc3_ != undefined)
+		{
+			return _loc3_.model.getCurrentSelection();
+		}
+	}
+	function SET_COLUMN_TITLE()
+	{
+		var _loc4_ = arguments[0];
+		var _loc5_ = arguments[1];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("SET_COLUMN_TITLE columnMC: " + _loc3_ + " | columnTitle params: " + arguments);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_TITLE.apply(_loc3_,arguments.slice(1));
+		}
+	}
+	function SET_DESCRIPTION()
+	{
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("SET_DESCRIPTION columnIndex: " + _loc4_ + " | description params: " + arguments);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_DESCRIPTION.apply(_loc3_,arguments.slice(1));
+		}
 	}
 
-	function SET_LEFT_ITEM_LEFT_BADGE(item, badge)
+	function SET_COLUMN_FOCUS()
 	{
-		this.PauseMenu.Tab.LeftItemList[item].SetLeftBadge(badge);
+		var _loc10_ = arguments[0];
+		var _loc4_ = true;
+		var _loc12_ = false;
+		var _loc8_ = true;
+		if (arguments[1] != undefined)
+		{
+			_loc4_ = arguments[1];
+		}
+		if (arguments[2] != undefined)
+		{
+			_loc12_ = arguments[2];
+		}
+		if (arguments[3] != undefined)
+		{
+			_loc8_ = arguments[3];
+		}
+		this.dbg("columnIndex " + _loc10_);
+		this.dbg("highlighted " + _loc4_);
+		this.dbg("moveFocus " + _loc12_);
+		this.dbg("prevHightlight " + _loc8_);
+		var _loc5_ = this.GET_COLUMN(_loc10_);
+		if (_loc5_ != undefined)
+		{
+			_loc5_.SET_FOCUS.apply(_loc5_,[_loc4_]);
+			if (_loc12_)
+			{
+				var _loc9_ = this.menuState;
+				var _loc14_ = this.menuLevel;
+				var _loc15_ = _loc10_ + 1;
+				if (!_loc8_)
+				{
+					this.MENU_SET_FOCUS(false);
+				}
+				this.menuLevel = _loc15_;
+				this.MENU_SET_FOCUS(_loc4_);
+				var _loc6_ = -1;
+				_loc5_ = this.GET_COLUMN(this.menuLevel - 1);
+				this.MENU_CHANGE_STATE(_loc5_);
+				if (_loc5_ != undefined)
+				{
+					var _loc3_ = this.getSelectedMenuItem(_loc5_);
+					_loc6_ = _loc3_.uniqueID;
+				}
+				this.dbg("----------------------------------- ");
+				this.dbg("oldMenuState " + _loc9_);
+				this.dbg("oldMenuLevel " + _loc14_);
+				this.dbg("targetLevel " + _loc15_);
+				this.dbg("uniqueID " + _loc6_);
+				this.dbg("----------------------------------- ");
+				if (_loc6_ != undefined)
+				{
+					this.menuUniqueID = _loc6_;
+					var _loc7_ = this.menuLevel - _loc14_;
+					this.dbg("DIRECTION AFTER SET COLUMN FOCUS " + _loc7_);
+					if (_loc7_ > 0)
+					{
+						var _loc11_ = this.getSelectedMenuItem(this.GET_COLUMN(this.menuLevel));
+						var _loc13_ = -1;
+						if (_loc11_.menuID != undefined || _loc11_.menuID != null)
+						{
+							_loc13_ = _loc11_.menuID;
+						}
+						_loc3_ = this.getSelectedMenuItem(_loc5_);
+						if (_loc3_ != undefined)
+						{
+							com.rockstargames.ui.game.GameInterface.call("TRIGGER_PAUSE_MENU_EVENT",com.rockstargames.ui.game.GameInterface.PAUSE_TYPE,_loc3_.menuID,_loc3_.uniqueID,_loc13_);
+							this.dbg("TRIGGER_PAUSE_MENU_EVENT | currMenuItem.menuID: " + _loc3_.menuID + " | currMenuItem.uniqueID: " + _loc3_.uniqueID + " nextMenuID: " + _loc13_);
+						}
+					}
+					else
+					{
+						com.rockstargames.ui.game.GameInterface.call("LAYOUT_CHANGED",com.rockstargames.ui.game.GameInterface.PAUSE_TYPE,_loc9_,this.menuState,this.menuUniqueID,_loc7_);
+						this.dbg("---->LAYOUT_CHANGED oldMenuState: " + _loc9_ + " | menuState: " + this.menuState + " | menuUniqueID: " + this.menuUniqueID + " | dir: " + _loc7_);
+					}
+					com.rockstargames.ui.game.GameInterface.call("IS_NAVIGATING_CONTENT",com.rockstargames.ui.game.GameInterface.PAUSE_TYPE,true);
+				}
+				this.menuLevelOld = this.menuLevel;
+			}
+		}
 	}
 
-	function SET_LEFT_ITEM_CUSTOM_LEFT_BADGE(item, txd, txn)
+	function SET_COLUMN_STATE()
 	{
-		this.PauseMenu.Tab.LeftItemList[item].SetCustomLeftBadge(txd,txn);
+		this.dbg("SET_COLUMN_STATE -----> " + arguments);
+		var _loc3_ = this.GET_COLUMN(arguments[0]);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_STATE.apply(_loc3_,arguments.slice(1));
+		}
 	}
 
-	function UPDATE_LEFT_ITEM_TITLE(item, txt, param1, param2)
+	function SET_COLUMN_HIGHLIGHT()
 	{
-		this.PauseMenu.AddRightTitle(item,txt,param1,param2);
+		var _loc7_ = arguments[0];
+		var _loc6_ = arguments[1];
+		var _loc9_ = false;
+		var _loc4_ = false;
+		if (arguments[3] != undefined)
+		{
+			_loc4_ = arguments[3];
+		}
+		var _loc5_ = false;
+		if (arguments[4] != undefined)
+		{
+			_loc5_ = arguments[4];
+		}
+		var _loc3_ = this.GET_COLUMN(_loc7_);
+		this.dbg("SET_COLUMN_HIGHLIGHT -----> " + arguments);
+		this.dbg("SET_COLUMN_HIGHLIGHT columnIndex: " + _loc7_);
+		this.dbg("SET_COLUMN_HIGHLIGHT highlightIndex: " + _loc6_);
+		this.dbg("SET_COLUMN_HIGHLIGHT scriptSetUnqID " + _loc4_);
+		this.dbg("SET_COLUMN_HIGHLIGHT scriptSetMenuState " + _loc5_);
+		this.dbg("SET_COLUMN_HIGHLIGHT -----> columnMC: " + _loc3_);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_HIGHLIGHT.apply(_loc3_,[_loc6_]);
+			_loc3_.SEND_COLUMN_PARAMS();
+			var _loc8_ = this.getSelectedMenuItem(_loc3_);
+			if (_loc4_ == true)
+			{
+				this.menuUniqueID = _loc8_.uniqueID;
+				this.dbg("*****************");
+				this.dbg("menuUniqueID set to " + this.menuUniqueID);
+				this.dbg("*****************");
+			}
+			if (_loc5_ == true)
+			{
+				this.menuState = _loc8_.menuID;
+				this.dbg("*****************");
+				this.dbg("menuState set to " + this.menuUniqueID);
+				this.dbg("*****************");
+			}
+		}
+	}
+	function REBUILD_COLUMN()
+	{
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("INIT_COLUMN_SCROLL ____> arguments: " + arguments);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.REFRESH.apply(_loc3_,arguments.slice(1));
+		}
+	}
+	function SET_COLUMN_MAX_ITEMS()
+	{
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("SET_COLUMN_MAX_ITEMS ____> arguments: " + arguments);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_MAX_ITEMS.apply(_loc3_,arguments.slice(1));
+		}
+	}
+	function INIT_COLUMN_SCROLL()
+	{
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("INIT_COLUMN_SCROLL ____> arguments: " + arguments);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.INIT_SCROLL_BAR.apply(_loc3_,arguments.slice(1));
+		}
+	}
+	function SET_COLUMN_SCROLL()
+	{
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("SET_COLUMN_SCROLL ____> arguments: " + arguments);
+		this.dbg("SET_COLUMN_SCROLL ____> columnMC: " + _loc3_);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_SCROLL_BAR.apply(_loc3_,arguments.slice(1));
+		}
+	}
+	function SET_COLUMN_CAN_JUMP()
+	{
+		var _loc5_ = arguments[0];
+		var _loc4_ = arguments[1];
+		var _loc3_ = this.GET_COLUMN(_loc5_);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_COLUMN_CAN_JUMP.apply(_loc3_,[_loc4_]);
+		}
+	}
+	function ALLOW_CLICK_FROM_COLUMN()
+	{
+		var _loc5_ = arguments[0];
+		var _loc3_ = arguments[1];
+		this.dbg("---->ALLOW_CLICK_FROM_COLUMN <---- " + arguments);
+		if (_loc3_ != undefined)
+		{
+			if (_loc3_)
+			{
+				this.sendClickEventOnly = true;
+			}
+			else
+			{
+				this.sendClickEventOnly = false;
+			}
+		}
+		var _loc4_ = this.GET_COLUMN(_loc5_);
+		if (_loc4_ != undefined)
+		{
+			_loc4_.canMouseNav = _loc3_;
+		}
+	}
+	function SET_CONTROL_LABELS()
+	{
+		var _loc3_ = this.GET_COLUMN(1);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_CONTROL_LABELS.apply(_loc3_,arguments);
+		}
+	}
+	function SET_CONTROL_IMAGE()
+	{
+		var _loc3_ = this.GET_COLUMN(1);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_CONTROL_IMAGE.apply(_loc3_,arguments);
+		}
+	}
+	function SET_VIDEO_MEMORY_BAR()
+	{
+		var _loc3_ = this.GET_COLUMN(1);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_VIDEO_MEMORY_BAR.apply(_loc3_,arguments);
+		}
+	}
+	function SET_VIDEO_MEMORY_BAR_2()
+	{
+		var _loc3_ = this.GET_COLUMN(1);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_VIDEO_MEMORY_BAR_2.apply(_loc3_,arguments);
+		}
+	}
+	function SET_TIP_TEXT()
+	{
+		var _loc3_ = this.GET_COLUMN(1);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_TIP_TEXT.apply(_loc3_,arguments);
+		}
+	}
+	function SET_DISPLAY_MICS()
+	{
+		var _loc3_ = this.GET_COLUMN(1);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.DISPLAY_MIC.apply(_loc3_,arguments);
+		}
+	}
+	function SET_PLAYERLIST_ICON()
+	{
+		var _loc3_ = this.GET_COLUMN(1);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_ICON.apply(_loc3_,arguments);
+		}
+	}
+	function SET_DATA_SLOT()
+	{
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("SET_DATA_SLOT - " + arguments);
+		this.dbg("SET_DATA_SLOT ____> columnMC: " + _loc3_);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_DATA_SLOT.apply(_loc3_,arguments.slice(1));
+		}
+	}
+	function SET_DATA_SLOT_SPLICE()
+	{
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("SET_DATA_SLOT_SPLICE - " + arguments);
+		this.dbg("SET_DATA_SLOT_SPLICE ____> columnMC: " + _loc3_);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_DATA_SLOT_SPLICE.apply(_loc3_,arguments.slice(1));
+		}
 	}
 
-	function SET_LEFT_ITEM_RIGHT_BADGE(item, badge)
+	function UPDATE_SLOT()
 	{
-		this.PauseMenu.Tab.LeftItemList[item].SetRightBadge(badge);
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("UPDATE_SLOT - " + arguments);
+		this.dbg("UPDATE_SLOT ____> columnMC: " + _loc3_);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.UPDATE_SLOT.apply(_loc3_,arguments.slice(1));
+		}
+	}
+	function ADD_SLOT()
+	{
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("ADD_SLOT - " + arguments);
+		this.dbg("ADD_SLOT ____> columnMC: " + _loc3_);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.ADD_SLOT.apply(_loc3_,arguments.slice(1));
+		}
+	}
+	function REMOVE_SLOT()
+	{
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("REMOVE_SLOT - " + arguments);
+		this.dbg("REMOVE_SLOT ____> columnMC: " + _loc3_);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.REMOVE_SLOT.apply(_loc3_,arguments.slice(1));
+		}
+	}
+	
+	function DISPLAY_DATA_SLOT()
+	{
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("DISPLAY_DATA_SLOT : " + arguments);
+		this.dbg("DISPLAY_DATA_SLOT ____> columnMC: " + _loc3_);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.DISPLAY_VIEW.apply(_loc3_,[0]);
+		}
+		if (!this.isReadyToRender)
+		{
+			com.rockstargames.ui.game.GameInterface.call("PAUSE_MENU_READY_TO_RENDER",com.rockstargames.ui.game.GameInterface.PAUSE_TYPE);
+			this.isReadyToRender = true;
+		}
+	}
+	function SET_DATA_SLOT_EMPTY()
+	{
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("SET_DATA_SLOT_EMPTY " + arguments);
+		this.dbg("SET_DATA_SLOT_EMPTY _____> columnMC: " + _loc3_);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SET_DATA_SLOT_EMPTY.apply(_loc3_,[0]);
+		}
 	}
 
-	function ENABLE_LEFT_ITEM(item, disable)
+	function MENU_STATE(id)
 	{
-		this.PauseMenu.Tab.LeftItemList[item].Enabled = disable;
+		var _loc3_ = this.menuState;
+		this.dbg("--- DYNAMIC EXTERNAL LOAD FROM **NOT XML** --- menuLevel: " + this.menuLevel);
+		this.storedMenuState = id;
+		var _loc4_ = true;
+		if (this.menuLevel == 0)
+		{
+			this.menuState = this.menuList[this.menuIndex];
+			this.MENU_STATE_LOAD(_loc3_);
+			_loc4_ = false;
+		}
+		if (_loc4_)
+		{
+			this.currentPage.stateChanged(this.storedMenuState);
+			this.MENU_STATE_LOAD(_loc3_);
+		}
 	}
 
-	function ENABLE_RIGHT_ITEM(litem, ritem, disable)
+	function SHOW_COLUMN()
 	{
-		this.PauseMenu.Tab.LeftItemList[litem].ItemList[ritem].Enabled = disable;
+		var _loc4_ = arguments[0];
+		var _loc3_ = this.GET_COLUMN(_loc4_);
+		this.dbg("SHOW_COLUMN " + arguments);
+		this.dbg("SHOW_COLUMN _____> columnMC: " + _loc3_);
+		if (_loc3_ != undefined)
+		{
+			_loc3_.SHOW_COLUMN.apply(_loc3_,arguments.slice(1));
+		}
+	}
+	function SHOW_AND_CLEAR_COLUMNS()
+	{
+		var _loc6_ = arguments.length;
+		if (_loc6_ % 2 != 0)
+		{
+			this.dbg("AN IMPROPER NUMBER OF ARGUMENTS WAS PASSED INTO SHOW_AND_CLEAR_COLUMNS");
+			return undefined;
+		}
+		var _loc3_ = 0;
+		while (_loc3_ < _loc6_)
+		{
+			var _loc4_ = arguments[_loc3_];
+			var _loc5_ = arguments[_loc3_ + 1];
+			this.SET_DATA_SLOT_EMPTY(_loc4_);
+			this.SHOW_COLUMN(_loc4_,_loc5_);
+			_loc3_ += 2;
+		}
+	}
+	function LOAD_CHILD_PAGE(gfxFilePath, _menustate, inceptDir)
+	{
+		this.dbg("LOAD_CHILD_PAGE: " + arguments);
+		this.KILL_PAGE();
+		this.menuLevel = 0;
+		if (inceptDir > 0)
+		{
+			this.menuceptionDepth += inceptDir;
+		}
+		this.storedMenuState = _menustate;
+		this.LOAD_PAGE(gfxFilePath);
 	}
 
-	function SET_INPUT_EVENT(direction)
+	function LOAD_PAGE(gfxFilePath)
 	{
-		//if (this.PauseMenu.Tab instanceof com.rockstargames.PauseMenu.tabs.VehicleSelectionTab)
-		//{
-		//return this.PauseMenu.Tab.SET_INPUT_EVENT(direction);
-		//}
-		switch (direction)
+		this.dbg("--------------LOAD_PAGE--------> " + gfxFilePath);
+		var thisObj = this;
+		this.pageLoaderObject = new Object();
+		// Create container movie clip
+		this.pageLoaderObject._path = gfxFilePath;
+		this.pageLoaderObject._mc = this.content.createEmptyMovieClip("pageContainerMC", this.content.getNextHighestDepth());
+		// Initialize listener
+		this.pageLoaderObject._listener = new Object();
+		this.pageLoaderObject._listener.thisObj = thisObj;
+		this.pageLoaderObject._listener.onLoadError = function(errorCode)
+		{
+			Debug.Debug.Error("Error attaching movie clip: " + errorCode);
+		};
+		// Attach movie clip from library
+		var success = this.pageLoaderObject._mc.attachMovie(gfxFilePath, "TIMELINE", this.pageLoaderObject._mc.getNextHighestDepth(), this.pageLoaderObject._listener);
+		if (!success)
+		{
+			Debug.Debug.Error("Failed to attach movie clip: " + gfxFilePath);
+		}
+		else
+		{
+			success.INITIALISE(this.pageLoaderObject._mc.TIMELINE);
+			this.LOADED_PAGE();
+		}
+	}
+	function KILL_PAGE()
+	{
+		this.dbg("KILL_PAGE " + this.currentPage);
+		this.dbg("pageLoaderObject._mc " + this.pageLoaderObject._mc);
+		this.SHOW_WARNING_MESSAGE(false);
+		if (this.errorImgMC.isLoaded)
+		{
+			this.errorImgMC.removeTxdRef();
+		}
+		this.SHOW_CONTEXT_MENU(false);
+		if (this.pageLoaderObject._mc != undefined)
+		{
+			this.currentPage.onPageExit();
+			this.pageLoaderObject._mc.removeMovieClip();
+		}
+		this.pageLoaderObject = null;
+		this.currentPage = null;
+	}
+	function LOADED_PAGE()
+	{
+		super.LOADED_PAGE();
+		this.PAGE_FADE_IN();
+	}
+	function PAGE_FADE_IN()
+	{
+		this.errorMsg._alpha = this.content._alpha = this.context._alpha = 0;
+		com.rockstargames.ui.tweenStar.TweenStarLite.to(this.errorMsg,0.3,{_alpha:100, ease:com.rockstargames.ui.tweenStar.Ease.CUBIC_IN});
+		com.rockstargames.ui.tweenStar.TweenStarLite.to(this.content,0.3,{_alpha:100, ease:com.rockstargames.ui.tweenStar.Ease.CUBIC_IN});
+		com.rockstargames.ui.tweenStar.TweenStarLite.to(this.context,0.3,{_alpha:100, ease:com.rockstargames.ui.tweenStar.Ease.CUBIC_IN});
+	}
+
+	function MENU_STATE_LOAD(oldMenuState)
+	{
+		this.dbg("------->MENU_STATE_LOAD with, menuState: " + this.menuState + " oldMenuState: " + oldMenuState);
+		var _loc3_ = 1;
+		this.dbg("******** CALL -- LAYOUT_CHANGED with oldMenuState: " + oldMenuState + " menuState: " + this.menuState + " menuUniqueID: " + this.menuUniqueID + " dir");
+		if (this.menuUniqueID == undefined)
+		{
+			this.menuUniqueID = -1;
+			this.dbg("********  menuUniqueID was undefined so chnaged to " + this.menuUniqueID);
+		}
+		com.rockstargames.ui.game.GameInterface.call("LAYOUT_CHANGED",com.rockstargames.ui.game.GameInterface.PAUSE_TYPE,oldMenuState,this.menuState,this.menuUniqueID,_loc3_);
+	}
+	function SET_CONTENT_SCALED(isScaled, tlx, tly, brx, bry)
+	{
+		this.currentPage.setScaledContent(true,tlx,tly,brx,bry);
+	}
+	function SET_DISPLAY_CONFIG(_screenWidthPixels, _screenHeightPixels, _safeTopPercent, _safeBottomPercent, _safeLeftPercent, _safeRightPercent, _isWideScreen)
+	{
+		this.currentPage.setDisplayConfig(_screenWidthPixels,_screenHeightPixels,_safeTopPercent,_safeBottomPercent,_safeLeftPercent,_safeRightPercent,_isWideScreen);
+	}
+	function SET_INPUT_EVENT(inputID)
+	{
+		if (this.inTopMenu)
+		{
+			return undefined;
+		}
+		this.dbg("inputID " + inputID);
+		switch (inputID)
 		{
 			case com.rockstargames.ui.game.GamePadConstants.DPADUP :
-				return this.PauseMenu.GoUp();
-				break;
 			case com.rockstargames.ui.game.GamePadConstants.DPADDOWN :
-				return this.PauseMenu.GoDown();
-				break;
 			case com.rockstargames.ui.game.GamePadConstants.DPADLEFT :
-				com.rockstargames.ui.game.GameInterface.call("PLAY_SOUND",com.rockstargames.ui.game.GameInterface.GENERIC_TYPE,"NAV_LEFT_RIGHT","HUD_FRONTEND_DEFAULT_SOUNDSET");
-				return this.PauseMenu.GoLeft();
-				break;
 			case com.rockstargames.ui.game.GamePadConstants.DPADRIGHT :
-				com.rockstargames.ui.game.GameInterface.call("PLAY_SOUND",com.rockstargames.ui.game.GameInterface.GENERIC_TYPE,"NAV_LEFT_RIGHT","HUD_FRONTEND_DEFAULT_SOUNDSET");
-				return this.PauseMenu.GoRight();
-				break;
-			case com.rockstargames.ui.game.GamePadConstants.CROSS :
-
-				switch (this.PauseMenu.Focus)
-				{
-					case 1 :
-						if (this.PauseMenu.Tab instanceof com.rockstargames.PauseMenu.tabs.PlayerListTab)
-						{
-							var col = this.PauseMenu.Tab.getColumn("settings");
-							if (col != undefined)
-							{
-								if (col.currentItem._type == 2)
-								{
-									col.currentItem.Checked = !col.currentItem.Checked;
-
-								}
-							}
-						}
-						break;
-					case 2 :
-						{
-							var curItem = this.PauseMenu.currentTab.currentItem;
-							if (curItem.currentItem._type == 4)
-							{
-								curItem.currentItem.Checked = !curItem.currentItem.Checked;
-								com.rockstargames.ui.game.GameInterface.call("PLAY_SOUND",com.rockstargames.ui.game.GameInterface.GENERIC_TYPE,"SELECT","HUD_FRONTEND_DEFAULT_SOUNDSET");
-							}
-						};
-						break;
-				}
-				break;
+				this.MENU_INTERACTION(inputID);
 		}
 	}
-
-	function SET_SCROLL_EVENT(direction, isJoyPad)
-	{
-		// -1 up , 1 down
-		var focus = this.PauseMenu.Focus;
-		if (focus == 1)
-		{
-			var curTab = this.PauseMenu.currentTab;
-			var curItem = curTab.currentItem;
-			if (curTab instanceof com.rockstargames.PauseMenu.tabs.InfoTab)
-			{
-				if (curItem.itemType == 1)
-				{
-					curItem.scrollAll(direction,true);
-				}
-			}
-			else if (curTab instanceof com.rockstargames.PauseMenu.tabs.SimpleTab)
-			{
-				if (curTab.panelHovered || isJoyPad)
-				{
-					curTab.scrollAll(direction,true);
-				}
-			}
-			else if (curTab instanceof com.rockstargames.PauseMenu.tabs.VehicleSelectionTab)
-			{
-				curTab.scrollAll(direction);
-			}
-		}
-	}
-
-	function MOUSE_CLICK_EVENT()
-	{
-		var _result = [];
-		var focus = this.PauseMenu.Focus;
-		var canIncrease = false;
-		switch (focus)
-		{
-			case 0 :
-				this.PauseMenu.Focus++;
-				break;
-			case 1 :
-				var curTab = this.PauseMenu.currentTab;
-				var _hoveredItem;
-				if (curTab.currentItem.itemType == 3)
-				{
-					for (var j = 0; j < curTab.currentItem.ItemList.length; j++)
-					{
-						if (curTab.currentItem.ItemList[j]._hovered && !curTab.currentItem.ItemList[j]._highlighted)
-						{
-							curTab.currentItem.currentSelection = j;
-							this.PauseMenu.Focus++;
-							break;
-						}
-					}
-				}
-
-				for (var i = 0; i < curTab.LeftItemList.length; i++)
-				{
-					if (curTab.LeftItemList[i].leftItem._hovered && !curTab.LeftItemList[i].Selected)
-					{
-						curTab.currentSelection = i;
-						break;
-					}
-				}
-
-
-				break;
-			case 2 :
-				var curTab = this.PauseMenu.currentTab;
-				var curItem = curTab.currentItem;
-
-				for (var i = 0; i < curTab.LeftItemList.length; i++)
-				{
-					if (curTab.LeftItemList[i].leftItem._hovered && !curTab.LeftItemList[i].Selected)
-					{
-						this.PauseMenu.Focus--;
-						curTab.currentSelection = i;
-						break;
-					}
-				}
-
-
-				for (var i = 0; i < curItem.ItemList.length; i++)
-				{
-					if (curItem.ItemList[i]._hovered)
-					{
-						if (!curItem.ItemList[i]._highlighted)
-						{
-							curItem.currentSelection = i;
-						}
-						else
-						{
-							if (curItem.ItemList[i]._type == 4)
-							{
-								curItem.ItemList[i].Checked = !curItem.ItemList[i].Checked;
-							}
-						}
-					}
-				}
-
-
-				break;
-		}
-		com.rockstargames.ui.game.GameInterface.call("PLAY_SOUND",com.rockstargames.ui.game.GameInterface.GENERIC_TYPE,"SELECT","HUD_FRONTEND_DEFAULT_SOUNDSET");
-
-		switch (focus)
-		{
-			case 0 :
-				_result.push(this.PauseMenu.Index);
-				_result.push(this.PauseMenu.Focus);
-				break;
-			case 1 :
-				_result.push(this.PauseMenu.Index);
-				_result.push(this.PauseMenu.Focus);
-				_result.push(this.PauseMenu.currentTab.currentSelection);
-				break;
-			case 2 :
-				_result.push(this.PauseMenu.Index);
-				_result.push(this.PauseMenu.Focus);
-				_result.push(this.PauseMenu.currentTab.currentSelection);
-				_result.push(this.PauseMenu.currentTab.currentItem.currentSelection);
-				_result.push(this.PauseMenu.currentTab.currentItem.currentItem.Value);
-				break;
-
-		}
-		return _result.toString();
-	}
-
-	function CREATE_PLAYERS_TAB_COLUMNS(left, center, right)
-	{
-		this.PauseMenu.Tab.Initialize(left,center,right);
-		this.PauseMenu.updateTabsDrawing();
-	}
-
-	function SET_PLAYERS_TAB_COLUMN_MAXITEMS(col, max)
-	{
-		this.PauseMenu.Tab.orderedColumns[col].column.setMaxItems(max);
-	}
-
-	function SET_PLAYERS_TAB_NEWSTYLE(bool)
-	{
-		this.PauseMenu.Tab.NewStyle = bool;
-	}
-
-	function ADD_PLAYERS_TAB_SETTINGS_ITEM(before, index, id, str, sub, enabled, blink, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
-	{
-		this.PauseMenu.Tab.AddSetting(before,index,id,str,sub,enabled,blink,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13);
-	}
-
-	function ADD_PLAYERS_TAB_PLAYER_ITEM(before, index, id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
-	{
-		this.PauseMenu.Tab.AddPlayerItem(before,index,id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13);
-	}
-
-	function ADD_PLAYERS_TAB_MISSIONS_ITEM(before, index, id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14)
-	{
-		this.PauseMenu.Tab.AddMissionsItem(before,index,id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13,param14);
-	}
-
-	function ADD_PLAYERS_TAB_STORE_ITEM(before, index, id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
-	{
-		this.PauseMenu.Tab.AddStoreItem(before,index,id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13);
-	}
-
-	function ADD_PLAYERS_TAB_MISSION_PANEL_ITEM(itemType, textLeft, textRight, param3, param4, param5, param6, param7, param8, param9, param10)
-	{
-		this.PauseMenu.Tab.AddMissionPanelItem(itemType,textLeft,textRight,param3,param4,param5,param6,param7,param8,param9,param10);
-	}
-
-	function REMOVE_PLAYERS_TAB_MISSION_PANEL_ITEM(id)
-	{
-		this.PauseMenu.Tab.RemoveMissionPanelItem(id);
-	}
-
-	function ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE(txd, txn)
-	{
-		this.PauseMenu.Tab.SetPanelPicture(txd,txn);
-	}
-
-	function SET_PLAYERS_TAB_MISSION_PANEL_TITLE(title)
-	{
-		this.PauseMenu.Tab.SetMissionPanelTitle(title);
-	}
-
-	function REMOVE_PLAYERS_TAB_PLAYER_ITEM(id)
-	{
-		this.PauseMenu.Tab.RemovePlayer(id);
-	}
-
-	function REMOVE_PLAYERS_TAB_MISSIONS_ITEM(id)
-	{
-		this.PauseMenu.Tab.RemoveMission(id);
-	}
-
-	function UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST(item, list, index)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
-		{
-			col.ItemList[item].multiListItems = [];
-			col.ItemList[item].multiListItems = list.split(",");
-			col.ItemList[item].Value = index;
-		}
-	}
-
-	function SET_PLAYERS_TAB_SETTINGS_SELECTION(id)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			col.currentSelection = id;
-		}
-	}
-	function SET_PLAYERS_TAB_PLAYERS_SELECTION(id)
-	{
-		var col = this.PauseMenu.Tab.getColumn("players");
-		if ((col != undefined))
-		{
-			col.currentSelection = id;
-		}
-	}
-	function SET_PLAYERS_TAB_MISSIONS_SELECTION(id)
-	{
-		var col = this.PauseMenu.Tab.getColumn("missions");
-		if ((col != undefined))
-		{
-			col.currentSelection = id;
-		}
-	}
-	function SET_PLAYERS_TAB_STORE_SELECTION(id)
-	{
-		var col = this.PauseMenu.Tab.getColumn("store");
-		if ((col != undefined))
-		{
-			col.currentSelection = id;
-		}
-	}
-
-	function SET_PLAYERS_TAB_SETTINGS_QTTY(current, max)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			col.setCounter(current,max);
-		}
-	}
-
-	function SET_PLAYERS_TAB_PLAYERS_QTTY(current, max)
-	{
-		var col = this.PauseMenu.Tab.getColumn("players");
-		if ((col != undefined))
-		{
-			col.setCounter(current,max);
-		}
-	}
-
-	function SET_PLAYERS_TAB_MISSIONS_QTTY(current, max)
-	{
-		var col = this.PauseMenu.Tab.getColumn("missions");
-		if ((col != undefined))
-		{
-			col.setCounter(current,max);
-		}
-	}
-	function SET_PLAYERS_TAB_STORE_QTTY(current, max)
-	{
-		var col = this.PauseMenu.Tab.getColumn("store");
-		if ((col != undefined))
-		{
-			col.setCounter(current,max);
-		}
-	}
-
-	function SET_PLAYERS_TAB_PLAYER_ITEM_STATUS(item, status, statusColor)
-	{
-		var col = this.PauseMenu.Tab.getColumn("players");
-		if ((col != undefined))
-		{
-			col.ItemList[item].setStatus(status,statusColor);
-		}
-	}
-
-	function SET_PLAYERS_TAB_PLAYER_ITEM_PANEL()
-	{
-		var col = this.PauseMenu.Tab.getColumn("players");
-		if ((col != undefined))
-		{
-			col.ItemList[arguments[0]].addPanel(arguments.slice(1));
-			col.updateItemsDrawing();
-		}
-	}
-
-	function SET_PLAYERS_TAB_PLAYERS_STAT_PANEL_PERMANENT(item, bool)
-	{
-		var col = this.PauseMenu.Tab.getColumn("players");
-		if ((col != undefined))
-		{
-			col.ItemList[item].permanentPanel = bool;
-		}
-	}
-
-	function HIDE_PLAYERS_TAB_MISSION_PANEL(show)
-	{
-		if ((show == true))
-		{
-			var plCol = this.PauseMenu.Tab.getColumn("players");
-			if ((((plCol != undefined) && plCol.IsPermanentPanel) || this.PauseMenu.Tab.currentColumn.type == "players"))
-			{
-				return;
-			}
-		}
-		var col = this.PauseMenu.Tab.getColumn("panel");
-		if ((col != undefined))
-		{
-			col.itemMC._visible = show;
-		}
-	}
-
-	function SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT()
-	{
-		var col = this.PauseMenu.Tab.getColumn("players");
-		if ((col != undefined))
-		{
-			col.ItemList[arguments[0]].panel.AddStatItem(arguments.slice(1));
-		}
-	}
-
-	function SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DETAIL(item, id, textLeft, textRight, param3, param4, param5, param6, param7, param8, param9, param10)
-	{
-		var col = this.PauseMenu.Tab.getColumn("players");
-		if ((col != undefined))
-		{
-			col.ItemList[item].panel.ADD_DETAILS_ITEM(id,textLeft,textRight,param3,param4,param5,param6,param7,param8,param9,param10);
-		}
-	}
-	function SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION(item, desc, type, unused, collapse)
-	{
-		var col = this.PauseMenu.Tab.getColumn("players");
-		if ((col != undefined))
-		{
-			col.ItemList[item].panel.SET_DESCRIPTION(desc,type,unused,collapse);
-		}
-	}
-
-	function SET_PLAYERS_TAB_FOCUS(focus)
-	{
-		return this.PauseMenu.Tab.SetFocus(focus);
-	}
-
-	function UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS(item, lbl, rtxt)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			com.rockstargames.ui.utils.UIText.setSizedText(col.ItemList[item].leftTextTF,lbl,false,true);
-			if (col.ItemList[item]._type == 0)
-			{
-				col.ItemList[item].SetRightText(rtxt);
-			}
-			col.ItemList[item].refreshLabelFonts();
-		}
-	}
-
-	function SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT(item, fName, fId)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			col.ItemList[item].updateLabelFont(fName,fId);
-		}
-	}
-	function SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT(item, fName, fId)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			col.ItemList[item].updateRightLabelFont(fName,fId);
-		}
-	}
-
-	function UPDATE_PLAYERS_TAB_SETTINGS_ITEM_DESCRIPTION(item, desc)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			col.ItemList[item].subtitle = desc;
-			col.updateDescription();
-		}
-	}
-
-	function UPDATE_PLAYERS_TAB_SETTINGS_ITEM_BLINK_DESC(item, blink)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			col.ItemList[item].blinkDesc = blink;
-		}
-	}
-
-	function UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL(item, txt)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			com.rockstargames.ui.utils.UIText.setSizedText(col.ItemList[item].leftTextTF,txt,false,true);
-			col.ItemList[item].refreshLabelFonts();
-		}
-	}
-
-	function UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT(item, _label)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			col.ItemList[item].SetRightText(_label);
-		}
-	}
-
-	function SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE(item, badge)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			col.ItemList[item].SetLeftBadge(badge);
-		}
-	}
-
-	function SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE(item, badge)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			col.ItemList[item].SetRightBadge(badge);
-		}
-	}
-
-	function SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_LEFT_BADGE(item, txd, txn)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
-		{
-			col.ItemList[item].SetCustomLeftBadge(txd,txn);
-		}
-	}
-
-	function SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_RIGHT_BADGE(item, txd, txn)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if (col != undefined)
-		{
-			col.ItemList[item].SetCustomRightBadge(txd,txn);
-		}
-	}
-
-	function ENABLE_PLAYERS_TAB_SETTINGS_ITEM(item, disable)
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			col.ItemList[item].Enabled = disable;
-		}
-	}
-
-	function SET_PLAYERS_TAB_MISSION_ITEM_ENABLED(item, bool)
-	{
-		var col = this.PauseMenu.Tab.getColumn("missions");
-		if ((col != undefined))
-		{
-			col.ItemList[item].Enabled = bool;
-		}
-	}
-
-	function SET_PLAYERS_TAB_MISSION_ITEM_LEFT_ICON(item, icon, color)
-	{
-		var col = this.PauseMenu.Tab.getColumn("missions");
-		if ((col != undefined))
-		{
-			col.ItemList[item].AddLeftTexture(icon,color);
-		}
-	}
-
-	function SET_PLAYERS_TAB_MISSION_ITEM_RIGHT_ICON(item, icon, checked, color)
-	{
-		var col = this.PauseMenu.Tab.getColumn("missions");
-		if ((col != undefined))
-		{
-			col.ItemList[item].AddRightTexture(icon,checked,color);
-		}
-	}
-
-	function SET_PLAYERS_TAB_MISSION_ITEM_CUSTOM_LEFT_ICON(item, txd, txn)
-	{
-		var col = this.PauseMenu.Tab.getColumn("missions");
-		if (col != undefined)
-		{
-			col.ItemList[item].AddCustomLeftTexture(txd,txn);
-		}
-	}
-
-	function SET_PLAYERS_TAB_MISSION_ITEM_CUSTOM_RIGHT_ICON(item, txd, txn, checked)
-	{
-		var col = this.PauseMenu.Tab.getColumn("missions");
-		if (col != undefined)
-		{
-			col.ItemList[item].AddCustomRightTexture(txd,txn,checked);
-		}
-	}
-
-	function UPDATE_PLAYERS_TAB_MISSIONS_ITEM_ICONS(item)
-	{
-		var col = this.PauseMenu.Tab.getColumn("missions");
-		if (col != undefined)
-		{
-			col.ItemList[item].refreshIcons();
-		}
-	}
-
-	function CLEAR_PLAYERS_TAB_PLAYERS_COLUMN()
-	{
-		var col = this.PauseMenu.Tab.getColumn("players");
-		if ((col != undefined))
-		{
-			col.ClearItems();
-		}
-	}
-	function CLEAR_PLAYERS_TAB_SETTINGS_COLUMN()
-	{
-		var col = this.PauseMenu.Tab.getColumn("settings");
-		if ((col != undefined))
-		{
-			col.ClearItems();
-		}
-	}
-	function CLEAR_PLAYERS_TAB_MISSIONS_COLUMN()
-	{
-		var col = this.PauseMenu.Tab.getColumn("missions");
-		if ((col != undefined))
-		{
-			col.ClearItems();
-		}
-	}
-	function CLEAR_PLAYERS_TAB_STORE_COLUMN()
-	{
-		var col = this.PauseMenu.Tab.getColumn("store");
-		if ((col != undefined))
-		{
-			col.ClearItems();
-		}
-	}
-	function CLEAR_PLAYERS_TAB_MISSION_PANEL_ITEMS()
-	{
-		var col = this.PauseMenu.Tab.getColumn("panel");
-		if ((col != undefined))
-		{
-			col.ClearItems();
-		}
-	}
-
-	function SET_GALLERY_DESCRIPTION_LABELS(max, _title, date, location, track, visible)
-	{
-		this.PauseMenu.Tab.SetDescription(max,_title,date,location,track,visible);
-	}
-
-	function SET_GALLERY_SCROLL_LABEL(currentPosition, maxPosition, maxVisible, caption, captionR)
-	{
-		this.PauseMenu.Tab.SetScrollBar(currentPosition,maxPosition,maxVisible,caption,captionR);
-	}
-
-	function SET_GALLERY_TITLE(txd, txn, state)
-	{
-		this.PauseMenu.Tab.SetTitle(txd,txn,state);
-	}
-
-	function ADD_GALLERY_ITEM(_slotIndex)
-	{
-		this.PauseMenu.Tab.AddItem(_slotIndex,arguments);
-	}
-
-	function UPDATE_GALLERY_ITEM(_slotIndex)
-	{
-		this.PauseMenu.Tab.model.updateSlot(0,_slotIndex,arguments);
-		if (this.PauseMenu.Tab.scrollBase != undefined)
-		{
-			this.PauseMenu.Tab.scrollBase.updateScroll();
-		}
-	}
-
-	function ADD_VEHICLE_SELECTOR_ITEM(_type, model, modelString, vehicleName, txd, txn, makeTxd, makeTxn, perfTxd, perfClass, bgTxd, bgTxn, isPesonal, className, locked, param15)
-	{
-		this.PauseMenu.Tab.AddItem(_type,model,modelString,vehicleName,txd,txn,makeTxd,makeTxn,perfTxd,perfClass,bgTxd,bgTxn,isPesonal,className,locked,param15);
-	}
-
-	function HOVER_VEHICLE_SELECTOR_INDEX(index, isMouse)
-	{
-		this.PauseMenu.Tab.HoverItem(index);
-	}
-	function SELECT_VEHICLE_SELECTOR_INDEX(index)
-	{
-		this.PauseMenu.Tab.SetIndex(index);
-	}
-	function SET_VEHICLE_SELECTOR_ITEM_CHECKED(item, bool)
-	{
-		this.PauseMenu.Tab.SetItemChecked(item,bool);
-	}
-
-	function SET_VEHICLE_SELECTOR_ITEM_STATS(item, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14, param15)
-	{
-		this.PauseMenu.Tab.SetStatsLabelsAndValues(item,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13,param14,param15);
-	}
-
-
-	function SET_VEHICLE_SELECTOR_STATS(param0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14, param15)
-	{
-		this.PauseMenu.Tab.SetStatsVisible(true);
-		this.PauseMenu.Tab.SetStatsLabelsAndValues(param0,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13,param14,param15);
-	}
-
-	function CLEAR_VEHICLE_SELECTOR_STATS()
-	{
-		this.PauseMenu.Tab.ClearStatsAndValues();
-	}
-	function SET_VEHICLE_SELECTOR_STATS_VISIBLE(_v)
-	{
-		this.PauseMenu.Tab.SetStatsVisible(_v);
-	}
-
-	function CLEAR_GALLERY()
-	{
-		this.PauseMenu.Tab.ON_DESTROY();
-	}
-
-	function SET_GALLERY_PANEL_HIDDEN(bool)
-	{
-		this.PauseMenu.Tab.SET_COMPONENT_HIDDEN(bool);
-	}
-
-	function SET_GALLERY_PANEL_DESCRIPTION(desc)
-	{
-		this.PauseMenu.Tab.SetRightDescription(desc);
-	}
-
-	function UPDATE_GALLERY_HIGHLIGHT(highlightIndex, staticClear)
-	{
-		this.PauseMenu.Tab.SET_HIGHLIGHT(highlightIndex,staticClear);
-	}
-
-	function DISPLAY_GALLERY()
-	{
-		this.PauseMenu.Tab.model.displayView(0,0);
-	}
-
-	function UPDATE_DRAWING()
-	{
-		this.PauseMenu.updateTabsDrawing();
-	}
-
-	function CLEAR_ALL()
-	{
-		this.PauseMenu.Clear();
-		this.removeClipAndChildren(this.CONTENT._content_);
-		this.removeAllObjects(this.PauseMenu);
-		this.CONTENT.mouseCatcher.removeMovieClip();
-		this.PauseMenu.Tab = null;
-		this.PauseMenu = null;
-		this.PauseMenu = new com.rockstargames.PauseMenu.TabView(this.CONTENT);
-	}
-
-	function removeClipAndChildren(clip:MovieClip):Void
-	{
-		for (var i in clip)
-		{
-			if (typeof clip[i] == "movieclip")
-			{
-				clip[i].swapDepths(0);
-				// Bring the MovieClip to the topmost layer;
-				removeClipAndChildren(clip[i]);
-			}
-		}
-		clip.removeMovieClip();
-	}
-
-	function removeAllObjects(parent:Object):Void
-	{
-		for (var prop in parent)
-		{
-			// Check if the property is an object (not a primitive type like Number, String, etc.)
-			if (typeof parent[prop] == "object")
-			{
-				// Remove the object by setting its reference to null
-				parent[prop] = null;
-			}
-		}
-	}
-
-	function DRAW_MENU()
-	{
-		this.CONTENT._alpha = 0;
-		com.rockstargames.ui.tweenStar.TweenStarLite.to(this.CONTENT,0.2,{_alpha:100, ease:com.rockstargames.ui.tweenStar.Ease.CUBIC_IN});
-	}
-
-	function FADE_IN()
-	{
-		this.CONTENT._alpha = 0;
-		com.rockstargames.ui.tweenStar.TweenStarLite.to(this.CONTENT,0.2,{_alpha:100, ease:com.rockstargames.ui.tweenStar.Ease.CUBIC_IN});
-	}
-
-	function FADE_OUT()
-	{
-		this.CONTENT._alpha = 100;
-		com.rockstargames.ui.tweenStar.TweenStarLite.to(this.CONTENT,0.2,{_alpha:0, ease:com.rockstargames.ui.tweenStar.Ease.CUBIC_IN});
-	}
-
-
 	function ADD_TXD_REF_RESPONSE(txd, strRef, success)
 	{
+		Debug.Debug.Log("ADD_TXD_REF_RESPONSE - " + arguments);
 		if (success == true)
 		{
-			var pMC = this.CONTENT;
-			var il = com.rockstargames.ui.media.ImageLoaderMC(eval((pMC + ".") + strRef));
+			var pMC = this.CONTENT.contentMC.pageContainerMC.TIMELINE;
+			var il = com.rockstargames.ui.media.ImageLoaderMC(eval(((pMC + ".") + strRef)));
 			if (pMC != undefined)
 			{
 				il.displayTxdResponse(txd);
@@ -956,10 +965,11 @@
 
 	function TXD_HAS_LOADED(txd, success, strRef)
 	{
+		Debug.Debug.Log("TXD_HAS_LOADED - " + arguments);
 		if (success == true)
 		{
-			var pMC = this.CONTENT;
-			var il = com.rockstargames.ui.media.ImageLoaderMC(eval((pMC + ".") + strRef));
+			var pMC = this.CONTENT.contentMC.pageContainerMC.TIMELINE;
+			var il = com.rockstargames.ui.media.ImageLoaderMC(eval(((pMC + ".") + strRef)));
 			if (pMC != undefined)
 			{
 				il.displayTxdResponse(txd,success);
@@ -969,8 +979,9 @@
 
 	function TXD_ALREADY_LOADED(txd, strRef)
 	{
-		var pMC = this.CONTENT;
-		var il = com.rockstargames.ui.media.ImageLoaderMC(eval((pMC + ".") + strRef));
+		Debug.Debug.Log("TXD_ALREADY_LOADED - " + arguments);
+		var pMC = this.CONTENT.contentMC.pageContainerMC.TIMELINE;
+		var il = com.rockstargames.ui.media.ImageLoaderMC(eval(((pMC + ".") + strRef)));
 		if (pMC != undefined)
 		{
 			il.displayTxdResponse(txd,true);

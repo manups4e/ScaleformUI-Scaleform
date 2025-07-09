@@ -21,6 +21,11 @@
 		super.INITIALISE(mc);
 		com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME = "ScaleformUI";
 		this.menuContainer = this.CONTENT.createEmptyMovieClip("menuContainer", this.CONTENT.getNextHighestDepth());
+		this.UIMenu = this.menuContainer.attachMovie("uimenu", "uimenu", this.menuContainer.getNextHighestDepth());
+		this.UIMenu._visible = false;
+		this.initScreenLayout();
+		var signature = "Made by MANUPS4E";
+		var signatureSub = "For the FiveM community. With Love 💓";
 	}
 
 	function SET_DISPLAY_CONFIG(_screenWidthPixels, _screenHeightPixels, _safeTopPercent, _safeBottomPercent, _safeLeftPercent, _safeRightPercent, _isWideScreen, _isHiDef, _isAsian, realWidth, realHeight)
@@ -37,20 +42,14 @@
 			this.screenHeightPixels = 720;
 		}
 		this.isHiDef = _isHiDef;
-		this.safeLeft = this.FOUR_THREE_PADDING + Math.round((_screenWidthPixels * _safeLeftPercent));
-		this.safeRight = this.FOUR_THREE_PADDING + Math.round((_screenWidthPixels * _safeRightPercent));
-		this.safeTop = Math.round((_screenHeightPixels * _safeTopPercent));
-		this.safeBottom = Math.round((_screenHeightPixels * _safeBottomPercent));
+		this.safeLeft = this.FOUR_THREE_PADDING + Math.round(_screenWidthPixels * _safeLeftPercent);
+		this.safeRight = this.FOUR_THREE_PADDING + Math.round(_screenWidthPixels * _safeRightPercent);
+		this.safeTop = Math.round(_screenHeightPixels * _safeTopPercent);
+		this.safeBottom = Math.round(_screenHeightPixels * _safeBottomPercent);
 		if (!this.isWideScreen)
 		{
 			Stage.scaleMode = "noBorder";
 		}
-		this.initScreenLayout();
-	}
-
-	function SET_MENU_ORIENTATION(align)
-	{
-		this.UIMenu.Orientation = align;
 		this.initScreenLayout();
 	}
 
@@ -64,247 +63,88 @@
 		this.UIMenu.UpdatePositions(this.safeLeft,this.safeTop,this.safeRight);
 	}
 
-	function CREATE_MENU(title, subtitle, x, y, alternative, txd, txn, maxItems, totItems, enableAnim, animType, buildType, counterColor, dFontName, dFontId, fadingSpeed, bannerColor, itemless, descText, txd2, txn2, align)
+	function SET_MENU_DATA()
 	{
-		if (fadingSpeed > 0.0)
+		this.UIMenu.data = arguments;
+		if (!this.UIMenu._visible)
 		{
-			this.menuContainer._alpha = 0;
-		}
-		else if (fadingSpeed <= 0.0)
-		{
-			this.menuContainer._alpha = 100;
-		}
-		this.UIMenu = new com.rockstargames.ScaleformUI.UIMenu(this.menuContainer, title, subtitle, alternative, x, y, txd, txn, maxItems, totItems, enableAnim, animType, buildType, counterColor, dFontName, dFontId, fadingSpeed, bannerColor, itemless, descText, txd2, txn2, align);
-		this.UIMenu.UpdatePositions(this.safeLeft,this.safeTop,this.safeRight);
-	}
-
-	function RE_CREATE_MENU(title, subtitle, x, y, alternative, txd, txn, maxItems, totItems, enableAnim, animType, buildType, counterColor, dFontName, dFontId, fadingSpeed, bannerColor, itemless, descText, txd2, txn2, align)
-	{
-		this.UIMenu.SetBaseValues(title,subtitle,alternative,x,y,txd,txn,maxItems,totItems,enableAnim,animType,buildType,counterColor,dFontName,dFontId,fadingSpeed,bannerColor,itemless,descText,txd2,txn2, align);
-		this.UIMenu.UpdatePositions(this.safeLeft,this.safeTop,this.safeRight);
-	}
-
-	function IS_MOUSE_ON_MENU()
-	{
-		if (this.menuContainer != undefined)
-		{
-			return this.menuContainer.hitTest(_root._xmouse, _root._ymouse);
-		}
-		return false;
-	}
-
-	function ENABLE_3D_ANIMATIONS(enable)
-	{
-		this.UIMenu.IS3D = enable;
-	}
-
-	function SET_KEEP_BANNER_WHEN_CLEARING(bool)
-	{
-		this.UIMenu.keepBannerWhenClearing = bool;
-	}
-
-	function CLEAR_ITEMS()
-	{
-		this.UIMenu.ClearItems();
-	}
-
-	function UPDATE_MENU_BANNER_TEXTURE(txd, txn)
-	{
-		this.UIMenu.SetBannerTexture(txd,txn);
-	}
-	function SET_MENU_BANNER_COLOR(color)
-	{
-		this.UIMenu.SetBannerColor(color);
-	}
-
-	function UPDATE_MENU_UNDERBANNER_TEXTURE(txd, txn)
-	{
-		this.UIMenu.SetUnderBannerTexture(txd,txn);
-	}
-	function SET_MENU_UNDERBANNER_COLOR(color)
-	{
-		this.UIMenu.SetUnderBannerColor(color);
-	}
-
-	function SET_WIDTH(w)
-	{
-		this.UIMenu.Width = w;
-	}
-
-	function ENABLE_MOUSE(bool)
-	{
-		com.rockstargames.gtav.levelDesign.SCALEFORMUI.MouseEnabled = bool;
-	}
-
-	function UPDATE_TITLE_SUBTITLE(title, sub, altern)
-	{
-		this.UIMenu.updateTitleSubtitle(title,sub,altern);
-	}
-
-	function SET_COUNTER_QTTY(actual, max)
-	{
-		this.UIMenu.setCounter(actual,max);
-	}
-
-	function UPDATE_ITEMS_DRAWING()
-	{
-		this.UIMenu.updateItemsDrawing();
-	}
-
-	function SET_COUNTER_COLOR(colour)
-	{
-		this.UIMenu.colorCounter(colour);
-	}
-
-	function SET_DESC_FONT(fName, fId)
-	{
-		this.UIMenu.descFont = [fName, fId];
-	}
-
-	function SET_ITEM_LABEL_FONT(item, fontName, fontId)
-	{
-		this.UIMenu.menuItems[item].updateLabelFont(fontName,fontId);
-	}
-
-	function SET_ITEM_RIGHT_LABEL_FONT(item, fontName, fontId)
-	{
-		this.UIMenu.menuItems[item].updateRightLabelFont(fontName,fontId);
-	}
-
-	function ADD_ITEM(before, id, index, str, sub, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
-	{
-		return this.UIMenu.addItem(before, id, index, str, sub, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13);
-	}
-
-	function REMOVE_ITEM(id)
-	{
-		return this.UIMenu.removeItem(id);
-	}
-
-	function ADD_PANEL(item, panelType, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)
-	{
-		this.UIMenu.addPanel(item,panelType,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10);
-	}
-
-	function REMOVE_PANEL(item, id)
-	{
-		this.UIMenu.removePanel(item,id);
-	}
-
-	function ENABLE_SCROLLING_ANIMATION(enable)
-	{
-		this.UIMenu.EnableAnim = enable;
-	}
-
-	function CHANGE_SCROLLING_ANIMATION_TYPE(type)
-	{
-		this.UIMenu.AnimType = type;
-	}
-
-	function CHANGE_BUILDING_ANIMATION_TYPE(type)
-	{
-		this.UIMenu.buildingType = type;
-	}
-
-	function ADD_WINDOW(id, param0, param1, param2, param3, param4, param5, param6, param7, param8, param9)
-	{
-		this.UIMenu.addWindow(id,param0,param1,param2,param3,param4,param5,param6,param7,param8,param9);
-	}
-	function UPDATE_HERITAGE_WINDOW(id, mom, dad)
-	{
-		this.UIMenu.windows[id].setIndex(mom,dad);
-	}
-	function UPDATE_DETAILS_WINDOW_VALUES(id, _det0, _det1, _det2, txd, txn, x, y, w, h)
-	{
-		this.UIMenu.windows[id].setValues(_det0,_det1,_det2,txd,txn,x,y,w,h);
-	}
-	function ADD_STATS_DETAILS_WINDOW_STATWHEEL(id, pctComplete, statColourEnum)
-	{
-		this.UIMenu.windows[id].addStatToWheel(pctComplete,statColourEnum);
-	}
-	function UPDATE_STATS_DETAILS_WINDOW_STATWHEEL(id, statId, pctComplete, statColourEnum)
-	{
-		this.UIMenu.windows[id].updateStatistic(statId,pctComplete,statColourEnum);
-	}
-	function ADD_SIDE_PANEL_TO_ITEM(item, panelType, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)
-	{
-		this.UIMenu.addSidePanel(item,panelType,param1,param2,param3,param4,param5,param6,param7,param8,param9,param10);
-	}
-	function REMOVE_SIDE_PANEL_TO_ITEM(item)
-	{
-		if (this.UIMenu.menuItems[item].sidePanel != undefined)
-		{
-			if (this.UIMenu.menuItems[item].sidePanel.descItems.length > 0)
-			{
-				for (var dd in this.UIMenu.menuItems[item].sidePanel.descItems)
-				{
-					this.UIMenu.menuItems[item].sidePanel.descItems[dd].itemMC.removeMovieClip();
-				}
-			}
-			this.UIMenu.menuItems[item].sidePanel.itemMC.removeMovieClip();
+			this.UIMenu._visible = true;
 		}
 	}
-	function UPDATE_SIDE_PANEL_TITLE(item, _title)
+
+	function SET_DATA_SLOT(slotIndex)
 	{
-		this.UIMenu.menuItems[item].sidePanel.setTitle(_title);
-	}
-	function UPDATE_MISSION_DETAILS_PANEL_IMG(item, txd, txn)
-	{
-		this.UIMenu.menuItems[item].sidePanel.setPicture(txd,txn);
-	}
-	function ADD_MISSION_DETAILS_DESC_ITEM(item, itemType, textLeft, textRight, param3, param4, param5, param6, param7, param8, param9, param10)
-	{
-		this.UIMenu.menuItems[item].sidePanel.AddItem(itemType,textLeft,textRight,param3,param4,param5,param6,param7,param8,param9,param10);
-	}
-	function REMOVE_MISSION_DETAILS_DESC_ITEM(item, id)
-	{
-		this.UIMenu.menuItems[item].sidePanel.RemoveItem(id);
+		this.UIMenu.AddItem(0,slotIndex,arguments);
 	}
 
-	function SET_INPUT_EVENT(direction, item, val)
+	function SET_DATA_SLOT_SPLICE(slotIndex)
 	{
-		var retVal = 0;
-		switch (direction)
-		{
-			case com.rockstargames.ui.game.GamePadConstants.CROSS :
-
-				var _item = this.UIMenu.menuItems[item];
-				if (_item._type == 2)
-				{
-					if (_item._enabled)
-					{
-						_item.Value = val;
-						retVal = _item.Value;
-					}
-				}
-				break;
-			case com.rockstargames.ui.game.GamePadConstants.DPADUP :
-				this.UIMenu.goUp(item);
-				break;
-			case com.rockstargames.ui.game.GamePadConstants.DPADDOWN :
-				this.UIMenu.goDown(item);
-				break;
-			case com.rockstargames.ui.game.GamePadConstants.DPADLEFT :
-				retVal = this.UIMenu.goLeft();
-				break;
-			case com.rockstargames.ui.game.GamePadConstants.DPADRIGHT :
-				retVal = this.UIMenu.goRight();
-				break;
-		}
-		return retVal;
+		this.UIMenu.AddItemSplice(0,slotIndex,arguments);
 	}
 
-	function SET_CURRENT_ITEM(item)
+	function ADD_SLOT(slotIndex)
 	{
-		this.UIMenu.currentSelection = item;
+		this.UIMenu.AddSlot(0,slotIndex,arguments);
 	}
 
-	function SELECT_ITEM(item)
+	function UPDATE_DATA_SLOT(slotIndex)
 	{
-		var _item = this.UIMenu.menuItems[item];
-		var ret = _item.Select();
-		com.rockstargames.ui.game.GameInterface.call("PLAY_SOUND",com.rockstargames.ui.game.GameInterface.GENERIC_TYPE,"SELECT","HUD_FRONTEND_DEFAULT_SOUNDSET");
-		return ret;
+		this.UIMenu.UpdateItem(0,slotIndex,arguments);
+	}
+
+	function SET_DATA_SLOT_EMPTY(viewIndex)
+	{
+		this.UIMenu.clearItems();
+	}
+
+	function REMOVE_DATA_SLOT(slotIndex)
+	{
+		this.UIMenu.RemoveItem(slotIndex);
+	}
+
+	function SET_PANEL_DATA_SLOT(slotIndex, panIndex)
+	{
+		var _loc3_ = arguments.slice(1);
+		this.UIMenu.AddPanel(slotIndex,_loc3_);
+	}
+
+	function UPDATE_PANEL_DATA_SLOT(slotIndex, panIndex)
+	{
+		var _loc3_ = arguments.slice(1);
+		this.UIMenu.UpdatePanel(slotIndex,_loc3_);
+	}
+
+	function SET_PANEL_DATA_SLOT_EMPTY()
+	{
+		this.UIMenu.clearPanels();
+	}
+
+	function SET_SIDE_PANEL_DATA_SLOT(slotIndex)
+	{
+		var _loc3_ = arguments.slice(1);
+		this.UIMenu.AddSidePanel(slotIndex,_loc3_);
+	}
+
+	function UPDATE_SIDE_PANEL_DATA_SLOT(slotIndex)
+	{
+		var _loc3_ = arguments.slice(1);
+		this.UIMenu.UpdateSidePanel(slotIndex,_loc3_);
+	}
+
+	function SET_SIDE_PANEL_SLOT(slotIndex)
+	{
+		var _loc3_ = arguments.slice(1);
+		this.UIMenu.SetSidePanelSlot(slotIndex,_loc3_);
+	}
+
+	function SET_SIDE_PANEL_DATA_SLOT_EMPTY()
+	{
+		this.UIMenu.clearSidePanel();
+	}
+
+	function SHOW_SIDE_PANEL()
+	{
+		this.UIMenu.ShowSidePanel();
 	}
 
 	function GET_PICKER_COLOR(colorId)
@@ -320,13 +160,12 @@
 	function SELECT_PANEL(item, colorID)
 	{
 		var retVal = new Array();
-		var _item = this.UIMenu.menuItems[item];
-		if (_item.panels.length > 0)
+		if (this.UIMenu.model.getCurrentView().panelItemList.length > 0)
 		{
-			for (var i = 0; i < _item.panels.length; i++)
+			for (var i = 0; i < this.UIMenu.model.getCurrentView().panelItemList.length; i++)
 			{
-				var _panel = _item.panels[i];
-				if ((_panel instanceof com.rockstargames.ScaleformUI.panels.UIMenuColorPickerPanel))
+				var _panel = this.UIMenu.model.getCurrentView().panelItemList[i];
+				if (_panel instanceof com.rockstargames.ScaleformUI.panels.UIMenuColorPickerPanel)
 				{
 					return i;
 				}
@@ -334,7 +173,7 @@
 				{
 					if (_panel._hovered)
 					{
-						if ((_panel instanceof com.rockstargames.ScaleformUI.panels.UIMenuColorPanel))
+						if (_panel instanceof com.rockstargames.ScaleformUI.panels.UIMenuColorPanel)
 						{
 							retVal.push(i);
 							retVal.push(_panel.Value);
@@ -347,28 +186,25 @@
 		}
 	}
 
-	function SELECT_SIDE_PANEL(item)
+	function SELECT_ITEM(item)
 	{
-		var item = this.UIMenu.menuItems[item];
-		if (item.sidePanel != undefined)
+		var _item = this.UIMenu.CurrentItem;
+		var ret = _item.Select();
+		if (_item._type != 3 && _item._type != 4)
 		{
-			if (item.sidepanel instanceof com.rockstargames.ScaleformUI.sidePanels.ColourPickerPanel)
-			{
-				com.rockstargames.ui.game.GameInterface.call("PLAY_SOUND",com.rockstargames.ui.game.GameInterface.GENERIC_TYPE,"SELECT","HUD_FRONTEND_DEFAULT_SOUNDSET");
-				return item.sidePanel.Value.toString();
-			}
+			com.rockstargames.ui.game.GameInterface.call("PLAY_SOUND",com.rockstargames.ui.game.GameInterface.GENERIC_TYPE,"SELECT","HUD_FRONTEND_DEFAULT_SOUNDSET");
 		}
+		return ret;
 	}
 
 	function SET_INPUT_MOUSE_EVENT_CONTINUE()
 	{
 		var retVal = new Array();
-		var counter = 0;
-		if (this.UIMenu.currentItem.panels.length > 0)
+		if (this.UIMenu.model.getCurrentView().panelItemList.length > 0)
 		{
-			for (var i = 0; i < this.UIMenu.currentItem.panels.length; i++)
+			for (var i = 0; i < this.UIMenu.model.getCurrentView().panelItemList.length; i++)
 			{
-				var _panel = this.UIMenu.currentItem.panels[i];
+				var _panel = this.UIMenu.model.getCurrentView().panelItemList[i];
 				if (_panel._hovered)
 				{
 					_panel.SetCoords();
@@ -380,254 +216,92 @@
 		}
 	}
 
-	function ADD_ITEM_TO_ITEMLIST(listItemId, item)
+	function SET_VISIBLE(bool, index)
 	{
-		this.UIMenu.menuItems[listItemId].itemList.push(item);
-	}
-
-	function REMOVE_ITEM_FROM_ITEMLIST(listItemId, idx)
-	{
-		this.UIMenu.menuItems[listItemId].multiListItems.splice(idx,1);
-	}
-
-	function UPDATE_LISTITEM_LIST(item, list, index)
-	{
-		this.UIMenu.menuItems[item].multiListItems = [];
-		this.UIMenu.menuItems[item].multiListItems = list.split(",");
-		this.SET_ITEM_VALUE(item,index);
-	}
-
-	function UPDATE_LISTITEM_INDEX(item, index)
-	{
-
-	}
-
-	function ENABLE_ITEM(item, disable)
-	{
-		this.UIMenu.menuItems[item].Enabled = disable;
-		this.UIMenu.updateItemsDrawing();
-	}
-
-	function UPDATE_ITEM_DESCRIPTION(item, substr)
-	{
-		var _selectedItem = this.UIMenu.menuItems[item];
-		_selectedItem.subtitle = substr;
-		this.UIMenu.updateItemsDrawing();
-	}
-
-	function UPDATE_COLORS(item, mainColor, highlightColor, textColor, textHighlightColor, sliderColor)
-	{
-		var _selectedItem = UIMenu.menuItems[item];
-		_selectedItem._mainColor = mainColor;
-		_selectedItem._highlightColor = highlightColor;
-		if (_selectedItem.Enabled)
+		this.UIMenu._visible = bool;
+		if (bool)
 		{
-			_selectedItem._textColor = textColor;
-			_selectedItem._textHighlightColor = textHighlightColor;
+			this.UIMenu.Show(index);
+			this.UIMenu.UpdatePositions(this.safeLeft,this.safeTop,this.safeRight);
 		}
-		if (_selectedItem._type == 3 || _selectedItem._type == 4)
+	}
+
+	function CLICK_SCROLL_COLUMN_ARROW(dir, col)
+	{
+		var _loc4_ = [5, this.UIMenu._name, -1, dir];
+		this.UIMenu.MOUSE_EVT.triggerEvent(_loc4_);
+
+	}
+
+	function IS_MOUSE_ON_MENU()
+	{
+		if (this.menuContainer != undefined)
 		{
-			_selectedItem._sliderColor = sliderColor;
-			_selectedItem.bar.setBarColour(_selectedItem._sliderColor);
+			return this.menuContainer.hitTest(_root._xmouse, _root._ymouse);
 		}
-		if (_selectedItem._type == 5)
-		{
-			_selectedItem.barMC.setBarColour(sliderColor);
-		}
-		this.UIMenu.updateItemsDrawing();
+		return false;
 	}
 
-	function SET_ITEM_VALUE(item, _val)
+	function SET_CURRENT_SELECTION(id)
 	{
-		var _item = this.UIMenu.menuItems[item];
-		if (_item._type == 1 || _item._type == 2 || _item._type == 3 || _item._type == 4)
-		{
-			_item.Value = _val;
-		}
-		else if (_item._type == 5)
-		{
-			_item.barscale = _val;
-		}
-		this.UIMenu.updateItemsDrawing();
+		this.UIMenu.CurrentSelection = id;
 	}
 
-
-	function SET_LEFT_BADGE(item, icon)
+	function SHOW_PANELS()
 	{
-		this.UIMenu.menuItems[item].SetLeftBadge(icon);
+		this.UIMenu.ShowPanels();
 	}
 
-	function SET_CUSTOM_LEFT_BADGE(item, txd, txn)
+	function SET_INPUT_EVENT(direction)
 	{
-		this.UIMenu.menuItems[item].SetCustomLeftBadge(txd,txn);
-	}
-	function SET_CUSTOM_RIGHT_BADGE(item, txd, txn)
-	{
-		this.UIMenu.menuItems[item].SetCustomRightBadge(txd,txn);
+		return this.UIMenu.InputEvent(direction);
 	}
 
-	function SET_RIGHT_BADGE(item, icon)
+	function GET_MENU_POSITION_AND_SIZE()
 	{
-		this.UIMenu.menuItems[item].SetRightBadge(icon);
+		return String(new Array(this.UIMenu._x, this.UIMenu._y, this.UIMenu.BannerSprite.bannerBG.bannerSprite._width, this.UIMenu.BannerSprite.bannerBG.bannerSprite._height));
 	}
 
-	function SET_ITEM_LABELS(item, lbl, rtxt)
+	function SET_WINDOWS_SLOT_DATA(slotIndex)
 	{
-		com.rockstargames.ui.utils.UIText.setSizedText(this.UIMenu.menuItems[item].leftTextTF,lbl,false);
-		if (this.UIMenu.menuItems[item]._type == 0)
-		{
-			this.UIMenu.menuItems[item].SetRightText(rtxt);
-		}
-		this.UIMenu.menuItems[item].refreshLabelFonts();
-	}
-	function SET_BLINK_DESC(item, blink)
-	{
-		this.UIMenu.menuItems[item].blinkDesc = blink;
+		var _loc3_ = arguments.slice(1);
+		this.UIMenu.AddWindow(slotIndex,_loc3_);
 	}
 
-	function SET_LEFT_LABEL(item, txt)
+	function SET_WINDOWS_SLOT_EXTRA_DATA(slotIndex, dataIndex)
 	{
-		var _item = this.UIMenu.menuItems[item];
-		com.rockstargames.ui.utils.UIText.setSizedText(_item.leftTextTF,txt,false);
-		if (_item._type == 6)
-		{
-			_item.leftTextTF.autoSize = "center";
-			_item.updateLabelWidth();
-		}
-		this.UIMenu.menuItems[item].refreshLabelFonts();
-	}
-	function SET_RIGHT_LABEL(item, txt)
-	{
-		if (this.UIMenu.menuItems[item]._type == 0)
-		{
-			this.UIMenu.menuItems[item].SetRightText(txt);
-		}
-		this.UIMenu.menuItems[item].refreshLabelFonts();
+		var _loc3_ = arguments.slice(2);
+		this.UIMenu.AddWindowExtra(slotIndex,dataIndex,_loc3_);
 	}
 
-	function GET_VALUE_FROM_PANEL(item, panel)
+	function UPDATE_WINDOWS_SLOT_DATA(slotIndex)
 	{
-		return this.UIMenu.menuItems[item].panels[panel].Value;
+		var _loc3_ = arguments.slice(1);
+		this.UIMenu.UpdateWindow(slotIndex,_loc3_);
 	}
 
-	function ADD_STATISTIC_TO_PANEL(item, panel, _label, _value)
+	function SET_WINDOWS_SLOT_DATA_EMPTY()
 	{
-		this.UIMenu.menuItems[item].panels[panel].addStat(_label,_value);
+		this.UIMenu.clearWindows();
 	}
 
-	function SET_PANEL_STATS_ITEM_VALUE(item, panel, statId, _value)
+	function SHOW_WINDOWS()
 	{
-		this.UIMenu.menuItems[item].panels[panel].setStat(statId,_value);
+		this.UIMenu.ShowWindows();
 	}
 
-	function SET_COLOR_PANEL_RETURN_VALUE(item, panel)
+	function REFRESH_MENU()
 	{
-		// returns -1 if no selection is done
-		return this.UIMenu.menuItems[item].panels[panel].Value;
-	}
-	function COLOR_PANEL_INPUT(item, panel, dir)
-	{
-		var panel = this.UIMenu.menuItems[item].panels[panel];
-		if ((dir == 0))
-		{
-			panel.goLeft();
-		}
-		else
-		{
-			panel.goRight();
-		}
-		return panel.currentSelection;
-	}
-	function SET_COLOR_PANEL_VALUE(item, panel, val)
-	{
-		this.UIMenu.menuItems[item].panels[panel].Value = val;
-	}
-
-	function SET_COLOR_PICKER_PANEL_VALUE(item, panel, val)
-	{
-		this.UIMenu.menuItems[item].panels[panel].Value = val;
-	}
-
-	function SET_PERCENT_PANEL_RETURN_VALUE(item, panel, val)
-	{
-		// set percentage and its value
-		this.UIMenu.menuItems[item].panels[panel].Value = val;
-		return this.UIMenu.menuItems[item].panels[panel].Value;
-	}
-
-	function SET_GRID_PANEL_POSITION_RETURN_VALUE(item, panel, posX, posY)
-	{
-		// returns grid position (x, y)
-		this.UIMenu.menuItems[item].panels[panel].Coords = new Array(posX, posY);
-		return this.UIMenu.menuItems[item].panels[panel].Value.toString();
-	}
-	function SET_GRID_PANEL_POSITION_RETURN_COORDS(item, panel, posX, posY)
-	{
-		// returns dot coordinates
-		this.UIMenu.menuItems[item].panels[panel].Coords = new Array(posX, posY);
-		return this.UIMenu.menuItems[item].panels[panel].Coords.toString();
-	}
-	function SET_GRID_PANEL_VALUE_RETURN_COORDS(item, panel, posX, posY)
-	{
-		// returns dot coordinates
-		this.UIMenu.menuItems[item].panels[panel].Value = new Array(posX, posY);
-		return this.UIMenu.menuItems[item].panels[panel].Coords.toString();
-	}
-	function SET_GRID_PANEL_VALUE_RETURN_VALUE(item, panel, posX, posY)
-	{
-		// returns dot coordinates
-		this.UIMenu.menuItems[item].panels[panel].Value = new Array(posX, posY);
-		return this.UIMenu.menuItems[item].panels[panel].Value.toString();
-	}
-
-	function SET_PERCENT_PANEL_POSITION_RETURN_VALUE(item, panel, posX)
-	{
-		// set percentage based on mouse and returns its value
-		this.UIMenu.menuItems[item].panels[panel].Coords = posX;
-		return this.UIMenu.menuItems[item].panels[panel].Value.toString();
-	}
-
-	function FADE_OUT_MENU()
-	{
-		this.UIMenu.FadeOutMenu();
-	}
-
-	function FADE_IN_MENU()
-	{
-		this.UIMenu.FadeInMenu();
-	}
-
-	function FADE_OUT_ITEMS()
-	{
-		this.UIMenu.FadeOutItems();
-	}
-
-	function FADE_IN_ITEMS()
-	{
-		this.UIMenu.FadeInItems();
-	}
-
-	function GET_IS_FADING()
-	{
-		return com.rockstargames.gtav.levelDesign.SCALEFORMUI.IS_FADING;
-	}
-
-	function CLEAR_ALL()
-	{
-		this.UIMenu.Clear();
-		if (this.UIMenu.keepBannerWhenClearing)
-		{
-			this.UIMenu = undefined;
-		}
+		this.UIMenu.RefreshMenu(arguments);
 	}
 
 	function ADD_TXD_REF_RESPONSE(txd, strRef, success)
 	{
-		if ((success == true))
+		if (success == true)
 		{
 			var pMC = this.CONTENT;
 			var il = com.rockstargames.ui.media.ImageLoaderMC(eval(((pMC + ".") + strRef)));
-			if ((pMC != undefined))
+			if (pMC != undefined)
 			{
 				il.displayTxdResponse(txd);
 			}
@@ -636,11 +310,11 @@
 
 	function TXD_HAS_LOADED(txd, success, strRef)
 	{
-		if ((success == true))
+		if (success == true)
 		{
 			var pMC = this.CONTENT;
 			var il = com.rockstargames.ui.media.ImageLoaderMC(eval(((pMC + ".") + strRef)));
-			if ((pMC != undefined))
+			if (pMC != undefined)
 			{
 				il.displayTxdResponse(txd,success);
 			}
@@ -651,15 +325,9 @@
 	{
 		var pMC = this.CONTENT;
 		var il = com.rockstargames.ui.media.ImageLoaderMC(eval(((pMC + ".") + strRef)));
-		if ((pMC != undefined))
+		if (pMC != undefined)
 		{
 			il.displayTxdResponse(txd,true);
 		}
 	}
-
-	function SET_MENU_OFFSET(x, y)
-	{
-		this.UIMenu.SetMenuOffset(x,y);
-	}
-
 }

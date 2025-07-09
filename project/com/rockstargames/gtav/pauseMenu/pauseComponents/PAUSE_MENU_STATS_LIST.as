@@ -1,6 +1,8 @@
-class com.rockstargames.gtav.pauseMenu.pauseComponents.PAUSE_MENU_STATS_LIST extends com.rockstargames.gtav.pauseMenu.pauseComponents.PauseMenuComponentBase
+﻿class com.rockstargames.gtav.pauseMenu.pauseComponents.PAUSE_MENU_STATS_LIST extends com.rockstargames.gtav.pauseMenu.pauseComponents.PauseMenuComponentBase
 {
    var _highlightTitle = false;
+   var scrollableContent;
+   var bgMC;
    function PAUSE_MENU_STATS_LIST()
    {
       super();
@@ -48,14 +50,14 @@ class com.rockstargames.gtav.pauseMenu.pauseComponents.PAUSE_MENU_STATS_LIST ext
       }
       this.CONTENT.helpMC._visible = helpStr != "";
       var _loc4_ = 27;
-      var _loc3_ = (com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuStatsView)this.model.getCurrentView();
+      var _loc3_ = this.model.getCurrentView();
       this.CONTENT.helpMC._y = _loc3_.dataList.length * _loc4_;
       this.CONTENT.helpMC.bgMC._height = this.CONTENT.helpMC.helpTF.textHeight + 12;
    }
    function DISPLAY_VIEW(viewIndex, itemIndex)
    {
       super.DISPLAY_VIEW(viewIndex,itemIndex);
-      var _loc3_ = (com.rockstargames.gtav.pauseMenu.pauseMenuItems.singleplayer.PauseMenuStatsView)this.model.getCurrentView(0).itemList.length;
+      var _loc3_ = this.model.getCurrentView(0).itemList.length;
       var _loc5_ = 2;
       var _loc4_ = 25;
       this.bgMC._height = (_loc3_ - 1) * _loc5_ + _loc3_ * _loc4_;

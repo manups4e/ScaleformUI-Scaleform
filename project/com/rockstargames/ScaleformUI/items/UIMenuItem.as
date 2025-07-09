@@ -2,6 +2,14 @@
 {
 	static var CHECKBOX_STYLE_CROSS = 0;
 	static var CHECKBOX_STYLE_TICK = 1;
+	static var BASIC_ITEM = 0;
+	static var LIST_ITEM = 1;
+	static var CHECKBOX_ITEM = 2;
+	static var SLIDER_ITEM = 3;
+	static var PROGRESS_ITEM = 4;
+	static var STATS_ITEM = 5;
+	static var SEPARATOR_ITEM = 6;
+	var mc;
 	var _heritage = false;
 	var bar;
 	var checkbox;
@@ -13,8 +21,11 @@
 	var leftBadgeMC;
 	var rightBadgeId = com.rockstargames.ScaleformUI.utils.Badges.NONE;
 	var leftBadgeId = com.rockstargames.ScaleformUI.utils.Badges.NONE;
+	var rightBadgeTxd;
+	var rightBadgeTxn;
+	var leftBadgeTxd;
+	var leftBadgeTxn;
 	var _data;
-	var _type;
 	var selectedIndex;
 	var selectedValue;
 	var defaultLabelColourEnum;
@@ -45,185 +56,362 @@
 	var scrollTimeout;
 	var labelFont;
 	var rightLabelFont;
-	var menuIndex;
 	var rightTextY = 0;
 	var rightTextX = 0;
+	var rightArrow;
 	var wasH = false;
+	var bgMC;
+	var labelMC;
+	var separator;
+	var labelX;
+	var rightLabelX;
+	var RlabelTF;
+	var MOUSE_EVT;
+	var storeFunc;
+	var storeScope;
+	var isSelectable;
+	var darkbarMC;
+	var maskMC;
+	var darkmaskMC;
+	var txt;
+	var keepWhite;
 
-	function UIMenuItem(id, index, str, substr, parentMenu, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13)
+	function UIMenuItem()
 	{
-		super(parentMenu,str,substr,param1);
-		this.blinkDesc = param2;
-		this.itemMC = this.parentMC.attachMovie("UIMenuItem", "menuItem_" + this.parentMC.getNextHighestDepth(), this.parentMC.getNextHighestDepth());
-		this.backgroundMC = this.itemMC.bgMC;
-		this.itemMC.rightArrow._visible = this.itemMC.leftArrow._visible = false;
-		this.leftTextTF = this.itemMC.labelMC.labelTF;
+		super();
 		this.leftTextTF.antiAliasType = "advanced";
 		this.leftTextTF.selectable = false;
-		this.rightTextTF = this.itemMC.RLabelMC.labelTF;
+		this.leftTextTF = this.labelMC.txtString;
+		this.rightTextTF = this.RlabelTF;
 		this.rightText = "";
-		this._type = id;
 		this.jumpable = false;
-		this.menuIndex = index;
-		this._enabled = param1;
-		this.itemMC.checkbox._visible = false;
-		//this.itemMC.mouseCatcher.swapDepths(this.itemMC.RLabelMC);
+		this.bar = this.attachMovie("GenericColourBar", "progress_bar", this.getNextHighestDepth(), {_y:9.80});
+		this.bar._visible = false;
+		this.barMC = this.attachMovie("GenericColourBar", "darkbarMC", this.getNextHighestDepth());
+		this.darkbarMC = this.attachMovie("GenericColourBar", "barMC", this.getNextHighestDepth());
+		this.barMC._visible = this.darkbarMC._visible = false;
+		this.separator = this.attachMovie("separator", "_separator_", this.getNextHighestDepth());
+		this.rightBadgeMC = this.attachMovie("txdLoader", "RightBadge", this.getNextHighestDepth());
+		this.leftBadgeMC = this.attachMovie("txdLoader", "LeftBadge", this.getNextHighestDepth());
+		this.txt = new com.rockstargames.ui.utils.Text();
+		//this.bMC.removeMovieClip();
+	}
 
-		if (str != undefined)
+	function initStoreMethod(func, scope)
+	{
+		this.storeFunc = func;
+		this.storeScope = scope;
+	}
+
+	function set data(d)
+	{
+		//label, blink, itemdata[]
+		//parentMenu, index, id, str, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13
+		//parentMenu, this.data[1], this.data[2], this.data[3], this.data[4], this.data[5], this.data[6], this.data[7], this.data[8], this.data[9], this.data[10], this.data[11], this.data[12], this.data[13], this.data[14], this.data[15], this.data[16]
+		super.data = d;
+		if (d[0] instanceof com.rockstargames.ScaleformUI.UIMenu)
 		{
-			if (id == 6)
+			this.MOUSE_EVT = new com.rockstargames.ui.mouse.MOUSE_EVENTS();
+			this.MOUSE_EVT.INTERFACE_TYPE = 10;
+			this.MOUSE_EVT.UI_MOVIE = 4;
+			this.onRollOver = com.rockstargames.ui.utils.DelegateStar.create(this, this.sendMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OVER);
+			this.onRollOut = com.rockstargames.ui.utils.DelegateStar.create(this, this.sendMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OUT);
+			this.onDragOver = com.rockstargames.ui.utils.DelegateStar.create(this, this.sendMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_DRAG_OVER);
+			this.onDragOut = com.rockstargames.ui.utils.DelegateStar.create(this, this.sendMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_DRAG_OUT);
+			this.onPress = com.rockstargames.ui.utils.DelegateStar.create(this, this.sendMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_PRESS);
+			this.onRelease = com.rockstargames.ui.utils.DelegateStar.create(this, this.sendMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_RELEASE);
+			this.onReleaseOutside = com.rockstargames.ui.utils.DelegateStar.create(this, this.sendMouseEvent, com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_RELEASE_OUTSIDE);
+		}
+		this.barMC._visible = this.darkbarMC._visible = false;
+		this.darkmaskMC._visible = this.maskMC._visible = false;
+		this.bar._visible = false;
+		this.separator._visible = false;
+		this.checkbox._visible = false;
+		this.rightArrow._visible = this.leftArrow._visible = false;
+		this.rightTextTF._visible = false;
+		this._heritage = false;
+		//this.rightBadgeMC.clearTxd();
+		//this.leftBadgeMC.clearTxd();
+		this.labelMC._x = 5;
+		this.leftTextTF._x = 0;
+		this.rightText = "";
+		this.rightTextTF._x = 0;
+		this.rightTextTF.text = "";
+		this.leftArrow.gotoAndStop(1);
+		this.rightArrow.gotoAndStop(1);
+		//this.mouseCatcher.swapDepths(this.RLabelMC);
+		this.rightTextTF.autoSize = "left";
+
+		this.blinkDesc = this.data[1];
+		this.bgMC._height = 25;
+		this.rightTextTF._x = 271;
+		switch (this.type)
+		{
+			case com.rockstargames.ScaleformUI.items.UIMenuItem.BASIC_ITEM :// base item
+				this.rightTextTF._visible = true;
+				this._mainColor = this.data[2];
+				this._highlightColor = this.data[3];
+				this.leftBadgeId = this.data[5];
+				this.leftBadgeTxd = this.data[6];
+				this.leftBadgeTxn = this.data[7];
+				this.rightBadgeId = this.data[8];
+				this.rightBadgeTxd = this.data[9];
+				this.rightBadgeTxn = this.data[10];
+				this.SetRightText(this.data[4]);
+				this.updateLabelFont(this.data[11]);
+				this.updateRightLabelFont(this.data[12]);
+				this.keepWhite = this.data[13]
+				this.snapLabels();
+				break;
+			case com.rockstargames.ScaleformUI.items.UIMenuItem.LIST_ITEM :// list item
+				this.rightTextTF._visible = true;
+				this.rightText = this.initialIndex;
+				this.rightTextTF.autoSize = true;
+				this._mainColor = this.data[2];
+				this._highlightColor = this.data[3];
+				this.leftBadgeId = this.data[4];
+				this.leftBadgeTxd = this.data[5];
+				this.leftBadgeTxn = this.data[6];
+				this.rightBadgeId = -1;
+				this.rightBadgeTxd = "";
+				this.rightBadgeTxn = "";
+				this.updateLabelFont(this.data[7]);
+				this.updateRightLabelFont(this.data[8]);
+				this.keepWhite = this.data[9]
+				if (this.blipLayer)
+				{
+					this.blipLayer.removeMovieClip();
+				}
+				this.blipLayer = this.createEmptyMovieClip("blipLayer", 1000);
+				var rLabel = com.rockstargames.ScaleformUI.utils.Functions.formatLabel(this.rightText, this.isSelectable, this.highlighted, this.keepWhite);
+				this.txt.setTextWithIcons(rLabel,this.blipLayer,this.rightTextTF,0,com.rockstargames.ui.utils.UIText.SIZE,2,false);
+				this.snapLabels();
+				break;
+			case com.rockstargames.ScaleformUI.items.UIMenuItem.CHECKBOX_ITEM :// checkbox item
+				this.checkbox = this.checkbox;
+				this.checkbox._visible = true;
+				this.tickStyle = this.data[2];
+				this.Checked = this.initialIndex;
+				this._mainColor = this.data[3];
+				this._highlightColor = this.data[4];
+				this.leftBadgeId = this.data[5];
+				this.leftBadgeTxd = this.data[6];
+				this.leftBadgeTxn = this.data[7];
+				this.rightBadgeId = -1;
+				this.rightBadgeTxd = "";
+				this.rightBadgeTxn = "";
+				this.updateLabelFont(this.data[8]);
+				this.keepWhite = this.data[9]
+				this.snapLabels();
+				break;
+			case com.rockstargames.ScaleformUI.items.UIMenuItem.SLIDER_ITEM :// slider item
+				this.rightArrow._x = 279.9;
+				this.bar._visible = true;
+				this.separator._visible = true;
+				this._mainColor = this.data[4];
+				this._highlightColor = this.data[5];
+				this._sliderColor = this.data[6];
+				this._multiplier = this.data[3];
+				this.rightArrow._visible = this.leftArrow._visible = this.isSelectable;
+				this._max = this.data[2];
+				var steps = this._max;
+				if (steps == "" || steps == undefined)
+				{
+					steps = 1;
+				}
+				this.barValsList = [];
+				var i = 0;
+				while (i < steps + 1)
+				{
+					this.barValsList.push(100 / steps * i);
+					i++;
+				}
+				var colourIndex = this._sliderColor;
+				if (colourIndex == undefined)
+				{
+					colourIndex = com.rockstargames.ui.utils.HudColour.HUD_COLOUR_GREEN;
+				}
+				var _loc1_ = new com.rockstargames.ui.utils.HudColour();
+				com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(this._sliderColor,_loc1_);
+				this.bar.initCustom(_loc1_,100);
+				this.bar._visible = true;
+				this.bar._alpha = !this.highlighted ? 75 : 100;
+				this.bar.percent(50);
+				this.sliderscale = this.initialIndex;
+				this._heritage = this.data[7];
+				this.bar._x = this.rightArrow._x - this.bar._width - 2;
+				this.leftArrow._x = this.bar._x - 8;
+				if (this._heritage)
+				{
+					this.leftArrow.gotoAndStop(2);
+					this.rightArrow.gotoAndStop(2);
+					this.rightArrow._x = 279.9 - 8;
+					this.bar._x = this.rightArrow._x - this.bar._width - 8;
+					this.leftArrow._x = this.bar._x - 8;
+				}
+				this.rightTextTF._visible = false;
+				this.separator._x = this.bar._x + this.bar._width / 2;
+				this.separator._y = this.bar._y + this.bar._height / 2;
+				this.leftBadgeId = this.data[8];
+				this.leftBadgeTxd = this.data[9];
+				this.leftBadgeTxn = this.data[10];
+				this.rightBadgeId = -1;
+				this.rightBadgeTxd = "";
+				this.rightBadgeTxn = "";
+				this.updateLabelFont(this.data[11]);
+				this.keepWhite = this.data[12]
+				this.snapLabels();
+				break;
+			case com.rockstargames.ScaleformUI.items.UIMenuItem.PROGRESS_ITEM :// progress item
+				this.bar.setFillX(0);
+				this.rightArrow._x = 279.9;
+				this.bar._visible = true;
+				this._mainColor = this.data[4];
+				this._highlightColor = this.data[5];
+				this._sliderColor = this.data[6];
+				this.rightArrow._visible = this.leftArrow._visible = this.isSelectable;
+				this._multiplier = this.data[3];
+				this._max = this.data[2];
+				var steps = this._max;
+				if (steps == "" || steps == undefined)
+				{
+					steps = 1;
+				}
+				this.barValsList = [];
+				var i = 0;
+				while (i < steps + 1)
+				{
+					this.barValsList.push(100 / steps * i);
+					i++;
+				}
+				var colourIndex = this._sliderColor;
+				if (colourIndex == undefined)
+				{
+					colourIndex = com.rockstargames.ui.utils.HudColour.HUD_COLOUR_GREEN;
+				}
+				var _loc1_ = new com.rockstargames.ui.utils.HudColour();
+				com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(this._sliderColor,_loc1_);
+				this.bar.initCustom(_loc1_,100);
+				this.bar._visible = true;
+				this.bar._alpha = !this.highlighted ? 75 : 100;
+				this.bar._x = this.rightArrow._x - this.bar._width - 2;
+				this.leftArrow._x = this.bar._x - 8;
+				this.rightTextTF._visible = false;
+				this.barscale = this.initialIndex;
+				this.leftBadgeId = this.data[7];
+				this.leftBadgeTxd = this.data[8];
+				this.leftBadgeTxn = this.data[9];
+				this.rightBadgeId = -1;
+				this.rightBadgeTxd = "";
+				this.rightBadgeTxn = "";
+				this.updateLabelFont(this.data[10]);
+				this.keepWhite = this.data[11]
+				this.snapLabels();
+				break;
+			case com.rockstargames.ScaleformUI.items.UIMenuItem.STATS_ITEM :
+				this.maskMC._y = this.darkmaskMC._y = 30;
+				this.barMC._x = this.darkbarMC._x = this.maskMC._x;
+				this.barMC._y = this.darkbarMC._y = this.maskMC._y;
+				this.bgMC._height = 40;
+				if (this.data[2] == 0)
+				{
+					this.darkmaskMC._visible = this.maskMC._visible = true;
+					this.barMC.mc.baralphaMC._visible = false;
+					this.barMC._height = 6;
+					this.barMC.setMask(this.maskMC);
+					this.darkbarMC._visible = true;
+					this.darkbarMC.setMask(this.darkmaskMC);
+					this.bgMC._height = 40;
+				}
+				else if (this.data[5] == 1)
+				{
+					this.darkmaskMC._visible = this.maskMC._visible = false;
+					this.barMC.mc.baralphaMC._visible = true;
+					this.barMC._height = 10;
+					this.barMC.setMask(null);
+					this.darkbarMC._visible = false;
+					this.bgMC._height = 46;
+				}
+				if (this.barMC != undefined)
+				{
+					var _loc1_ = new com.rockstargames.ui.utils.HudColour();
+					com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(this.data[3],_loc1_);
+					this.barMC.initCustom(_loc1_,278);
+					var __reg6 = com.rockstargames.gtav.utils.GTAVUIUtils.getAdjustedSegmentPct(Math.max(0, Math.min(this.initialIndex, 100)), 54, 2, 5);
+					this.barMC.percent(__reg6,false);
+				}
+				if (this.darkbarMC != undefined)
+				{
+					var _loc1_ = new com.rockstargames.ui.utils.HudColour();
+					com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(this.data[3],_loc1_);
+					this.darkbarMC.initCustom(_loc1_,278);
+					this.darkbarMC._alpha = 70;
+					var __reg7 = com.rockstargames.gtav.utils.GTAVUIUtils.getAdjustedSegmentPct(Math.max(0, Math.min(this.initialIndex, 100)), 54, 2, 5);
+					this.darkbarMC.percent(__reg7,false);
+				}
+				this._mainColor = this.data[4];
+				this._highlightColor = this.data[5];
+				this.keepWhite = this.data[6]
+				break;
+			case com.rockstargames.ScaleformUI.items.UIMenuItem.SEPARATOR_ITEM :// separator
+				this.rightTextTF._visible = false;
+				this.rightArrow._visible = this.leftArrow._visible = false;
+				this.jumpable = this.data[2];
+				this._mainColor = this.data[3];
+				this._highlightColor = this.data[4];
+				this.leftBadgeId = -1;
+				this.leftBadgeTxd = "";
+				this.leftBadgeTxn = "";
+				this.rightBadgeId = -1;
+				this.rightBadgeTxd = "";
+				this.rightBadgeTxn = "";
+				this.updateLabelFont(this.data[5]);
+				this.keepWhite = this.data[6]
+				this.snapLabels();
+				break;
+		}
+
+		if (this.data[0] != undefined)
+		{
+			if (this.type == 6)
 			{
 				this.leftTextTF.autoSize = "center";
 			}
 			else
 			{
-				this.leftTextTF.autoSize = true;
+				this.leftTextTF.autoSize = false;
 			}
-			com.rockstargames.ui.utils.UIText.setSizedText(this.leftTextTF,str,false);
-			this.itemMC.labelMC.setMask(this.itemMC.labelMC.maskMC);
+			if (this.labelMC.blipLayer)
+			{
+				this.labelMC.blipLayer.removeMovieClip();
+			}
+			this.labelMC.blipLayer = this.labelMC.createEmptyMovieClip("blipLayer", 1000);
+			var lLabel = com.rockstargames.ScaleformUI.utils.Functions.formatLabel(this.data[0], this.isSelectable, this.highlighted, this.keepWhite);
+			this.txt.setTextWithIcons(lLabel,this.labelMC.blipLayer,this.leftTextTF,0,com.rockstargames.ui.utils.UIText.SIZE,2,false);
 		}
 
-		switch (id)
+
+		if (!this.isSelectable)
 		{
-			case 0 :// base item
-				this.itemMC.RLabelMC._x = 271;
-				this.itemMC.RLabelMC._visible = true;
-				this._mainColor = param3;
-				this._highlightColor = param4;
-				this._textColor = param5;
-				this._textHighlightColor = param6;
-				break;
-			case 1 :// list item
-				this.itemMC.RLabelMC._visible = true;
-				this.multiListItems = param3.split(",");
-				this.textIndex = param4;
-				this._mainColor = param5;
-				this._highlightColor = param6;
-				this._textColor = param7;
-				this._textHighlightColor = param8;
-				break;
-			case 2 :// checkbox item
-				this.itemMC.RLabelMC._visible = false;
-				this.checkbox = this.itemMC.checkbox;
-				this.itemMC.checkbox._visible = true;
-				this.tickStyle = param3;
-				this.Checked = param4;
-				this._mainColor = param5;
-				this._highlightColor = param6;
-				this._textColor = param7;
-				this._textHighlightColor = param8;
-				break;
-			case 3 :// slider item
-				this._mainColor = param6;
-				this._highlightColor = param7;
-				this._textColor = param8;
-				this._textHighlightColor = param9;
-				this._sliderColor = param10;
-				this._multiplier = param4;
-				this.itemMC.rightArrow._visible = this.itemMC.leftArrow._visible = true;
-				var steps = param3;
-				if (steps == "" || steps == undefined)
-				{
-					steps = 1;
-				}
-				this.barValsList = [];
-				var i = 0;
-				while (i < steps + 1)
-				{
-					this.barValsList.push(100 / steps * i);
-					i++;
-				}
-				var colourIndex = this._sliderColor;
-				if (colourIndex == undefined)
-				{
-					colourIndex = com.rockstargames.ui.utils.HudColour.HUD_COLOUR_GREEN;
-				}
-				this.bar = this.itemMC.attachMovie("GenericColourBar", "progress_bar", this.itemMC.getNextHighestDepth(), {_y:9.80});
-				var _loc1_ = new com.rockstargames.ui.utils.HudColour();
-				com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(this._sliderColor,_loc1_);
-				this.bar.initCustom(_loc1_,100);
-				this.bar._visible = true;
-				this.bar._alpha = !this.highlighted ? 50 : 100;
-				this.bar._x = this.itemMC.rightArrow._x - this.bar._width - 2;
-				this.itemMC.leftArrow._x = this.bar._x - 8;
-				this.itemMC.RLabelMC._visible = false;
-				this.bar.percent(50);
-				this.sliderscale = param5;
-				this._heritage = param11;
-				if (this._heritage)
-				{
-					this.itemMC.leftArrow.gotoAndStop(2);
-					this.itemMC.rightArrow.gotoAndStop(2);
-					this.itemMC.rightArrow._x -= 2;
-					this.bar._x = this.itemMC.rightArrow._x - this.bar._width - 5;
-					this.itemMC.leftArrow._x = this.bar._x - 8;
-				}
-				var separator = this.itemMC.attachMovie("separator", "_separator_", this.itemMC.getNextHighestDepth());
-				separator._x = this.bar._x + this.bar._width / 2;
-				separator._y = this.bar._y + this.bar._height / 2;
-				break;
-			case 4 :// progress item
-				this._mainColor = param6;
-				this._highlightColor = param7;
-				this._textColor = param8;
-				this._textHighlightColor = param9;
-				this._sliderColor = param10;
-				this.itemMC.rightArrow._visible = this.itemMC.leftArrow._visible = true;
-				this._multiplier = param4;
-				var steps = param3;
-				if (steps == "" || steps == undefined)
-				{
-					steps = 1;
-				}
-				this.barValsList = [];
-				var i = 0;
-				while (i < steps + 1)
-				{
-					this.barValsList.push(100 / steps * i);
-					i++;
-				}
-				var colourIndex = this._sliderColor;
-				if (colourIndex == undefined)
-				{
-					colourIndex = com.rockstargames.ui.utils.HudColour.HUD_COLOUR_GREEN;
-				}
-				this.bar = this.itemMC.attachMovie("GenericColourBar", "progress_bar", this.itemMC.getNextHighestDepth(), {_y:9.80});
-				var _loc1_ = new com.rockstargames.ui.utils.HudColour();
-				com.rockstargames.ScaleformUI.utils.MovieClipHandler.HexToARGB(this._sliderColor,_loc1_);
-				this.bar.initCustom(_loc1_,100);
-				this.bar._visible = true;
-				this.bar._alpha = !this.highlighted ? 50 : 100;
-				this.bar._x = this.itemMC.rightArrow._x - this.bar._width - 2;
-				this.itemMC.leftArrow._x = this.bar._x - 8;
-				this.itemMC.RLabelMC._visible = false;
-				this.barscale = param5;
-				break;
-			case 6 :// separator
-				this.itemMC.RLabelMC._visible = false;
-				this.itemMC.rightArrow._visible = this.itemMC.leftArrow._visible = false;
-				this.updateLabelWidth();
-				this.jumpable = param3;
-				this._mainColor = param4;
-				this._highlightColor = param5;
-				this._textColor = param6;
-				this._textHighlightColor = param7;
-				break;
+			this.rightArrow._visible = this.leftArrow._visible = false;
+			if (this.type == 1)
+			{
+				this.rightTextTF._x = 288 - this.rightTextTF._width - 6;
+			}
+			else if (this.type == 3 || this.type == 4)
+			{
+				this.bar._alpha = 50;
+			}
 		}
 
-		/*
-		if (this._textColor != com.rockstargames.ui.utils.HudColour.NONE && this._textHighlightColor != com.rockstargames.ui.utils.HudColour.NONE && this._textColor != 0 && this._textHighlightColor != 0)
-		{
-		com.rockstargames.ui.utils.Colour.ApplyHudColourToTF(this.leftTextTF,!this.highlighted ? this._textColor : this._textHighlightColor);
-		}
-		*/
-		if (this._parentMenu instanceof com.rockstargames.ScaleformUI.UIMenu)
-		{
-			this.itemMC.attachMovie("mouseCatcher","mouseCatcher",itemMC.getNextHighestDepth(),{_width:itemMC._width, _height:itemMC._height});
-			this.itemMC.mouseCatcher.setupGenericMouseInterface(this.menuIndex,0,this.onMouseEvent,[this, this._parentMenu]);
-		}
-		this.itemMC.labelMC._x = 5;
+		this.setIcon(this.leftBadgeId,this.leftBadgeMC,this.leftBadgeId == -1,this.leftBadgeTxd,this.leftBadgeTxn);
+		this.setIcon(this.rightBadgeId,this.rightBadgeMC,this.rightBadgeId == -1,this.rightBadgeTxd,this.rightBadgeTxn);
+		//this.SetLeftBadge(this.leftBadgeId,this.leftBadgeTxd,this.leftBadgeTxn);
+		//this.SetRightBadge(this.rightBadgeId,this.rightBadgeTxd,this.rightBadgeTxn);
+		this.labelMC.resetDelay();
+		this.labelMC.setDelayTimeout(120);
 		this.refreshLabelFonts();
-		this.updateLabelWidth();
+		this.snapLabels();
 	}
 
 	function refreshLabelFonts()
@@ -242,7 +430,7 @@
 		newFont.font = this.labelFont[0];
 		this.leftTextTF.setNewTextFormat(newFont);
 		this.leftTextTF.setTextFormat(newFont);
-		this.updateLabelWidth();
+		this.snapLabels();
 	}
 
 	function updateRightLabelFont(fontName, fontId)
@@ -255,178 +443,169 @@
 		newFont.font = this.rightLabelFont[0];
 		this.rightTextTF.setNewTextFormat(newFont);
 		this.rightTextTF.setTextFormat(newFont);
-		this.updateLabelWidth();
-	}
-
-	function checkScroll()
-	{
-		if (this.leftTextTF.textWidth > this.itemMC.labelMC.maskMC._width)
-		{
-			this.inverseScrollSpeed = 1 / com.rockstargames.ScaleformUI.items.UIMenuItem.DEFAULT_SCROLL_SPEED;
-			this.goalX = (this.leftTextTF._width - this.itemMC.labelMC.maskMC._width);
-			this.duration = this.goalX * this.inverseScrollSpeed;
-			this.scrollTimeout = setTimeout(this.startScroll, 2000, this);
-		}
+		this.snapLabels();
 	}
 
 	// this function is called out of scope of the item itself, use this.something won't do anything!
-	function onMouseEvent(evtType, targetMC, args)
+	function sendMouseEvent(id)
 	{
-		var item = args[0];
-		var menu = args[1];
-		switch (evtType)
+		switch (id)
 		{
 			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OUT :
-				item.mOut();
+				this.mOut();
 				break;
 			case com.rockstargames.ui.mouse.MOUSE_EVENTS.MOUSE_ROLL_OVER :
-				if (item._type == 6 && item.jumpable)
+				if (this.type == 6 && this.jumpable)
 				{
 					return;
 				}
-				item.mOver();
+				this.mOver();
 				break;
 		}
+		var idx = 0;
+		// Get the mouse position relative to the parent
+		var mouseX = _xmouse - this._x;
+		var mouseY = _ymouse - this._y;
+
+		// Check each child component
+		if (this.type == 1 || this.type == 3 || this.type == 4)
+		{
+			if (this.bar.hitTest(_root._xmouse, _root._ymouse))
+			{
+				idx = 1;
+			}
+			else if (this.leftArrow.hitTest(_root._xmouse, _root._ymouse))
+			{
+				idx = 2;
+			}
+			else if (this.rightArrow.hitTest(_root._xmouse, _root._ymouse))
+			{
+				idx = 3;
+			}
+		}
+		var _loc4_ = [id, this._name, idx, this.index];
+		this.MOUSE_EVT.triggerEvent(_loc4_);
 	}
 
-	function startScroll(item)
+	function snapLabels()
 	{
-		item.inverseScrollSpeed = 1 / com.rockstargames.ScaleformUI.items.UIMenuItem.DEFAULT_SCROLL_SPEED;
-		item.goalX = (item.leftTextTF._width - item.itemMC.labelMC.maskMC._width);
-		item.duration = item.goalX * item.inverseScrollSpeed;
-		com.rockstargames.ui.tweenStar.TweenStarLite.to(item.leftTextTF,item.duration,{_x:-item.goalX, _y:0, onCompleteScope:item, onComplete:item.completeScroll, onCompleteArgs:["scroll"]});
-	}
-
-	function goBackScroll(item)
-	{
-		item.inverseScrollSpeed = 1 / com.rockstargames.ScaleformUI.items.UIMenuItem.DEFAULT_SCROLL_SPEED;
-		item.goalX = (item.leftTextTF._width - item.itemMC.labelMC.maskMC._width);
-		item.duration = item.goalX * item.inverseScrollSpeed;
-		com.rockstargames.ui.tweenStar.TweenStarLite.to(item.leftTextTF,item.duration,{_x:0, _y:0, onCompleteScope:item, onComplete:item.completeScroll, onCompleteArgs:["back"]});
-	}
-
-	function completeScroll(arg)
-	{
-		this.scrollTimeout = setTimeout(arg == "scroll" ? this.goBackScroll : this.startScroll, 3000, this);
-	}
-
-	function updateLabelWidth()
-	{
-		switch (this._type)
+		if (this.leftBadgeId != 0)
+		{
+			this.labelMC._x = 28.25;
+		}
+		else
+		{
+			if (this.type != 6)
+			{
+				this.labelMC._x = 5;
+			}
+		}
+		if (this.type != 1)
+		{
+			this.rightTextTF._x = 288 - this.rightTextTF._width - 6;
+			if (this.rightBadgeId != 0)
+			{
+				this.rightTextTF._x = this.rightBadgeMC._x - 5 - this.rightTextTF._width;
+			}
+		}
+		else
+		{
+			if (this.highlighted)
+			{
+				this.rightArrow._visible = this.leftArrow._visible = this.isSelectable;
+				this.rightTextTF._x = this.rightArrow._x - this.rightTextTF._width;
+				this.leftArrow._x = this.rightTextTF._x - 6;
+			}
+			else
+			{
+				this.rightArrow._visible = this.leftArrow._visible = false;
+				this.rightTextTF._x = 288 - this.rightTextTF._width - 6;
+			}
+			if (!this.isSelectable)
+			{
+				this.rightTextTF._x = 288 - this.rightTextTF._width - 6;
+			}
+		}
+		this.rightTextTF._y = 2.35;
+		this.leftTextTF._x = 0;
+		switch (this.type)
 		{
 			case 0 :
-				this.itemMC.labelMC.maskMC._width = this.itemMC.RLabelMC._x - this.itemMC.RLabelMC._width - this.itemMC.labelMC._x - 5;
+				this.leftTextTF._width = this.rightTextTF._x - this.labelMC._x - 5;
 				break;
 			case 2 :
-				this.itemMC.labelMC.maskMC._width = this.checkbox._x - this.itemMC.labelMC._x - 5;
+				this.leftTextTF._width = this.checkbox._x - this.labelMC._x - 5;
 				break;
 			case 1 :
 			case 3 :
 			case 4 :
-				this.itemMC.labelMC.maskMC._width = this.itemMC.leftArrow._x - this.itemMC.labelMC._x - 5;
+				this.leftTextTF._width = this.leftArrow._x - this.labelMC._x - 5;
 				break;
 			case 6 :
-				this.itemMC.labelMC._x = (288 - this.itemMC.labelMC._width) / 2;
-				this.leftTextTF._x = (this.itemMC.labelMC._width - this.leftTextTF._width) / 2;
+				this.labelMC._x = (288 - this.labelMC._width) / 2;
+				this.leftTextTF._x = (this.labelMC._width - this.leftTextTF._width) / 2;
 				break;
-
 		}
-		//this.checkScroll();
 	}
 
 	function SetRightText(str)
 	{
 		this.rightText = str;
-		this.setRightText(this.rightTextTF,this.rightText);
-		this.updateLabelWidth();
+		if (this.blipLayer)
+		{
+			this.blipLayer.removeMovieClip();
+		}
+		this.blipLayer = this.createEmptyMovieClip("blipLayer", 1000);
+		var rLabel = com.rockstargames.ScaleformUI.utils.Functions.formatLabel(this.rightText, this.isSelectable, this.highlighted, this.keepWhite);
+		this.txt.setTextWithIcons(rLabel,this.blipLayer,this.rightTextTF,0,com.rockstargames.ui.utils.UIText.SIZE,2,false);
 		this.refreshLabelFonts();
-		this.rightTextX = this.itemMC.RLabelMC._x;
-		this.updateLabelWidth();
+		this.snapLabels();
 	}
 
-	function SetRightBadge(id)
+	function setIcon(frameStr, fMC, isCustom, txd, txn)
 	{
-		this.rightBadgeId = id;
-		if (this.rightBadgeId != com.rockstargames.ScaleformUI.utils.Badges.NONE && this.rightBadgeId != -1)
+		if (fMC == undefined)
 		{
-			if (this.rightBadgeMC == undefined)
+			return;
+		}
+		var textureName = isCustom ? txn : com.rockstargames.ScaleformUI.utils.Badges.getSpriteNameById(frameStr, this.highlighted);
+		var textureDict = isCustom ? txd : com.rockstargames.ScaleformUI.utils.Badges.GetSpriteDictionary(frameStr);
+
+		if (!isCustom && frameStr == com.rockstargames.ScaleformUI.utils.Badges.NONE)
+		{
+			fMC.removeTxdRef();
+			return;
+		}
+
+		if (isCustom && (txd == undefined || txd == "" || txn == undefined || txn == ""))
+		{
+			fMC.removeTxdRef();
+			return;
+		}
+
+		if (fMC.textureDict != textureDict)
+		{
+			if (this._parentMenu instanceof com.rockstargames.ScaleformUI.UIMenu)
 			{
-				this.rightBadgeMC = this.itemMC.attachMovie("txdLoader", "RightBadge", this.itemMC.getNextHighestDepth());
+				com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(fMC,textureDict,textureName,24,24,this.iconLoaded,this);
 			}
-			if (this.rightBadgeMC.isLoaded)
+			else
 			{
-				this.rightBadgeMC.removeTxdRef();
+				com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClipPM(fMC,textureDict,textureName,24,24,this.iconLoaded,this);
 			}
-			var sprite_name = com.rockstargames.ScaleformUI.utils.Badges.getSpriteNameById(id, this.highlighted);
-			var sprite_txd = com.rockstargames.ScaleformUI.utils.Badges.GetSpriteDictionary(id);
-			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.rightBadgeMC,sprite_txd,sprite_name,24,24,this.rightBadgeLoaded,this);
 		}
 		else
 		{
-			if (this.rightBadgeMC.isLoaded)
-			{
-				this.rightBadgeMC.removeTxdRef();
-				this.itemMC.RLabelMC._x = 271;
-			}
+			fMC.init(com.rockstargames.ScaleformUI.utils.MovieClipHandler.GFXNAME,textureDict,textureName,24,24);
+			fMC.displayTxdResponse(textureDict);
+			this.iconLoaded();
 		}
-		this.updateLabelWidth();
 	}
 
-	function SetCustomRightBadge(sprite_txd,sprite_name)
+	function iconLoaded()
 	{
-		this.rightBadgeId = -1;
-		if (this.rightBadgeMC == undefined)
-		{
-			this.rightBadgeMC = this.itemMC.attachMovie("txdLoader", "RightBadge", this.itemMC.getNextHighestDepth());
-		}
-		if (this.rightBadgeMC.isLoaded)
-		{
-			this.rightBadgeMC.removeTxdRef();
-		}
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.rightBadgeMC,sprite_txd,sprite_name,24,24,this.rightBadgeLoaded,this);
-	}
-
-	function SetCustomLeftBadge(sprite_txd,sprite_name)
-	{
-		this.leftBadgeId = -1;
-		if (this.leftBadgeMC == undefined)
-		{
-			this.leftBadgeMC = this.itemMC.attachMovie("txdLoader", "LeftBadge", this.itemMC.getNextHighestDepth());
-		}
-		if (this.leftBadgeMC.isLoaded)
-		{
-			this.leftBadgeMC.removeTxdRef();
-		}
-		com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.leftBadgeMC,sprite_txd,sprite_name,24,24,this.leftBadgeLoaded,this);
-		this.itemMC.labelMC._x = 28.25;
-	}
-	function SetLeftBadge(id)
-	{
-		this.leftBadgeId = id;
-		if (this.leftBadgeId != com.rockstargames.ScaleformUI.utils.Badges.NONE && this.leftBadgeId != -1)
-		{
-			if (this.leftBadgeMC == undefined)
-			{
-				this.leftBadgeMC = this.itemMC.attachMovie("txdLoader", "LeftBadge", this.itemMC.getNextHighestDepth());
-			}
-			if (this.leftBadgeMC.isLoaded)
-			{
-				this.leftBadgeMC.removeTxdRef();
-			}
-			var sprite_name = com.rockstargames.ScaleformUI.utils.Badges.getSpriteNameById(id, this.highlighted);
-			var sprite_txd = com.rockstargames.ScaleformUI.utils.Badges.GetSpriteDictionary(id);
-			com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.leftBadgeMC,sprite_txd,sprite_name,24,24,this.leftBadgeLoaded,this);
-			this.itemMC.labelMC._x = 28.25;
-		}
-		else
-		{
-			if (this.leftBadgeMC.isLoaded)
-			{
-				this.leftBadgeMC.removeTxdRef();
-				this.itemMC.labelMC._x = 5;
-			}
-		}
-		this.updateLabelWidth();
+		this.rightBadgeLoaded();
+		this.leftBadgeLoaded();
 	}
 
 	function rightBadgeLoaded()
@@ -436,23 +615,12 @@
 		this.rightBadgeMC._height = 24;
 		this.rightBadgeMC._x = 263.5;
 		this.rightBadgeMC._y = 0.5;
-		this.itemMC.RLabelMC._x = this.rightBadgeMC._x - 5;
-		//this.rightBadgeMC._alpha = 0;
-		//com.rockstargames.ui.tweenStar.TweenStarLite.to(this.rightBadgeMC,0.2,{_alpha:100});
 		var color = com.rockstargames.ScaleformUI.utils.Badges.BadgeToColor(this.rightBadgeId, this.highlighted);
 		if (color != -1)
 		{
 			com.rockstargames.ui.utils.Colour.ApplyHudColour(this.rightBadgeMC,color);
 		}
-		this.updateLabelWidth();
-	}
-
-	function rightBadgeLoaded_withAnim()
-	{
-		this.rightBadgeLoaded();
-		this.rightBadgeMC._alpha = 0;
-		com.rockstargames.ui.tweenStar.TweenStarLite.to(this.rightBadgeMC,0.2,{_alpha:100});
-		this.updateLabelWidth();
+		this.snapLabels();
 	}
 
 	function leftBadgeLoaded()
@@ -467,15 +635,7 @@
 		{
 			com.rockstargames.ui.utils.Colour.ApplyHudColour(this.leftBadgeMC,color);
 		}
-		this.updateLabelWidth();
-	}
-
-	function leftBadgeLoaded_withAnim()
-	{
-		this.leftBadgeLoaded();
-		this.leftBadgeMC._alpha = 0;
-		com.rockstargames.ui.tweenStar.TweenStarLite.to(this.leftBadgeMC,0.2,{_alpha:100});
-		this.updateLabelWidth();
+		this.snapLabels();
 	}
 
 	function checkLoaded()
@@ -487,7 +647,7 @@
 		this.checkbox._visible = true;
 		//this.rightBadgeMC._alpha = 0;
 		//com.rockstargames.ui.tweenStar.TweenStarLite.to(this.rightBadgeMC,0.2,{_alpha:100});
-		this.updateLabelWidth();
+		this.snapLabels();
 	}
 
 	function checkLoaded_withAnim()
@@ -495,7 +655,7 @@
 		this.checkLoaded();
 		this.checkbox._alpha = 0;
 		com.rockstargames.ui.tweenStar.TweenStarLite.to(this.checkbox,0.2,{_alpha:100});
-		this.updateLabelWidth();
+		this.snapLabels();
 	}
 
 	function addPanel(_panel)
@@ -512,7 +672,7 @@
 
 	function getSprite(_highlighted, _style, _checked)
 	{
-		return _highlighted ? (_checked ? (_style == com.rockstargames.ScaleformUI.items.UIMenuCheckboxItem.CHECKBOX_STYLE_TICK ? "check_black" : "cross_black") : "empty_black") : _checked ? (_style == com.rockstargames.ScaleformUI.items.UIMenuCheckboxItem.CHECKBOX_STYLE_TICK ? "check_white" : "cross_white") : "empty";
+		return _highlighted ? (_checked ? (_style == com.rockstargames.ScaleformUI.items.UIMenuItem.CHECKBOX_STYLE_TICK ? "check_black" : "cross_black") : "empty_black") : _checked ? (_style == com.rockstargames.ScaleformUI.items.UIMenuItem.CHECKBOX_STYLE_TICK ? "check_white" : "cross_white") : "empty";
 		//return _highlighted ? (_checked ? (_style == com.rockstargames.ScaleformUI.items.UIMenuCheckboxItem.CHECKBOX_STYLE_TICK ? "shop_box_tickb" : "shop_box_crossb") : "shop_box_blankb") : _checked ? (_style == com.rockstargames.ScaleformUI.items.UIMenuCheckboxItem.CHECKBOX_STYLE_TICK ? "shop_box_tick" : "shop_box_cross") : "shop_box_blank";
 	}
 
@@ -528,11 +688,11 @@
 	function set Checked(val)
 	{
 		this._checked = val;
-		
+
 		var sprite_name = this.getSprite(this._highlighted, this.tickStyle, this._checked);
 		//com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.checkbox,"commonmenu",sprite_name,24,24,this.checkLoaded_withAnim,this);
 		this.checkbox.gotoAndStop(sprite_name);
-		this.updateLabelWidth();
+		this.snapLabels();
 	}
 
 	function get Checked()
@@ -553,8 +713,8 @@
 		}
 		this.selectedIndex = this.barIndex;
 		this.selectedValue = this.barValsList[this.barIndex];
-		this.bar.percent(this.selectedValue,true);
-		this.updateLabelWidth();
+		this.bar.percent(this.selectedValue,false);
+		this.snapLabels();
 	}
 
 	function get barscale()
@@ -576,7 +736,7 @@
 		this.selectedIndex = this.barIndex;
 		this.selectedValue = this.barValsList[this.barIndex];
 		this.bar.setFillX(50 * (this.selectedValue / 100));
-		this.updateLabelWidth();
+		this.snapLabels();
 	}
 
 	function get sliderscale()
@@ -601,11 +761,7 @@
 		this.rightText = this.selectedValue;
 		com.rockstargames.ui.utils.UIText.setSizedText(this.rightTextTF,this.rightText);
 		this.rightTextTF.autoSize = true;
-		this.itemMC.RLabelMC._x = this.itemMC.rightArrow._x - this.rightTextTF._width;
-		this.itemMC.leftArrow._x = this.itemMC.RLabelMC._x - 6;
-		this.itemMC.rightArrow._visible = this.itemMC.leftArrow._visible = true;
-		this.rightTextTF._y = 0;
-		this.updateLabelWidth();
+		this.snapLabels();
 	}
 
 	function get textIndex()
@@ -615,78 +771,42 @@
 
 	function set highlighted(_h)
 	{
-		if (this._highlighted != _h)
-		{
-			if (this.rightBadgeMC != undefined && this.rightBadgeMC.isLoaded && this.rightBadgeId != -1)
-			{
-				if (com.rockstargames.ScaleformUI.utils.Badges.canChangeSprite(this.rightBadgeId))
-				{
-					this.rightBadgeMC.removeTxdRef();
-					var txd = com.rockstargames.ScaleformUI.utils.Badges.GetSpriteDictionary(this.rightBadgeId);
-					var sprite_name = com.rockstargames.ScaleformUI.utils.Badges.getSpriteNameById(this.rightBadgeId, _h);
-					com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.rightBadgeMC,txd,sprite_name,24,24,this.rightBadgeLoaded,this);
-				}
-				var color = com.rockstargames.ScaleformUI.utils.Badges.BadgeToColor(this.rightBadgeId, _h);
-				if (color != -1)
-				{
-					com.rockstargames.ui.utils.Colour.ApplyHudColour(this.rightBadgeMC,color);
-				}
-			}
-			if (this.leftBadgeMC != undefined && this.leftBadgeMC.isLoaded && this.leftBadgeId != -1)
-			{
-				if (com.rockstargames.ScaleformUI.utils.Badges.canChangeSprite(this.leftBadgeId))
-				{
-					this.leftBadgeMC.removeTxdRef();
-					var txd = com.rockstargames.ScaleformUI.utils.Badges.GetSpriteDictionary(this.leftBadgeId);
-					var sprite_name = com.rockstargames.ScaleformUI.utils.Badges.getSpriteNameById(this.leftBadgeId, _h);
-					com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.leftBadgeMC,txd,sprite_name,24,24,this.leftBadgeLoaded,this);
-				}
-				var color = com.rockstargames.ScaleformUI.utils.Badges.BadgeToColor(this.leftBadgeId, _h);
-				if (color != -1)
-				{
-					com.rockstargames.ui.utils.Colour.ApplyHudColour(this.leftBadgeMC,color);
-				}
-			}
-		}
 		super.highlighted = _h;
-
-		if (this._enabled)
+		if (this.isSelectable)
 		{
 			if (_h)
 			{
-				if (this._type == 1)
+				if (this.type == 3 || this.type == 4)
 				{
-					this.itemMC.rightArrow._visible = this.itemMC.leftArrow._visible = true;
-					this.itemMC.RLabelMC._x = this.itemMC.rightArrow._x - this.rightTextTF._width;
-					this.itemMC.leftArrow._x = this.itemMC.RLabelMC._x - 6;
-				}
-				else if (this._type == 3 || this._type == 4)
-				{
-					this.itemMC.rightArrow._visible = this.itemMC.leftArrow._visible = true;
+					this.rightArrow._visible = this.leftArrow._visible = true;
+					if (this._heritage)
+					{
+						com.rockstargames.ui.utils.Colour.ApplyHudColour(this.leftArrow,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_BLACK);
+						com.rockstargames.ui.utils.Colour.ApplyHudColour(this.rightArrow,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_BLACK);
+					}
 					this.bar._alpha = 100;
 				}
-				else if (this._type == 2)
+				else if (this.type == 2)
 				{
 					var sprite_name = this.getSprite(true, this.tickStyle, this.Checked);
 					//com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.checkbox,"commonmenu",sprite_name,24,24,this.checkLoaded,this);
 					this.checkbox.gotoAndStop(sprite_name);
 				}
-				this.updateLabelWidth();
-				this.checkScroll();
 			}
 			else
 			{
-				if (this._type == 1)
+				if (this.type == 3 || this.type == 4)
 				{
-					this.itemMC.rightArrow._visible = this.itemMC.leftArrow._visible = false;
-					this.itemMC.RLabelMC._x = 288 - this.rightTextTF._width - 6;
-				}
-				else if (this._type == 3 || this._type == 4)
-				{
-					this.itemMC.rightArrow._visible = this.itemMC.leftArrow._visible = false;
+					this.rightArrow._visible = this.leftArrow._visible = false;
+					if (this._heritage)
+					{
+						this.rightArrow._visible = this.leftArrow._visible = true;
+						com.rockstargames.ui.utils.Colour.ApplyHudColour(this.leftArrow,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
+						com.rockstargames.ui.utils.Colour.ApplyHudColour(this.rightArrow,com.rockstargames.ui.utils.HudColour.HUD_COLOUR_WHITE);
+					}
 					this.bar._alpha = 50;
 				}
-				else if (this._type == 2)
+				else if (this.type == 2)
 				{
 					var sprite_name = this.getSprite(false, this.tickStyle, this.Checked);
 					//com.rockstargames.ScaleformUI.utils.MovieClipHandler.SetClip(this.checkbox,"commonmenu",sprite_name,24,24,this.checkLoaded,this);
@@ -695,7 +815,6 @@
 				clearTimeout(this.scrollTimeout);
 				com.rockstargames.ui.tweenStar.TweenStarLite.removeTweenOf(this.leftTextTF);
 				this.leftTextTF._x = 0;
-				this.updateLabelWidth();
 			}
 			for (var _panel in this.panels)
 			{
@@ -708,27 +827,62 @@
 		}
 		else
 		{
-			this.itemMC.rightArrow._visible = this.itemMC.leftArrow._visible = false;
-			if (this._type == 1)
+			this.rightArrow._visible = this.leftArrow._visible = false;
+			if (this.type == 1)
 			{
-				this.itemMC.RLabelMC._x = 288 - this.rightTextTF._width - 6;
+				this.rightTextTF._x = 288 - this.rightTextTF._width - 6;
 			}
-			else if (this._type == 3 || this._type == 4)
+			else if (this.type == 3 || this.type == 4)
 			{
 				this.bar._alpha = 50;
 			}
 		}
-		this.refreshLabelFonts();
-		this.updateLabelWidth();
-		if (this._parentMenu instanceof com.rockstargames.ScaleformUI.UIMenu && this._parentMenu.IS3D)
+		this.setIcon(this.leftBadgeId,this.leftBadgeMC,this.leftBadgeId == -1,this.leftBadgeTxd,this.leftBadgeTxn);
+		this.setIcon(this.rightBadgeId,this.rightBadgeMC,this.rightBadgeId == -1,this.rightBadgeTxd,this.rightBadgeTxn);
+		if (this.data[0] != "")
 		{
-			this.rotateSel(_h);
+			if (this.labelMC.blipLayer)
+			{
+				this.labelMC.blipLayer.removeMovieClip();
+			}
+			this.labelMC.blipLayer = this.labelMC.createEmptyMovieClip("blipLayer", 1000);
+			var lLabel = com.rockstargames.ScaleformUI.utils.Functions.formatLabel(this.data[0], this.isSelectable, _h, this.keepWhite);
+			this.txt.setTextWithIcons(lLabel,this.labelMC.blipLayer,this.leftTextTF,0,com.rockstargames.ui.utils.UIText.SIZE,2,false);
 		}
+		if (this.rightText != undefined && this.rightText != "")
+		{
+			if (this.blipLayer)
+			{
+				this.blipLayer.removeMovieClip();
+			}
+			this.blipLayer = this.createEmptyMovieClip("blipLayer", 1000);
+			var rLabel = com.rockstargames.ScaleformUI.utils.Functions.formatLabel(this.rightText, this.isSelectable, _h, this.keepWhite);
+			this.txt.setTextWithIcons(rLabel,this.blipLayer,this.rightTextTF,0,com.rockstargames.ui.utils.UIText.SIZE,2,false);
+		}
+		this.refreshLabelFonts();
+		this.snapLabels();
 	}
+
+	function changeColor(text, _h)
+	{
+		var colorToChange = "#F0F0F0";
+		var newColor = "#000000";
+		if (!_h)
+		{
+			colorToChange = "#000000";
+			newColor = "#F0F0F0";
+		}
+		// Split the text into an array using the color as separator                                                                          
+		var parts = text.split(colorToChange);
+
+		// Join the parts back together using the new color
+		return parts.join(newColor);
+	}
+
 
 	function mOverI(mc)
 	{
-		if (this._type == 2)
+		if (this.type == 2)
 		{
 			if (this.highlighted)
 			{
@@ -736,12 +890,12 @@
 				this._hovered = true;
 			}
 		}
-		else if (mc == this.itemMC.leftArrow)
+		else if (mc == this.leftArrow)
 		{
 			this.hover = 0;
 			this._hovered = true;
 		}
-		else if (mc == this.itemMC.rightArrow)
+		else if (mc == this.rightArrow)
 		{
 			this.hover = 1;
 			this._hovered = true;
@@ -749,7 +903,7 @@
 	}
 	function mOutI(mc)
 	{
-		if (this._type == 2)
+		if (this.type == 2)
 		{
 			if (this.highlighted)
 			{
@@ -767,7 +921,7 @@
 	function get Value()
 	{
 		var ret;
-		switch (this._type)
+		switch (this.type)
 		{
 			case 0 :
 				ret = -1;
@@ -789,7 +943,7 @@
 
 	function set Value(value)
 	{
-		switch (this._type)
+		switch (this.type)
 		{
 			case 1 :
 				this.textIndex = value;
@@ -803,46 +957,17 @@
 				this.barscale = value;
 				break;
 		}
-		this.updateLabelWidth();
+		this.snapLabels();
 	}
 
 	function Select()
 	{
-		if (this._type == 1 || this._type == 3 || this._type == 4)
-		{
-			if (this.itemMC.leftArrow.hitTest(_xmouse, _ymouse, false))
-			{
-				this.hover = 0;
-				this._hovered = true;
-			}
-			else if (this.itemMC.rightArrow.hitTest(_xmouse, _ymouse, false))
-			{
-				this.hover = 1;
-				this._hovered = true;
-			}
-			else
-			{
-				this.hover = -1;
-				this._hovered = false;
-			}
-		}
-
-		if (this._enabled)
+		if (this.isSelectable)
 		{
 			if (this.highlighted)
 			{
-				switch (this._type)
+				switch (this.type)
 				{
-					case 1 :
-						if (this.hover == 0)
-						{
-							this.textIndex--;
-						}
-						else if (this.hover == 1)
-						{
-							this.textIndex++;
-						}
-						break;
 					case 2 :
 						if (this.hover == 1)
 						{
@@ -850,74 +975,36 @@
 						}
 						break;
 					case 3 :
-						switch (this.hover)
+						var m = _xmouse;
+						var val = (m - this.bar._x) / this.bar._width * this._max;
+						if (val < 0 || val > this._max)
 						{
-							case 0 :
-								this.sliderscale -= this._multiplier;
-								break;
-							case 1 :
-								this.sliderscale += this._multiplier;
-								break;
+							break;
 						}
+						this.sliderscale = Math.max(0, Math.min(val, this._max));
 						break;
-
 					case 4 :
-						switch (this.hover)
+						var m = _xmouse;
+						var val = (m - this.bar._x) / this.bar._width * this._max;
+						if (val < 0 || val > this._max)
 						{
-							case 0 :
-								this.barscale--;
-								break;
-							case 1 :
-								this.barscale++;
-								break;
+							break;
 						}
+						this.barscale = Math.max(0, Math.min(val, this._max));
 						break;
 				}
 			}
 		}
-		this.updateLabelWidth();
+		this.snapLabels();
 		return this.Value;
 	}
 
 	function set Width(w)
 	{
-		this.itemMC._width = w;
+		this._width = w;
 		for (var pan in this.panels)
 		{
 			this.panels[pan].Width = w;
-		}
-	}
-
-	function rotateSel(bool)
-	{
-		var speed = 0.25;
-		var xrot = 0;
-		if (bool)
-		{
-			this.backgroundMC._xrotation = 0;
-			xrot = 180;
-			com.rockstargames.ui.tweenStar.TweenStarLite.to(this.backgroundMC,speed,{_xrotation:xrot});
-			/*
-			//this.itemMC.labelMC._xrotation = 180;
-			this.itemMC.RLabelMC._xrotation = 180;
-			this.checkbox._xrotation = 180;
-			this.itemMC.rightArrow._xrotation = 180;
-			this.itemMC.leftArrow._xrotation = 180;
-			this.bar._xrotation = 180;
-			this.leftBadgeMC._xrotation = 180;
-			this.rightBadgeMC._xrotation = 180;
-			*/
-
-			//com.rockstargames.ui.tweenStar.TweenStarLite.to(this.itemMC.labelMC,speed,{_xrotation:360});
-			/*
-			com.rockstargames.ui.tweenStar.TweenStarLite.to(this.itemMC.RLabelMC,speed,{_xrotation:360});
-			com.rockstargames.ui.tweenStar.TweenStarLite.to(this.checkbox,speed,{_xrotation:360});
-			com.rockstargames.ui.tweenStar.TweenStarLite.to(this.itemMC.rightArrow,speed,{_xrotation:360});
-			com.rockstargames.ui.tweenStar.TweenStarLite.to(this.itemMC.leftArrow,speed,{_xrotation:360});
-			com.rockstargames.ui.tweenStar.TweenStarLite.to(this.bar,speed,{_xrotation:360});
-			com.rockstargames.ui.tweenStar.TweenStarLite.to(this.leftBadgeMC,speed,{_xrotation:360});
-			com.rockstargames.ui.tweenStar.TweenStarLite.to(this.rightBadgeMC,speed,{_xrotation:360});
-			*/
 		}
 	}
 
@@ -925,7 +1012,7 @@
 	{
 		clearTimeout(this.scrollTimeout);
 		com.rockstargames.ui.tweenStar.TweenStarLite.removeTweenOf(this.leftTextTF);
-		this.itemMC.mouseCatcher.dispose();
+		this.mouseCatcher.dispose();
 		if (this.rightBadgeMC.isLoaded)
 		{
 			this.rightBadgeMC.removeTxdRef();
@@ -949,6 +1036,6 @@
 		{
 			this.sidePanel.Clear();
 		}
-		this.itemMC.removeMovieClip();
+		this.removeMovieClip();
 	}
 }
